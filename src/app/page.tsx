@@ -51,7 +51,7 @@ function getDemoPosts(): PostWithDetails[] {
       view_count: 15,
       profiles: {
         username: '인사팀장',
-        avatar_url: null
+        avatar_url: undefined
       },
       likes: [],
       comments: []
@@ -68,7 +68,7 @@ function getDemoPosts(): PostWithDetails[] {
       view_count: 8,
       profiles: {
         username: '개발자김씨',
-        avatar_url: null
+        avatar_url: undefined
       },
       likes: [{ id: 'like-1' }],
       comments: [{ id: 'comment-1' }]
@@ -85,7 +85,7 @@ function getDemoPosts(): PostWithDetails[] {
       view_count: 23,
       profiles: {
         username: '신입개발자',
-        avatar_url: null
+        avatar_url: undefined
       },
       likes: [{ id: 'like-2' }, { id: 'like-3' }],
       comments: []

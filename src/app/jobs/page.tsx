@@ -52,7 +52,7 @@ function getDemoJobPosts(): PostWithDetails[] {
       view_count: 15,
       profiles: {
         username: '인사팀장',
-        avatar_url: null
+        avatar_url: undefined
       },
       likes: [],
       comments: []
@@ -69,7 +69,7 @@ function getDemoJobPosts(): PostWithDetails[] {
       view_count: 23,
       profiles: {
         username: '신입개발자',
-        avatar_url: null
+        avatar_url: undefined
       },
       likes: [{ id: 'like-2' }, { id: 'like-3' }],
       comments: []
@@ -91,7 +91,7 @@ function getDemoJobPosts(): PostWithDetails[] {
       view_count: 31,
       profiles: {
         username: 'CTO',
-        avatar_url: null
+        avatar_url: undefined
       },
       likes: [{ id: 'like-4' }],
       comments: [{ id: 'comment-2' }]

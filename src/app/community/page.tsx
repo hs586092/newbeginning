@@ -47,7 +47,7 @@ function getDemoCommunityPosts(): PostWithDetails[] {
       view_count: 8,
       profiles: {
         username: '개발자김씨',
-        avatar_url: null
+        avatar_url: undefined
       },
       likes: [{ id: 'like-1' }],
       comments: [{ id: 'comment-1' }]
@@ -64,7 +64,7 @@ function getDemoCommunityPosts(): PostWithDetails[] {
       view_count: 42,
       profiles: {
         username: 'React개발자',
-        avatar_url: null
+        avatar_url: undefined
       },
       likes: [{ id: 'like-5' }, { id: 'like-6' }, { id: 'like-7' }],
       comments: [{ id: 'comment-3' }, { id: 'comment-4' }]
@@ -81,7 +81,7 @@ function getDemoCommunityPosts(): PostWithDetails[] {
       view_count: 67,
       profiles: {
         username: '알고리즘마스터',
-        avatar_url: null
+        avatar_url: undefined
       },
       likes: [{ id: 'like-8' }, { id: 'like-9' }],
       comments: [{ id: 'comment-5' }, { id: 'comment-6' }, { id: 'comment-7' }]
