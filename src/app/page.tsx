@@ -5,6 +5,7 @@ import { PostsWrapper } from '@/components/posts/posts-wrapper'
 import { RealtimeProvider } from '@/components/providers/realtime-provider'
 import { SearchBar } from '@/components/search/search-bar'
 import { SearchFilters } from '@/components/search/search-filters'
+import { CustomerCentricPage } from '@/components/landing/customer-centric-page'
 
 interface HomePageProps {
   searchParams: { [key: string]: string | undefined }
@@ -13,7 +14,15 @@ interface HomePageProps {
 export default async function HomePage({ searchParams }: HomePageProps) {
   const { user } = await getUser()
   const hasSearchParams = Object.keys(searchParams).length > 0
+  
+  // 새 방문자나 검색 파라미터가 없을 때는 Customer-Centric 랜딩페이지 표시
+  const showLandingPage = !user && !hasSearchParams
 
+  if (showLandingPage) {
+    return <CustomerCentricPage />
+  }
+
+  // 기존 대시보드형 페이지 (로그인 사용자 또는 검색 중)
   return (
     <RealtimeProvider>
       <div className="max-w-6xl mx-auto px-4 py-8">
