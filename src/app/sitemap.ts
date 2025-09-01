@@ -1,5 +1,7 @@
 import { MetadataRoute } from 'next'
-import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
+
+export const revalidate = 3600 // Revalidate every hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://newbeginning-community.vercel.app'
@@ -41,15 +43,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let dynamicPages: MetadataRoute.Sitemap = []
   
   try {
-    const supabase = await createServerSupabaseClient()
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
     const { data: posts } = await supabase
       .from('posts')
       .select('id, updated_at, category')
       .order('updated_at', { ascending: false })
       .limit(1000)
 
-    if (posts) {
-      dynamicPages = posts.map((post) => ({
+    if (posts && posts.length > 0) {
+      dynamicPages = posts.map((post: any) => ({
         url: `${baseUrl}/post/${post.id}`,
         lastModified: new Date(post.updated_at),
         changeFrequency: post.category === 'job_offer' ? 'weekly' as const : 'monthly' as const,
