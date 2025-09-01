@@ -216,6 +216,53 @@ export async function incrementViewCount(postId: string) {
   }
 }
 
+export async function searchPosts(query: string = '', category?: string, location?: string) {
+  const supabase = await createServerSupabaseClient()
+  
+  try {
+    let queryBuilder = supabase
+      .from('posts')
+      .select(`
+        *,
+        profiles!posts_user_id_fkey (
+          username,
+          avatar_url
+        ),
+        likes (id),
+        comments (id)
+      `)
+
+    // 텍스트 검색 (제목 + 내용)
+    if (query) {
+      queryBuilder = queryBuilder.or(`title.ilike.%${query}%,content.ilike.%${query}%`)
+    }
+
+    // 카테고리 필터
+    if (category && category !== 'all') {
+      queryBuilder = queryBuilder.eq('category', category)
+    }
+
+    // 지역 필터
+    if (location) {
+      queryBuilder = queryBuilder.ilike('location', `%${location}%`)
+    }
+
+    const { data: posts, error } = await queryBuilder
+      .order('created_at', { ascending: false })
+      .limit(50) // 성능을 위해 제한
+
+    if (error) {
+      console.error('Search error:', error)
+      return { error: '검색 중 오류가 발생했습니다.', posts: [] }
+    }
+
+    return { posts: posts || [] }
+  } catch (error) {
+    console.error('Unexpected search error:', error)
+    return { error: '검색 중 오류가 발생했습니다.', posts: [] }
+  }
+}
+
 export async function toggleLike(postId: string) {
   const supabase = await createServerSupabaseClient()
   const { user } = await getUser()
