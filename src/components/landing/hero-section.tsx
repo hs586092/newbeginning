@@ -33,8 +33,8 @@ const HERO_CONTENT = {
     stats: { label: "월간 활동", value: "12,500+" }
   },
   default: {
-    headline: "개발자 커리어의 새로운 시작",
-    subtext: "구인구직부터 커뮤니티까지, 개발자 생태계의 모든 것을 한 곳에서 경험하세요",
+    headline: "불자들의 커뮤니티 : BUDICONNECTS",
+    subtext: "구인, 구직 부터 커뮤니티 서비스까지 모든 것을 한곳에서 경험하세요",
     cta: "시작하기",
     ctaIcon: <ArrowRight className="w-5 h-5" />,
     bgGradient: "from-indigo-600 to-blue-600",

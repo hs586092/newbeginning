@@ -92,7 +92,7 @@ export function DashboardStats({ className = '' }: DashboardStatsProps) {
       {/* Header */}
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-blue-600 mb-2">
-          JobConnect 커뮤니티
+          BUDICONNECTS 커뮤니티
         </h2>
         <p className="text-gray-600">
           새로운 기회를 발견하고, 커뮤니티와 함께 성장하세요

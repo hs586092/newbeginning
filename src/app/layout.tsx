@@ -10,18 +10,18 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://newbeginning-community.vercel.app'),
   title: {
-    default: '뉴비기닝 - 구인구직 & 커뮤니티 플랫폼',
-    template: '%s | 뉴비기닝'
+    default: 'BUDICONNECTS - 불자들의 커뮤니티',
+    template: '%s | BUDICONNECTS'
   },
-  description: '개발자와 IT 전문가를 위한 구인구직 및 커뮤니티 플랫폼. 최신 기술 트렌드와 채용 정보를 실시간으로 공유하세요.',
+  description: '불자들의 커뮤니티 BUDICONNECTS. 구인, 구직부터 커뮤니티 서비스까지 모든 것을 한곳에서 경험하세요.',
   keywords: [
-    '구인구직', '개발자 채용', 'IT 채용', '프로그래머 구인', 
-    '개발자 커뮤니티', '기술 블로그', '개발 정보', '프론트엔드', 
-    '백엔드', '풀스택', 'React', 'Next.js', 'TypeScript'
+    'BUDICONNECTS', '불자들의커뮤니티', '구인구직', '불자채용', 
+    '불교커뮤니티', '불자네트워킹', '구인', '구직', '커뮤니티서비스',
+    '불교도구인구직', '불자취업', '불교인커리어'
   ],
-  authors: [{ name: '뉴비기닝 팀' }],
-  creator: '뉴비기닝',
-  publisher: '뉴비기닝',
+  authors: [{ name: 'BUDICONNECTS 팀' }],
+  creator: 'BUDICONNECTS',
+  publisher: 'BUDICONNECTS',
   formatDetection: {
     email: false,
     address: false,
@@ -31,24 +31,24 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'ko_KR',
     url: '/',
-    siteName: '뉴비기닝',
-    title: '뉴비기닝 - 개발자를 위한 구인구직 & 커뮤니티',
-    description: '개발자와 IT 전문가를 위한 구인구직 및 커뮤니티 플랫폼. 최신 기술 트렌드와 채용 정보를 실시간으로 공유하세요.',
+    siteName: 'BUDICONNECTS',
+    title: 'BUDICONNECTS - 불자들의 커뮤니티',
+    description: '불자들의 커뮤니티 BUDICONNECTS. 구인, 구직부터 커뮤니티 서비스까지 모든 것을 한곳에서 경험하세요.',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: '뉴비기닝 - 구인구직 & 커뮤니티 플랫폼',
+        alt: 'BUDICONNECTS - 불자들의 커뮤니티',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    site: '@newbeginning_dev',
-    creator: '@newbeginning_dev',
-    title: '뉴비기닝 - 개발자를 위한 구인구직 & 커뮤니티',
-    description: '개발자와 IT 전문가를 위한 구인구직 및 커뮤니티 플랫폼',
+    site: '@budiconnects',
+    creator: '@budiconnects',
+    title: 'BUDICONNECTS - 불자들의 커뮤니티',
+    description: '불자들의 커뮤니티 BUDICONNECTS. 구인, 구직부터 커뮤니티 서비스까지',
     images: ['/og-image.png'],
   },
   robots: {

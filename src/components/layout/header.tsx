@@ -68,7 +68,7 @@ export function Header() {
           {/* Logo and Navigation */}
           <div className="flex items-center space-x-8">
             <Link href="/" className="flex items-center">
-              <h1 className="text-2xl font-bold text-blue-600">커뮤니티</h1>
+              <h1 className="text-2xl font-bold text-blue-600">BUDICONNECTS</h1>
             </Link>
             
             <nav className="hidden md:flex space-x-6">
