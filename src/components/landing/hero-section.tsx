@@ -78,23 +78,33 @@ export function HeroSection({ userType = null, onUserTypeSelect }: HeroSectionPr
       <div className="relative max-w-7xl mx-auto px-4 py-20">
         {/* User Type Selector */}
         <div className="flex justify-center mb-12">
-          <div className="flex bg-white/20 backdrop-blur-sm rounded-full p-1">
+          <div className="flex gap-3 bg-black/10 backdrop-blur-md rounded-2xl p-2 border border-white/20 shadow-2xl">
             {[
-              { key: 'seeker', label: '구직자', icon: <Briefcase className="w-4 h-4" /> },
-              { key: 'recruiter', label: '채용담당자', icon: <Users className="w-4 h-4" /> },
-              { key: 'community', label: '커뮤니티', icon: <TrendingUp className="w-4 h-4" /> }
+              { key: 'seeker', label: '구직자', icon: <Briefcase className="w-5 h-5" /> },
+              { key: 'recruiter', label: '채용담당자', icon: <Users className="w-5 h-5" /> },
+              { key: 'community', label: '커뮤니티', icon: <TrendingUp className="w-5 h-5" /> }
             ].map(({ key, label, icon }) => (
               <button
                 key={key}
                 onClick={() => handleTypeSelect(key as UserType)}
-                className={`flex items-center space-x-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ${
+                className={`group relative flex items-center space-x-3 px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform ${
                   selectedType === key
-                    ? 'bg-white text-gray-900 shadow-lg'
-                    : 'text-white/80 hover:text-white hover:bg-white/10'
+                    ? 'bg-white text-blue-600 shadow-xl scale-105 ring-2 ring-white/30'
+                    : 'text-white/90 hover:text-white hover:bg-white/20 hover:scale-102 hover:shadow-lg active:scale-95'
                 }`}
               >
-                {icon}
-                <span>{label}</span>
+                <div className={`transition-transform duration-300 ${selectedType === key ? 'scale-110' : 'group-hover:scale-110'}`}>
+                  {icon}
+                </div>
+                <span className="text-base whitespace-nowrap">{label}</span>
+                
+                {/* Subtle glow effect for active button */}
+                {selectedType === key && (
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-400/20 to-purple-400/20 blur-sm -z-10" />
+                )}
+                
+                {/* Hover glow effect */}
+                <div className="absolute inset-0 rounded-xl bg-white/0 group-hover:bg-white/5 transition-colors duration-300" />
               </button>
             ))}
           </div>
