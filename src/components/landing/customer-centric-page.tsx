@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { HeroSection } from './hero-section'
-import { ValueProposition } from './value-proposition'
 import { SocialProof } from './social-proof'
 import { Button } from '@/components/ui/button'
 import { Heart, Users } from 'lucide-react'
@@ -34,9 +33,6 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
         userType={selectedUserType} 
         onUserTypeSelect={handleUserTypeChange}
       />
-
-      {/* Value Propositions */}
-      <ValueProposition userType={selectedUserType} />
 
       {/* Live Community Feed with Sidebar Layout */}
       <section className="py-16 bg-gradient-to-b from-pink-50 via-white to-blue-50">
