@@ -62,59 +62,14 @@ export function Header() {
     <header className="bg-gradient-to-r from-pink-50 to-blue-50 dark:from-pink-900/20 dark:to-blue-900/20 shadow-sm border-b border-pink-100 dark:border-pink-800 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo and Navigation */}
-          <div className="flex items-center space-x-8">
+          {/* Logo */}
+          <div className="flex items-center">
             <Link href="/" className="flex items-center gap-2">
               <span className="text-3xl">🤱</span>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-blue-500 text-transparent bg-clip-text">
                 첫돌까지
               </h1>
             </Link>
-            
-            <nav className="hidden md:flex space-x-6">
-              <Link 
-                href="/pregnancy" 
-                className="text-gray-700 dark:text-gray-300 hover:text-pink-500 font-medium transition-colors"
-              >
-                🤰 임신
-              </Link>
-              <Link 
-                href="/birth" 
-                className="text-gray-700 dark:text-gray-300 hover:text-pink-500 font-medium transition-colors"
-              >
-                🏥 출산
-              </Link>
-              <Link 
-                href="/newborn" 
-                className="text-gray-700 dark:text-gray-300 hover:text-pink-500 font-medium transition-colors"
-              >
-                🍼 신생아
-              </Link>
-              <Link 
-                href="/baby-food" 
-                className="text-gray-700 dark:text-gray-300 hover:text-pink-500 font-medium transition-colors"
-              >
-                🥄 이유식
-              </Link>
-              <Link 
-                href="/development" 
-                className="text-gray-700 dark:text-gray-300 hover:text-pink-500 font-medium transition-colors"
-              >
-                📈 발달정보
-              </Link>
-              <Link 
-                href="/community" 
-                className="text-gray-700 dark:text-gray-300 hover:text-pink-500 font-medium transition-colors"
-              >
-                💬 커뮤니티
-              </Link>
-              <Link 
-                href="/emergency" 
-                className="text-red-500 hover:text-red-600 font-bold transition-colors"
-              >
-                🚨 응급
-              </Link>
-            </nav>
           </div>
 
           {/* User Actions */}
@@ -175,43 +130,6 @@ export function Header() {
         </div>
       </div>
 
-      {/* Mobile Navigation */}
-      <div className="md:hidden border-t border-pink-100 dark:border-pink-800 bg-gradient-to-r from-pink-25 to-blue-25 dark:from-pink-900/10 dark:to-blue-900/10 transition-colors">
-        <div className="max-w-7xl mx-auto px-4">
-          <nav className="flex space-x-4 py-3 overflow-x-auto">
-            <Link 
-              href="/pregnancy" 
-              className="text-gray-700 dark:text-gray-300 hover:text-pink-500 font-medium whitespace-nowrap py-2 px-1 min-w-0 flex-shrink-0 transition-colors text-sm"
-            >
-              🤰 임신
-            </Link>
-            <Link 
-              href="/newborn" 
-              className="text-gray-700 dark:text-gray-300 hover:text-pink-500 font-medium whitespace-nowrap py-2 px-1 min-w-0 flex-shrink-0 transition-colors text-sm"
-            >
-              🍼 신생아
-            </Link>
-            <Link 
-              href="/baby-food" 
-              className="text-gray-700 dark:text-gray-300 hover:text-pink-500 font-medium whitespace-nowrap py-2 px-1 min-w-0 flex-shrink-0 transition-colors text-sm"
-            >
-              🥄 이유식
-            </Link>
-            <Link 
-              href="/community" 
-              className="text-gray-700 dark:text-gray-300 hover:text-pink-500 font-medium whitespace-nowrap py-2 px-1 min-w-0 flex-shrink-0 transition-colors text-sm"
-            >
-              💬 커뮤니티
-            </Link>
-            <Link 
-              href="/emergency" 
-              className="text-red-500 hover:text-red-600 font-bold whitespace-nowrap py-2 px-1 min-w-0 flex-shrink-0 transition-colors text-sm"
-            >
-              🚨 응급
-            </Link>
-          </nav>
-        </div>
-      </div>
     </header>
   )
 }
