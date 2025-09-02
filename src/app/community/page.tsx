@@ -1,116 +1,153 @@
-import { createServerSupabaseClient, getUser } from '@/lib/supabase/server'
-import { PostList } from '@/components/posts/post-list'
-import { RealtimeProvider } from '@/components/providers/realtime-provider'
-import type { PostWithDetails } from '@/types/database.types'
+'use client'
 
-export const dynamic = 'force-dynamic'
+import { useState } from 'react'
+import { PlusCircle, Heart, Users, TrendingUp, MessageCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import SocialFeed from '@/components/social/social-feed'
+import CategoryFilter from '@/components/social/category-filter'
+import PostForm from '@/components/social/post-form'
 
-async function getCommunityPosts(): Promise<PostWithDetails[]> {
-  try {
-    const supabase = await createServerSupabaseClient()
-    
-    const { data: posts, error } = await supabase
-      .from('posts')
-      .select(`
-        *,
-        profiles!posts_user_id_fkey (
-          username,
-          avatar_url
-        ),
-        likes (id),
-        comments (id)
-      `)
-      .eq('category', 'community')
-      .order('created_at', { ascending: false })
-
-    if (error) {
-      console.log('Supabase connection failed (using placeholder credentials)')
-      return getDemoCommunityPosts()
-    }
-
-    return posts || []
-  } catch (error) {
-    console.log('Database connection unavailable, showing demo community posts')
-    return getDemoCommunityPosts()
-  }
-}
-
-function getDemoCommunityPosts(): PostWithDetails[] {
-  return [
-    {
-      id: 'demo-community-1',
-      title: '백엔드 개발 경험 공유',
-      content: 'Node.js와 PostgreSQL로 RESTful API를 구축한 경험을 공유합니다. 특히 대용량 데이터 처리와 최적화에 대한 이야기를 나누고 싶어요.',
-      category: 'community',
-      user_id: 'demo-user-2',
-      author_name: '개발자김씨',
-      created_at: new Date(Date.now() - 3600000).toISOString(),
-      updated_at: new Date(Date.now() - 3600000).toISOString(),
-      view_count: 8,
-      profiles: {
-        username: '개발자김씨',
-        avatar_url: undefined
-      },
-      likes: [{ id: 'like-1' }],
-      comments: [{ id: 'comment-1' }]
-    },
-    {
-      id: 'demo-community-2',
-      title: 'React 18의 새로운 기능들',
-      content: 'Concurrent Features와 Suspense를 실제 프로젝트에 적용해본 후기입니다. 성능 개선이 확실히 체감되더라구요.',
-      category: 'community',
-      user_id: 'demo-user-5',
-      author_name: 'React개발자',
-      created_at: new Date(Date.now() - 10800000).toISOString(),
-      updated_at: new Date(Date.now() - 10800000).toISOString(),
-      view_count: 42,
-      profiles: {
-        username: 'React개발자',
-        avatar_url: undefined
-      },
-      likes: [{ id: 'like-5' }, { id: 'like-6' }, { id: 'like-7' }],
-      comments: [{ id: 'comment-3' }, { id: 'comment-4' }]
-    },
-    {
-      id: 'demo-community-3',
-      title: '개발자 스터디 모집',
-      content: '알고리즘 문제 풀이 스터디를 시작하려고 합니다. 매주 토요일 오전 10시, 온라인으로 진행할 예정이에요. 관심 있으신 분들 연락주세요!',
-      category: 'community',
-      user_id: 'demo-user-6',
-      author_name: '알고리즘마스터',
-      created_at: new Date(Date.now() - 172800000).toISOString(),
-      updated_at: new Date(Date.now() - 172800000).toISOString(),
-      view_count: 67,
-      profiles: {
-        username: '알고리즘마스터',
-        avatar_url: undefined
-      },
-      likes: [{ id: 'like-8' }, { id: 'like-9' }],
-      comments: [{ id: 'comment-5' }, { id: 'comment-6' }, { id: 'comment-7' }]
-    }
-  ] as PostWithDetails[]
-}
-
-export default async function CommunityPage() {
-  const [posts, { user }] = await Promise.all([
-    getCommunityPosts(),
-    getUser()
-  ])
+export default function CommunityPage() {
+  const [selectedCategory, setSelectedCategory] = useState('all')
+  const [selectedBabyMonth, setSelectedBabyMonth] = useState<number | undefined>()
+  const [showPostForm, setShowPostForm] = useState(false)
 
   return (
-    <RealtimeProvider>
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">커뮤니티</h1>
-          <p className="text-gray-600 mt-2">자유로운 소통과 정보 공유의 공간입니다</p>
+    <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-blue-50">
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Header Section */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center space-x-2 bg-pink-100 px-4 py-2 rounded-full text-pink-700 font-medium mb-4">
+            <Users className="w-5 h-5" />
+            <span>👶 엄마들의 소통 공간</span>
+          </div>
+          
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <span className="bg-gradient-to-r from-pink-500 to-blue-500 text-transparent bg-clip-text">
+              첫돌까지 커뮤니티
+            </span>
+          </h1>
+          
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            임신부터 첫돌까지, 소중한 순간들을 함께 나누며 서로 응원하는 공간입니다
+          </p>
         </div>
 
-        <PostList 
-          posts={posts} 
-          currentUserId={user?.id}
-          emptyMessage="커뮤니티 게시글이 없습니다. 첫 번째 커뮤니티 글을 작성해보세요!"
-        />
+        {/* Community Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center">
+            <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Users className="w-6 h-6 text-pink-600" />
+            </div>
+            <div className="text-2xl font-bold text-gray-900 mb-1">2,847</div>
+            <div className="text-sm text-gray-600">활성 엄마들</div>
+          </div>
+          
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center">
+            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <MessageCircle className="w-6 h-6 text-blue-600" />
+            </div>
+            <div className="text-2xl font-bold text-gray-900 mb-1">12,456</div>
+            <div className="text-sm text-gray-600">공유된 이야기</div>
+          </div>
+          
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center">
+            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Heart className="w-6 h-6 text-purple-600" />
+            </div>
+            <div className="text-2xl font-bold text-gray-900 mb-1">89,234</div>
+            <div className="text-sm text-gray-600">포근한 응원</div>
+          </div>
+          
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center">
+            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <TrendingUp className="w-6 h-6 text-green-600" />
+            </div>
+            <div className="text-2xl font-bold text-gray-900 mb-1">94%</div>
+            <div className="text-sm text-gray-600">만족도</div>
+          </div>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar - Category Filter */}
+          <div className="lg:w-80">
+            <CategoryFilter
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+            />
+            
+            {/* Quick Actions */}
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">빠른 작성</h3>
+              <div className="space-y-3">
+                <Button 
+                  onClick={() => setShowPostForm(true)}
+                  className="w-full justify-start bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600"
+                >
+                  <PlusCircle className="w-4 h-4 mr-2" />
+                  새 글 작성하기
+                </Button>
+                <Button 
+                  onClick={() => setShowPostForm(true)}
+                  variant="outline" 
+                  className="w-full justify-start"
+                >
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  질문하기
+                </Button>
+              </div>
+            </div>
+
+            {/* Baby Month Filter */}
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">아기 개월수</h3>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { value: undefined, label: '전체' },
+                  { value: 0, label: '신생아' },
+                  { value: 1, label: '1개월' },
+                  { value: 3, label: '3개월' },
+                  { value: 6, label: '6개월' },
+                  { value: 9, label: '9개월' },
+                  { value: 12, label: '12개월' }
+                ].map(month => (
+                  <button
+                    key={month.value || 'all'}
+                    onClick={() => setSelectedBabyMonth(month.value)}
+                    className={`p-2 rounded-lg text-sm font-medium transition-colors ${
+                      selectedBabyMonth === month.value
+                        ? 'bg-pink-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {month.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content - Social Feed */}
+          <div className="flex-1">
+            <SocialFeed
+              selectedCategory={selectedCategory === 'all' ? undefined : selectedCategory}
+              selectedBabyMonth={selectedBabyMonth}
+            />
+          </div>
+        </div>
       </div>
-    </RealtimeProvider>
+      
+      {/* Post Form Modal */}
+      {showPostForm && (
+        <PostForm
+          onClose={() => setShowPostForm(false)}
+          onSubmit={(postData) => {
+            console.log('New post:', postData)
+            // TODO: Submit to database
+            setShowPostForm(false)
+          }}
+        />
+      )}
+    </div>
   )
 }
