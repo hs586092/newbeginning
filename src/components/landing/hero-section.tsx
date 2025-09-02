@@ -195,12 +195,9 @@ export function HeroSection({ userType = null, onUserTypeSelect }: HeroSectionPr
         {/* Trust Indicators */}
         <div className="mt-20 text-center">
           <p className="text-white/60 text-sm mb-6">12,000+ 엄마들이 함께하는 따뜻한 커뮤니티</p>
-          <div className="flex justify-center items-center space-x-8 opacity-60">
-            {['마리아병원', '세브란스', '삼성서울병원', '차병원', '강남여성병원'].map((hospital) => (
-              <div key={hospital} className="text-white font-semibold text-lg">
-                {hospital}
-              </div>
-            ))}
+          <div className="flex justify-center items-center space-x-2 text-sm">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span className="text-white/60">실시간으로 공유되는 엄마들의 소중한 경험들</span>
           </div>
         </div>
       </div>

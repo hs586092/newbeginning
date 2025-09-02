@@ -38,14 +38,6 @@ const TESTIMONIALS = [
   }
 ]
 
-const PARTNER_HOSPITALS = [
-  { name: "마리아 대학병원", members: "300+", logo: "🏥" },
-  { name: "삼성서울병원", members: "250+", logo: "🏥" },
-  { name: "세브란스병원", members: "180+", logo: "🏥" },
-  { name: "강남여성병원", members: "220+", logo: "🏥" },
-  { name: "차병원", members: "150+", logo: "🏥" },
-  { name: "민으로산부인과", members: "90+", logo: "🏥" }
-]
 
 const TRUST_METRICS = [
   {
@@ -56,9 +48,9 @@ const TRUST_METRICS = [
   },
   {
     icon: <Building className="w-8 h-8 text-blue-600" />,
-    value: "50+",
-    label: "파트너 병원",
-    description: "신뢰할 수 있는 산부인과 및 소아과"
+    value: "21개월",
+    label: "완전한 여정",
+    description: "임신부터 첫돌까지 모든 단계 지원"
   },
   {
     icon: <TrendingUp className="w-8 h-8 text-purple-600" />,
@@ -107,29 +99,6 @@ export function SocialProof() {
           </div>
         </div>
 
-        {/* Company Logos */}
-        <div className="mb-16">
-          <p className="text-center text-gray-600 mb-8">
-            이미 많은 신뢰할 수 있는 병원들이 함께하고 있습니다
-          </p>
-          <div className="grid grid-cols-3 lg:grid-cols-6 gap-6">
-            {PARTNER_HOSPITALS.map((hospital, index) => (
-              <div key={index} className="text-center group">
-                <div className="w-16 h-16 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center mb-3 mx-auto group-hover:shadow-md transition-shadow duration-300">
-                  <span className="text-2xl">
-                    {hospital.logo}
-                  </span>
-                </div>
-                <div className="text-sm font-medium text-gray-800">
-                  {hospital.name}
-                </div>
-                <div className="text-xs text-gray-500">
-                  {hospital.members} 엄마들
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
         {/* Testimonials */}
         <div className="mb-16">
