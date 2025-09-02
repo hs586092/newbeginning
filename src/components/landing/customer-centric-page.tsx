@@ -7,8 +7,10 @@ import { ValueProposition } from './value-proposition'
 import { SocialProof } from './social-proof'
 import { SearchBarEnhanced } from '@/components/ui/search-bar-enhanced'
 import { Button } from '@/components/ui/button'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight, Sparkles, Heart, MessageCircle, Users, PlusCircle } from 'lucide-react'
 import Link from 'next/link'
+import SocialFeed from '@/components/social/social-feed'
+import HorizontalCategoryFilter from '@/components/social/horizontal-category-filter'
 
 type UserType = 'pregnant' | 'newMom' | 'growingMom' | 'experienced' | null
 
@@ -19,6 +21,7 @@ interface CustomerCentricPageProps {
 export function CustomerCentricPage({ initialUserType = null }: CustomerCentricPageProps) {
   const [selectedUserType, setSelectedUserType] = useState<UserType>(initialUserType)
   const [showAdvancedFeatures, setShowAdvancedFeatures] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState('all')
 
   const handleUserTypeChange = (type: UserType) => {
     setSelectedUserType(type)
@@ -175,6 +178,136 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
               </div>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Live Community Feed */}
+      <section className="py-16 bg-gradient-to-b from-pink-50 via-white to-blue-50">
+        <div className="max-w-6xl mx-auto px-4">
+          {/* Community Header */}
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center space-x-2 bg-pink-100 px-4 py-2 rounded-full text-pink-700 font-medium mb-4">
+              <Users className="w-5 h-5" />
+              <span>👶 실시간 엄마들의 이야기</span>
+            </div>
+            
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              <span className="bg-gradient-to-r from-pink-500 to-blue-500 text-transparent bg-clip-text">
+                지금 이 순간 나누는 진솔한 경험들
+              </span>
+            </h2>
+            
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              임신부터 첫돌까지, 2,847명의 엄마들이 실시간으로 나누는 생생한 육아 이야기를 확인해보세요
+            </p>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-100">
+              <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Heart className="w-5 h-5 text-pink-600" />
+              </div>
+              <div className="text-lg font-bold text-gray-900">89,234</div>
+              <div className="text-xs text-gray-600">포근한 응원</div>
+            </div>
+            
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-100">
+              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                <MessageCircle className="w-5 h-5 text-blue-600" />
+              </div>
+              <div className="text-lg font-bold text-gray-900">12,456</div>
+              <div className="text-xs text-gray-600">공유된 이야기</div>
+            </div>
+            
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-100">
+              <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Users className="w-5 h-5 text-purple-600" />
+              </div>
+              <div className="text-lg font-bold text-gray-900">2,847</div>
+              <div className="text-xs text-gray-600">활성 엄마들</div>
+            </div>
+            
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-100">
+              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                <PlusCircle className="w-5 h-5 text-green-600" />
+              </div>
+              <div className="text-lg font-bold text-gray-900">156</div>
+              <div className="text-xs text-gray-600">오늘 새 글</div>
+            </div>
+          </div>
+
+          {/* Category Filter - Horizontal Scroll */}
+          <div className="mb-8">
+            <HorizontalCategoryFilter
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+              compact={true}
+            />
+          </div>
+
+          {/* Quick Post Box */}
+          <div className="max-w-4xl mx-auto mb-8">
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-gray-100 shadow-sm">
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-pink-100 to-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-xl">🤱</span>
+                </div>
+                <div className="flex-1">
+                  <button
+                    onClick={() => {}}
+                    className="w-full p-4 text-left bg-white rounded-xl border border-gray-200 hover:border-pink-300 transition-colors focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                  >
+                    <span className="text-gray-500">오늘은 어떤 육아 이야기를 나누고 싶으신가요?</span>
+                  </button>
+                  <div className="flex items-center justify-between mt-3">
+                    <div className="flex items-center space-x-4 text-sm text-gray-500">
+                      <button className="flex items-center space-x-1 hover:text-pink-600 transition-colors">
+                        <span>📷</span>
+                        <span>사진</span>
+                      </button>
+                      <button className="flex items-center space-x-1 hover:text-purple-600 transition-colors">
+                        <span>😊</span>
+                        <span>기분</span>
+                      </button>
+                      <button className="flex items-center space-x-1 hover:text-blue-600 transition-colors">
+                        <span>🏷️</span>
+                        <span>태그</span>
+                      </button>
+                    </div>
+                    <Link href="/login">
+                      <Button size="sm" className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600">
+                        포근 공유하기
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p className="text-center text-sm text-gray-500 mt-3">
+              💝 <Link href="/login" className="text-pink-600 hover:text-pink-700 font-medium">무료 가입</Link>으로 포스트 작성하고 2,847명의 엄마들과 소통하세요
+            </p>
+          </div>
+
+          {/* Social Feed Preview */}
+          <div className="max-w-4xl mx-auto">
+            <SocialFeed
+              selectedCategory={selectedCategory === 'all' ? undefined : selectedCategory}
+            />
+          </div>
+
+          {/* View More CTA */}
+          <div className="text-center mt-12">
+            <Link href="/community">
+              <Button size="lg" className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white font-semibold px-8 py-4">
+                <Users className="w-5 h-5 mr-2" />
+                전체 커뮤니티 보기
+              </Button>
+            </Link>
+            <p className="text-sm text-gray-500 mt-3">
+              무료 가입으로 포스트 작성하고 더 많은 엄마들과 소통하세요
+            </p>
+          </div>
         </div>
       </section>
 
