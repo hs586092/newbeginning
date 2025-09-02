@@ -27,7 +27,7 @@ export function PostCard({ post, currentUserId, isOwner }: PostCardProps) {
   
   const [optimisticLike, toggleOptimisticLike] = useOptimistic(
     { liked: initialLiked, count: post.likes.length },
-    (state, _) => ({
+    (state) => ({
       liked: !state.liked,
       count: state.liked ? state.count - 1 : state.count + 1
     })

@@ -37,7 +37,7 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
       />
 
       {/* Dashboard-style Stats (inspired by your reference) */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-white">
         <div className="max-w-6xl mx-auto px-4">
           <DashboardStats />
         </div>
@@ -139,18 +139,18 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
           {showAdvancedFeatures && (
             <div className="mt-8 p-6 bg-white/60 backdrop-blur-sm rounded-xl border border-gray-200">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                <div className="p-4 bg-white rounded-lg">
+                <Link href="/matching" className="block p-4 bg-white rounded-lg hover:shadow-md transition-shadow cursor-pointer">
                   <div className="font-semibold text-gray-800 mb-2">🎯 스마트 매칭</div>
                   <div className="text-gray-600">AI가 경력, 기술스택, 선호도를 분석해 최적 매칭</div>
-                </div>
-                <div className="p-4 bg-white rounded-lg">
+                </Link>
+                <Link href="/analytics" className="block p-4 bg-white rounded-lg hover:shadow-md transition-shadow cursor-pointer">
                   <div className="font-semibold text-gray-800 mb-2">📊 실시간 분석</div>
                   <div className="text-gray-600">시장 트렌드와 연봉 데이터를 실시간 제공</div>
-                </div>
-                <div className="p-4 bg-white rounded-lg">
+                </Link>
+                <Link href="/consulting" className="block p-4 bg-white rounded-lg hover:shadow-md transition-shadow cursor-pointer">
                   <div className="font-semibold text-gray-800 mb-2">🤝 1:1 컨설팅</div>
                   <div className="text-gray-600">전문 컨설턴트의 개인 맞춤형 커리어 조언</div>
-                </div>
+                </Link>
               </div>
             </div>
           )}

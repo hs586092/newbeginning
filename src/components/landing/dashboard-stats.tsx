@@ -1,6 +1,7 @@
 'use client'
 
 import { Users, Briefcase, MessageCircle, Star, ArrowUp } from 'lucide-react'
+import Link from 'next/link'
 
 const STATS_DATA = [
   {
@@ -54,7 +55,8 @@ const QUICK_ACTIONS = [
     icon: <Briefcase className="w-5 h-5" />,
     primary: true,
     bgColor: 'bg-blue-600',
-    textColor: 'text-white'
+    textColor: 'text-white',
+    href: '/write'
   },
   {
     id: 'job-search',
@@ -62,7 +64,8 @@ const QUICK_ACTIONS = [
     count: '24개',
     icon: <Briefcase className="w-5 h-5" />,
     bgColor: 'bg-gray-100',
-    textColor: 'text-gray-700'
+    textColor: 'text-gray-700',
+    href: '/jobs'
   },
   {
     id: 'community-search',
@@ -70,7 +73,8 @@ const QUICK_ACTIONS = [
     count: '156개',
     icon: <Users className="w-5 h-5" />,
     bgColor: 'bg-gray-100',
-    textColor: 'text-gray-700'
+    textColor: 'text-gray-700',
+    href: '/community'
   },
   {
     id: 'community',
@@ -78,7 +82,8 @@ const QUICK_ACTIONS = [
     count: '89개',
     icon: <MessageCircle className="w-5 h-5" />,
     bgColor: 'bg-gray-100',
-    textColor: 'text-gray-700'
+    textColor: 'text-gray-700',
+    href: '/community'
   }
 ]
 
@@ -142,9 +147,10 @@ export function DashboardStats({ className = '' }: DashboardStatsProps) {
       {/* Quick Actions */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-12">
         {QUICK_ACTIONS.map((action) => (
-          <button
+          <Link 
             key={action.id}
-            className={`p-4 rounded-xl transition-all duration-300 hover:shadow-md transform hover:scale-105 ${
+            href={action.href}
+            className={`block p-4 rounded-xl transition-all duration-300 hover:shadow-md transform hover:scale-105 ${
               action.primary 
                 ? `${action.bgColor} ${action.textColor}` 
                 : `${action.bgColor} ${action.textColor} hover:bg-gray-200`
@@ -165,7 +171,7 @@ export function DashboardStats({ className = '' }: DashboardStatsProps) {
                 </div>
               </div>
             </div>
-          </button>
+          </Link>
         ))}
       </div>
 

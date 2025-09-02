@@ -107,7 +107,7 @@ export async function signIn(formData: FormData) {
   try {
     const validatedData = signInSchema.parse(rawData)
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email: validatedData.email,
       password: validatedData.password,
     })

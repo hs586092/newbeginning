@@ -3,7 +3,6 @@ import { incrementViewCount } from '@/lib/posts/actions'
 import { CommentForm } from '@/components/comments/comment-form'
 import { CommentList } from '@/components/comments/comment-list'
 import { PostCard } from '@/components/posts/post-card'
-import { usePostRealtime } from '@/lib/hooks/use-realtime'
 import { notFound } from 'next/navigation'
 import type { PostWithDetails, CommentWithProfile } from '@/types/database.types'
 

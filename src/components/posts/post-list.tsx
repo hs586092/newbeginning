@@ -1,15 +1,20 @@
 'use client'
 
 import { PostCard } from './post-card'
+import { PostListSkeleton } from '@/components/ui/loading'
 import type { PostWithDetails } from '@/types/database.types'
 
 interface PostListProps {
   posts: PostWithDetails[]
   currentUserId?: string
   emptyMessage?: string
+  isLoading?: boolean
 }
 
-export function PostList({ posts, currentUserId, emptyMessage = "아직 게시글이 없습니다." }: PostListProps) {
+export function PostList({ posts, currentUserId, emptyMessage = "아직 게시글이 없습니다.", isLoading = false }: PostListProps) {
+  if (isLoading) {
+    return <PostListSkeleton />
+  }
   if (posts.length === 0) {
     return (
       <div className="text-center py-12">

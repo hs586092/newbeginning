@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { 
   User, 
@@ -19,7 +18,6 @@ import type { User as SupabaseUser } from '@supabase/supabase-js'
 export function Header() {
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const [profile, setProfile] = useState<{ username: string; avatar_url?: string } | null>(null)
-  const router = useRouter()
   const supabase = createClient()
 
   useEffect(() => {
@@ -100,9 +98,9 @@ export function Header() {
             {user ? (
               <>
                 <Link href="/write">
-                  <Button size="sm" className="flex items-center">
-                    <PenSquare className="w-4 h-4 mr-2" />
-                    글쓰기
+                  <Button size="sm" className="flex items-center h-9 px-3">
+                    <PenSquare className="w-4 h-4 mr-1.5 sm:mr-2" />
+                    <span className="text-sm">글쓰기</span>
                   </Button>
                 </Link>
                 
@@ -152,24 +150,24 @@ export function Header() {
       </div>
 
       {/* Mobile Navigation */}
-      <div className="md:hidden border-t">
+      <div className="md:hidden border-t bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
-          <nav className="flex space-x-6 py-3 overflow-x-auto">
+          <nav className="flex space-x-6 py-4 overflow-x-auto">
             <Link 
               href="/" 
-              className="text-gray-700 hover:text-blue-600 font-medium whitespace-nowrap"
+              className="text-gray-700 hover:text-blue-600 font-medium whitespace-nowrap py-2 px-1 min-w-0 flex-shrink-0"
             >
               전체
             </Link>
             <Link 
               href="/jobs" 
-              className="text-gray-700 hover:text-blue-600 font-medium whitespace-nowrap"
+              className="text-gray-700 hover:text-blue-600 font-medium whitespace-nowrap py-2 px-1 min-w-0 flex-shrink-0"
             >
               구인구직
             </Link>
             <Link 
               href="/community" 
-              className="text-gray-700 hover:text-blue-600 font-medium whitespace-nowrap"
+              className="text-gray-700 hover:text-blue-600 font-medium whitespace-nowrap py-2 px-1 min-w-0 flex-shrink-0"
             >
               커뮤니티
             </Link>

@@ -45,13 +45,14 @@ export function SearchBar({ placeholder = "게시글 검색...", className = "" 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={placeholder}
-          className="pl-10 pr-20 h-10"
+          className="pl-10 pr-20 h-11 sm:h-10 text-base sm:text-sm"
         />
-        {query && (
+{query && (
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-12 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-12 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100"
+            aria-label="검색어 지우기"
           >
             <X className="w-4 h-4" />
           </button>
@@ -59,7 +60,7 @@ export function SearchBar({ placeholder = "게시글 검색...", className = "" 
         <Button 
           type="submit"
           size="sm"
-          className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8"
+          className="absolute right-1 top-1/2 transform -translate-y-1/2 h-9 sm:h-8 px-3 text-sm"
         >
           검색
         </Button>

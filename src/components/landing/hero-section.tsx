@@ -77,26 +77,26 @@ export function HeroSection({ userType = null, onUserTypeSelect }: HeroSectionPr
 
       <div className="relative max-w-7xl mx-auto px-4 py-20">
         {/* User Type Selector */}
-        <div className="flex justify-center mb-12">
-          <div className="flex gap-3 bg-black/10 backdrop-blur-md rounded-2xl p-2 border border-white/20 shadow-2xl">
+        <div className="flex justify-center mb-8 md:mb-12 px-4">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 bg-black/10 backdrop-blur-md rounded-2xl p-2 border border-white/20 shadow-2xl w-full max-w-2xl">
             {[
-              { key: 'seeker', label: '구직자', icon: <Briefcase className="w-5 h-5" /> },
-              { key: 'recruiter', label: '채용담당자', icon: <Users className="w-5 h-5" /> },
-              { key: 'community', label: '커뮤니티', icon: <TrendingUp className="w-5 h-5" /> }
+              { key: 'seeker', label: '구직자', icon: <Briefcase className="w-4 h-4 sm:w-5 sm:h-5" /> },
+              { key: 'recruiter', label: '채용담당자', icon: <Users className="w-4 h-4 sm:w-5 sm:h-5" /> },
+              { key: 'community', label: '커뮤니티', icon: <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" /> }
             ].map(({ key, label, icon }) => (
               <button
                 key={key}
                 onClick={() => handleTypeSelect(key as UserType)}
-                className={`group relative flex items-center space-x-3 px-8 py-4 rounded-xl font-semibold transition-all duration-300 transform ${
+                className={`group relative flex items-center justify-center space-x-2 sm:space-x-3 px-4 py-3 sm:px-6 sm:py-4 rounded-xl font-semibold transition-all duration-300 transform flex-1 sm:flex-none ${
                   selectedType === key
-                    ? 'bg-white text-blue-600 shadow-xl scale-105 ring-2 ring-white/30'
-                    : 'text-white/90 hover:text-white hover:bg-white/20 hover:scale-102 hover:shadow-lg active:scale-95'
+                    ? 'bg-white text-blue-600 shadow-xl scale-[1.02] sm:scale-105 ring-2 ring-white/30'
+                    : 'text-white/90 hover:text-white hover:bg-white/20 hover:scale-[1.01] sm:hover:scale-102 hover:shadow-lg active:scale-[0.98] sm:active:scale-95'
                 }`}
               >
                 <div className={`transition-transform duration-300 ${selectedType === key ? 'scale-110' : 'group-hover:scale-110'}`}>
                   {icon}
                 </div>
-                <span className="text-base whitespace-nowrap">{label}</span>
+                <span className="text-sm sm:text-base whitespace-nowrap">{label}</span>
                 
                 {/* Subtle glow effect for active button */}
                 {selectedType === key && (
@@ -111,12 +111,12 @@ export function HeroSection({ userType = null, onUserTypeSelect }: HeroSectionPr
         </div>
 
         {/* Main Content */}
-        <div className={`text-center transition-all duration-300 ${isAnimating ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'}`}>
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+        <div className={`text-center px-4 transition-all duration-300 ${isAnimating ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'}`}>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight">
             {content.headline}
           </h1>
           
-          <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-6 sm:mb-8 max-w-4xl mx-auto leading-relaxed">
             {content.subtext}
           </p>
 
@@ -132,24 +132,24 @@ export function HeroSection({ userType = null, onUserTypeSelect }: HeroSectionPr
           </div>
 
           {/* CTA Button */}
-          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <Link href={selectedType === 'community' ? '/community' : selectedType === 'recruiter' ? '/write' : '/jobs'}>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4 max-w-lg sm:max-w-none mx-auto">
+            <Link href={selectedType === 'community' ? '/community' : selectedType === 'recruiter' ? '/write' : '/jobs'} className="w-full sm:w-auto">
               <Button
                 size="lg"
-                className="bg-white text-gray-900 hover:bg-white/90 font-semibold text-lg px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+                className="w-full sm:w-auto bg-white text-gray-900 hover:bg-white/90 font-semibold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 min-h-[48px]"
               >
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center justify-center space-x-2">
                   {content.ctaIcon}
                   <span>{content.cta}</span>
                 </div>
               </Button>
             </Link>
             
-            <Link href="/community">
+            <Link href="/community" className="w-full sm:w-auto">
               <Button
                 variant="ghost"
                 size="lg"
-                className="text-white border-2 border-white/30 hover:border-white/50 hover:bg-white/10 font-semibold text-lg px-8 py-4 rounded-full transition-all duration-300"
+                className="w-full sm:w-auto text-white border-2 border-white/30 hover:border-white/50 hover:bg-white/10 font-semibold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full transition-all duration-300 min-h-[48px]"
               >
                 커뮤니티 둘러보기
               </Button>
