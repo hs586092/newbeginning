@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Heart, Users } from 'lucide-react'
 import Link from 'next/link'
 import SocialFeed from '@/components/social/social-feed'
+import FeedTabNavigation from '@/components/navigation/feed-tab-navigation'
+import type { CommunityCategory } from '@/types/navigation'
 
 type UserType = 'pregnant' | 'newMom' | 'growingMom' | 'experienced' | null
 
@@ -17,12 +19,22 @@ interface CustomerCentricPageProps {
 export function CustomerCentricPage({ initialUserType = null }: CustomerCentricPageProps) {
   const [selectedUserType, setSelectedUserType] = useState<UserType>(initialUserType)
   const [selectedCategory, setSelectedCategory] = useState('all')
+  const [activeTab, setActiveTab] = useState('all')
+  const [communityCategory, setCommunityCategory] = useState<CommunityCategory>('all')
 
   const handleUserTypeChange = (type: UserType) => {
     setSelectedUserType(type)
     // 사용자 타입에 따라 페이지 개인화
     if (typeof window !== 'undefined') {
       localStorage.setItem('userType', type || 'default')
+    }
+  }
+
+  const handleTabChange = (tab: string, category?: CommunityCategory) => {
+    setActiveTab(tab)
+    if (category) {
+      setCommunityCategory(category)
+      setSelectedCategory(category)
     }
   }
 
@@ -54,6 +66,13 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
               소중한 21개월의 여정을 2,847명의 엄마들과 함께 나누고 있어요
             </p>
           </div>
+
+          {/* Feed Tab Navigation */}
+          <FeedTabNavigation
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+            className="mb-8"
+          />
 
           {/* Sidebar Layout */}
           <div className="flex flex-col lg:flex-row gap-8">
@@ -197,7 +216,7 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
             {/* Main Content - Social Feed */}
             <div className="flex-1">
               <SocialFeed
-                selectedCategory={selectedCategory === 'all' ? undefined : selectedCategory}
+                selectedCategory={communityCategory === 'all' ? undefined : communityCategory}
               />
             </div>
           </div>
