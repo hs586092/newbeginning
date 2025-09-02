@@ -4,42 +4,50 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { SearchBarEnhanced } from '@/components/ui/search-bar-enhanced'
-import { ArrowRight, Briefcase, Users, TrendingUp, Star } from 'lucide-react'
+import { ArrowRight, Heart, Baby, Users, Star } from 'lucide-react'
 
-type UserType = 'seeker' | 'recruiter' | 'community' | null
+type UserType = 'pregnant' | 'newMom' | 'growingMom' | 'experienced' | null
 
 const HERO_CONTENT = {
-  seeker: {
-    headline: "당신의 꿈의 직장이 여기 있습니다",
-    subtext: "5,000+ 개발자들이 선택한 신뢰할 수 있는 채용 플랫폼에서 완벽한 기회를 찾아보세요",
-    cta: "내 조건에 맞는 채용공고 찾기",
-    ctaIcon: <Briefcase className="w-5 h-5" />,
-    bgGradient: "from-blue-600 to-purple-600",
-    stats: { label: "성공 취업", value: "2,847명" }
+  pregnant: {
+    headline: "소중한 생명과 함께하는 특별한 시작",
+    subtext: "임신부터 출산까지, 매 순간이 소중한 예비맘들을 위한 전문 정보와 따뜻한 커뮤니티",
+    cta: "임신 정보 보기",
+    ctaIcon: <Heart className="w-5 h-5" />,
+    bgGradient: "from-pink-400 to-purple-400",
+    stats: { label: "예비맘", value: "2,500+" }
   },
-  recruiter: {
-    headline: "최고의 개발 인재를 3일 만에 찾으세요",
-    subtext: "평균 지원율 40% 높은 검증된 개발자 풀에서 우리 회사에 딱 맞는 인재를 만나보세요",
-    cta: "인재 채용 시작하기",
+  newMom: {
+    headline: "생애 첫 육아, 혼자가 아니에요",
+    subtext: "신생아와의 첫 만남부터 3개월까지, 초보맘들의 모든 궁금증과 불안을 함께 해결해요",
+    cta: "신생아 케어 가이드",
+    ctaIcon: <Baby className="w-5 h-5" />,
+    bgGradient: "from-blue-400 to-teal-400",
+    stats: { label: "신생아맘", value: "1,800+" }
+  },
+  growingMom: {
+    headline: "우리 아기 성장하는 모든 순간이 특별해요",
+    subtext: "이유식부터 첫 걸음까지, 4-12개월 아기와 함께하는 성장 여정을 응원합니다",
+    cta: "성장 발달 정보",
+    ctaIcon: <Baby className="w-5 h-5" />,
+    bgGradient: "from-green-400 to-blue-400",
+    stats: { label: "성장기맘", value: "3,200+" }
+  },
+  experienced: {
+    headline: "경험이 쌓인 선배맘들의 소중한 조언",
+    subtext: "육아 경험을 나누고, 후배맘들에게 도움을 주며 함께 성장하는 따뜻한 커뮤니티",
+    cta: "경험 공유하기",
     ctaIcon: <Users className="w-5 h-5" />,
-    bgGradient: "from-emerald-600 to-teal-600",
-    stats: { label: "평균 채용기간", value: "3일" }
-  },
-  community: {
-    headline: "개발자들과 함께 성장하는 커뮤니티",
-    subtext: "최신 기술 트렌드부터 실무 팁까지, 5,000+ 동료 개발자들과 지식을 나누고 함께 성장하세요",
-    cta: "커뮤니티 둘러보기",
-    ctaIcon: <TrendingUp className="w-5 h-5" />,
-    bgGradient: "from-orange-600 to-pink-600",
-    stats: { label: "월간 활동", value: "12,500+" }
+    bgGradient: "from-orange-400 to-pink-400",
+    stats: { label: "선배맘", value: "4,500+" }
   },
   default: {
-    headline: "불자들의 커뮤니티 : BUDICONNECTS",
-    subtext: "구인, 구직 부터 커뮤니티 서비스까지 모든 것을 한곳에서 경험하세요",
-    cta: "시작하기",
+    headline: "임신부터 첫돌까지, 모든 순간을 함께",
+    subtext: "21개월의 소중한 여정을 혼자 걸어가지 마세요. 따뜻한 엄마들의 커뮤니티가 함께합니다",
+    cta: "여정 시작하기",
     ctaIcon: <ArrowRight className="w-5 h-5" />,
-    bgGradient: "from-indigo-600 to-blue-600",
-    stats: { label: "총 사용자", value: "5,000+" }
+    bgGradient: "from-pink-500 to-blue-500",
+    stats: { label: "전체 회원", value: "12,000+" }
   }
 }
 
@@ -81,9 +89,10 @@ export function HeroSection({ userType = null, onUserTypeSelect }: HeroSectionPr
         <div className="flex justify-center mb-8 md:mb-12 px-4">
           <div className="inline-flex flex-col sm:flex-row gap-1 sm:gap-2 bg-black/10 backdrop-blur-md rounded-2xl p-1.5 sm:p-2 border border-white/20 shadow-2xl max-w-fit">
             {[
-              { key: 'seeker', label: '구직자', icon: <Briefcase className="w-4 h-4 sm:w-5 sm:h-5" /> },
-              { key: 'recruiter', label: '채용담당자', icon: <Users className="w-4 h-4 sm:w-5 sm:h-5" /> },
-              { key: 'community', label: '커뮤니티', icon: <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" /> }
+              { key: 'pregnant', label: '예비맘', icon: <Heart className="w-4 h-4 sm:w-5 sm:h-5" /> },
+              { key: 'newMom', label: '신생아맘', icon: <Baby className="w-4 h-4 sm:w-5 sm:h-5" /> },
+              { key: 'growingMom', label: '성장기맘', icon: <Baby className="w-4 h-4 sm:w-5 sm:h-5" /> },
+              { key: 'experienced', label: '선배맘', icon: <Users className="w-4 h-4 sm:w-5 sm:h-5" /> }
             ].map(({ key, label, icon }) => (
               <button
                 key={key}
@@ -133,14 +142,18 @@ export function HeroSection({ userType = null, onUserTypeSelect }: HeroSectionPr
           </div>
 
           {/* Quick Search */}
-          {selectedType && selectedType !== 'community' && (
+          {selectedType && (
             <div className="mb-8">
               <SearchBarEnhanced 
                 size="lg"
                 placeholder={
-                  selectedType === 'recruiter' 
-                    ? "찾는 개발자 유형을 입력하세요..." 
-                    : "원하는 직무나 회사를 검색하세요..."
+                  selectedType === 'pregnant' 
+                    ? "임신 정보, 병원, 검사 검색..." 
+                    : selectedType === 'newMom'
+                    ? "신생아 케어, 수유, 수면 정보..."
+                    : selectedType === 'growingMom'
+                    ? "이유식, 발달, 놀이 정보..."
+                    : "육아 정보, 병원, 전문가 검색..."
                 }
                 className="max-w-lg"
               />
@@ -149,7 +162,13 @@ export function HeroSection({ userType = null, onUserTypeSelect }: HeroSectionPr
 
           {/* CTA Button */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4 max-w-lg sm:max-w-none mx-auto">
-            <Link href={selectedType === 'community' ? '/community' : selectedType === 'recruiter' ? '/write' : '/jobs'} className="w-full sm:w-auto">
+            <Link href={
+              selectedType === 'pregnant' ? '/pregnancy' : 
+              selectedType === 'newMom' ? '/newborn' : 
+              selectedType === 'growingMom' ? '/development' : 
+              selectedType === 'experienced' ? '/community' : 
+              '/community'
+            } className="w-full sm:w-auto">
               <Button
                 size="lg"
                 className="w-full sm:w-auto bg-white text-gray-900 hover:bg-white/90 font-semibold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 min-h-[48px]"

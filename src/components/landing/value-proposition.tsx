@@ -1,79 +1,103 @@
 'use client'
 
-import { Target, DollarSign, TrendingUp, Clock, Shield, Users } from 'lucide-react'
+import { Target, TrendingUp, Clock, Shield, Users } from 'lucide-react'
 
-type UserType = 'seeker' | 'recruiter' | 'community' | null
+type UserType = 'pregnant' | 'newMom' | 'growingMom' | 'experienced' | null
 
 const VALUE_PROPOSITIONS = {
-  seeker: [
+  pregnant: [
     {
-      icon: <Target className="w-8 h-8 text-blue-600" />,
-      title: "맞춤 AI 추천",
-      description: "내 경력과 관심 기술에 딱 맞는 채용공고를 AI가 자동으로 선별해드려요",
-      benefit: "시간 절약 90%",
-      stats: "평균 3.2개 관련 공고 발견"
-    },
-    {
-      icon: <DollarSign className="w-8 h-8 text-green-600" />,
-      title: "투명한 연봉 정보",
-      description: "실제 연봉 범위와 복리혜택까지 상세하게 공개된 채용정보",
-      benefit: "협상력 40% 향상",
-      stats: "평균 연봉 상승률 23%"
-    },
-    {
-      icon: <TrendingUp className="w-8 h-8 text-purple-600" />,
-      title: "성장 가능성 분석",
-      description: "회사의 기술 스택, 문화, 성장성까지 종합적으로 분석해드려요",
-      benefit: "만족도 95%",
-      stats: "1년 후 재직률 87%"
-    }
-  ],
-  
-  recruiter: [
-    {
-      icon: <Clock className="w-8 h-8 text-emerald-600" />,
-      title: "3일 내 빠른 채용",
-      description: "검증된 개발자 풀에서 우리 조건에 맞는 후보자를 빠르게 매칭",
-      benefit: "채용 기간 70% 단축",
-      stats: "평균 3일 내 첫 면접"
+      icon: <Target className="w-8 h-8 text-pink-600" />,
+      title: "주차별 맞춤 정보",
+      description: "임신 주수에 맞는 검사 일정, 주의사항, 태아 발달 정보를 제공해드려요",
+      benefit: "정보 정확도 95%",
+      stats: "주차별 체크리스트 40개"
     },
     {
       icon: <Shield className="w-8 h-8 text-blue-600" />,
-      title: "검증된 인재 풀",
-      description: "코딩 테스트와 포트폴리오 검증을 거친 신뢰할 수 있는 개발자들",
-      benefit: "채용 성공률 85%",
-      stats: "90% 이상 1년 이상 근속"
+      title: "전문의 상담",
+      description: "산부인과 전문의와 직접 연결되어 궁금한 점을 바로 해결하세요",
+      benefit: "24시간 상담 가능",
+      stats: "평균 답변시간 2시간"
+    },
+    {
+      icon: <Users className="w-8 h-8 text-purple-600" />,
+      title: "예비맘 커뮤니티",
+      description: "같은 예정일을 가진 예비맘들과 정보를 나누고 함께 성장하세요",
+      benefit: "불안감 해소 80%",
+      stats: "월 평균 소통 500건"
+    }
+  ],
+  
+  newMom: [
+    {
+      icon: <Clock className="w-8 h-8 text-emerald-600" />,
+      title: "신생아 케어 가이드",
+      description: "수유, 기저귀 갈기, 수면 패턴 등 신생아 케어의 모든 것을 단계별로 안내",
+      benefit: "육아 스트레스 60% 감소",
+      stats: "일일 케어 체크리스트 15개"
+    },
+    {
+      icon: <Shield className="w-8 h-8 text-blue-600" />,
+      title: "응급상황 대처법",
+      description: "신생아 응급상황 판단 기준과 대처법, 병원 방문 타이밍 안내",
+      benefit: "안전한 육아 환경",
+      stats: "응급처치 가이드 25개"
     },
     {
       icon: <Users className="w-8 h-8 text-teal-600" />,
-      title: "전담 컨설팅",
-      description: "채용 전문가가 채용 전략부터 온보딩까지 전 과정을 지원",
-      benefit: "만족도 92%",
-      stats: "재이용률 78%"
+      title: "신생아맘 네트워킹",
+      description: "같은 시기 출산한 엄마들과 정보 공유하고 서로 응원하는 커뮤니티",
+      benefit: "육아 고립감 해소",
+      stats: "월 평균 정보 교환 300건"
     }
   ],
 
-  community: [
+  growingMom: [
     {
       icon: <TrendingUp className="w-8 h-8 text-orange-600" />,
-      title: "최신 기술 트렌드",
-      description: "업계 선배들이 공유하는 생생한 기술 트렌드와 실무 인사이트",
-      benefit: "학습 효율 2배 향상",
-      stats: "월 평균 150+ 기술 포스팅"
+      title: "월령별 발달 정보",
+      description: "4-12개월 아기의 신체, 인지, 언어 발달 단계와 놀이법 제공",
+      benefit: "발달 이해도 90% 향상",
+      stats: "월령별 발달 지표 120개"
     },
     {
       icon: <Users className="w-8 h-8 text-pink-600" />,
-      title: "활발한 네트워킹",
-      description: "같은 관심사를 가진 개발자들과 프로젝트, 스터디 그룹 형성",
-      benefit: "인맥 확장 300%",
-      stats: "월 평균 50+ 모임 성사"
+      title: "이유식 완전정복",
+      description: "초기부터 완료기까지 단계별 이유식 레시피와 식재료 정보",
+      benefit: "이유식 성공률 85%",
+      stats: "월령별 레시피 150개"
     },
     {
       icon: <Target className="w-8 h-8 text-indigo-600" />,
-      title: "커리어 멘토링",
-      description: "시니어 개발자들의 커리어 조언과 개인 맞춤형 성장 가이드",
-      benefit: "성장 속도 2.5배",
-      stats: "평균 승진 기간 1.2년 단축"
+      title: "육아용품 추천",
+      description: "월령에 맞는 필수 육아용품과 장난감 추천으로 현명한 육아 소비",
+      benefit: "육아비용 30% 절약",
+      stats: "검증된 제품 리뷰 500개"
+    }
+  ],
+
+  experienced: [
+    {
+      icon: <Clock className="w-8 h-8 text-emerald-600" />,
+      title: "첫돌 준비 가이드",
+      description: "돌잔치 준비부터 첫돌 이후 육아까지 경험이 풍부한 선배맘들의 조언",
+      benefit: "완벽한 첫돌 준비",
+      stats: "돌잔치 체크리스트 50개"
+    },
+    {
+      icon: <Shield className="w-8 h-8 text-blue-600" />,
+      title: "육아 멘토링",
+      description: "후배맘들에게 실전 육아 노하우를 전수하고 함께 성장하는 선순환",
+      benefit: "멘토링 만족도 95%",
+      stats: "월 평균 상담 200건"
+    },
+    {
+      icon: <Users className="w-8 h-8 text-purple-600" />,
+      title: "워킹맘 네트워크",
+      description: "육아와 일의 균형을 찾는 워킹맘들의 경험 공유와 정보 교환",
+      benefit: "워라밸 만족도 80% 향상",
+      stats: "워킹맘 모임 월 30회"
     }
   ]
 }
@@ -82,30 +106,35 @@ interface ValuePropositionProps {
   userType?: UserType
 }
 
-export function ValueProposition({ userType = 'seeker' }: ValuePropositionProps) {
-  const propositions = VALUE_PROPOSITIONS[userType || 'seeker']
+export function ValueProposition({ userType = null }: ValuePropositionProps) {
+  const propositions = VALUE_PROPOSITIONS[userType || 'pregnant'] || VALUE_PROPOSITIONS.pregnant
   
   const getSectionTitle = (type: UserType) => {
     switch (type) {
-      case 'seeker':
+      case 'pregnant':
         return {
-          title: "왜 5,000+ 개발자들이 선택했을까요?",
-          subtitle: "당신의 커리어 성장을 위한 모든 것이 준비되어 있습니다"
+          title: "왜 2,500+ 예비맘들이 선택했을까요?",
+          subtitle: "임신부터 출산까지, 소중한 여정을 함께 걸어갑니다"
         }
-      case 'recruiter':
+      case 'newMom':
         return {
-          title: "500+ 기업이 신뢰하는 채용 솔루션",
-          subtitle: "최고의 개발자를 가장 효율적으로 채용하는 방법"
+          title: "1,800+ 신생아맘들이 신뢰하는 케어 가이드",
+          subtitle: "생애 첫 육아, 혼자가 아니에요. 든든한 동반자가 되어드릴게요"
         }
-      case 'community':
+      case 'growingMom':
         return {
-          title: "함께 성장하는 개발자 커뮤니티",
-          subtitle: "혼자 공부하지 마세요. 동료와 함께 더 빠르게 성장하세요"
+          title: "3,200+ 성장기맘들과 함께하는 발달 여정",
+          subtitle: "우리 아기 성장하는 모든 순간이 특별하고 소중합니다"
+        }
+      case 'experienced':
+        return {
+          title: "4,500+ 선배맘들의 소중한 경험과 조언",
+          subtitle: "첫돌까지의 완주, 이제 후배맘들에게 따뜻한 안내자가 되어주세요"
         }
       default:
         return {
-          title: "개발자 생태계의 모든 것",
-          subtitle: "구인구직부터 커뮤니티까지, 한 곳에서 해결하세요"
+          title: "임신부터 첫돌까지, 모든 순간을 함께",
+          subtitle: "21개월의 소중한 여정을 혼자 걸어가지 마세요. 따뜻한 엄마들의 커뮤니티가 함께합니다"
         }
     }
   }

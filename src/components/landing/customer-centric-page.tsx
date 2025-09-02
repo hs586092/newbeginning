@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 
-type UserType = 'seeker' | 'recruiter' | 'community' | null
+type UserType = 'pregnant' | 'newMom' | 'growingMom' | 'experienced' | null
 
 interface CustomerCentricPageProps {
   initialUserType?: UserType
@@ -71,38 +71,51 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
               <SearchBarEnhanced 
                 size="lg"
                 placeholder={
-                  selectedUserType === 'recruiter' 
-                    ? "예: React 개발자, 3년차 이상, 서울" 
-                    : selectedUserType === 'community'
-                    ? "예: Next.js 성능 최적화, GraphQL 팁"
-                    : "예: React, TypeScript, 스타트업"
+                  selectedUserType === 'pregnant' 
+                    ? "예: 임신 초기 증상, 산부인과 추천, 태교법" 
+                    : selectedUserType === 'newMom'
+                    ? "예: 신생아 수유, 기저귀, 수면패턴"
+                    : selectedUserType === 'growingMom'
+                    ? "예: 이유식 시작, 아기 발달, 예방접종"
+                    : "예: 육아용품, 병원, 전문가"
                 }
               />
             </div>
             
             <div className="text-left">
-              <div className="text-sm text-gray-600 mb-3">🎯 AI 추천 예시:</div>
+              <div className="text-sm text-gray-600 mb-3">🎯 맞춤 정보 예시:</div>
               <div className="space-y-2">
-                {selectedUserType === 'recruiter' ? (
+                {selectedUserType === 'pregnant' ? (
                   <>
                     <div className="flex items-center space-x-2 text-sm">
-                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>React + TypeScript 3년차 개발자 <span className="text-green-600">12명 매칭</span></span>
+                      <div className="w-2 h-2 bg-pink-400 rounded-full"></div>
+                      <span>임신 초기 필수 검사 정보 <span className="text-pink-600">12건 발견</span></span>
                     </div>
                     <div className="flex items-center space-x-2 text-sm">
+                      <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                      <span>근처 산부인과 추천 <span className="text-purple-600">8곳 매칭</span></span>
+                    </div>
+                  </>
+                ) : selectedUserType === 'newMom' ? (
+                  <>
+                    <div className="flex items-center space-x-2 text-sm">
                       <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                      <span>Next.js 경험자 우대 <span className="text-blue-600">8명 매칭</span></span>
+                      <span>신생아 수유 가이드 <span className="text-blue-600">24개 정보</span></span>
+                    </div>
+                    <div className="flex items-center space-x-2 text-sm">
+                      <div className="w-2 h-2 bg-teal-400 rounded-full"></div>
+                      <span>수면 패턴 도움 팁 <span className="text-teal-600">18개 발견</span></span>
                     </div>
                   </>
                 ) : (
                   <>
                     <div className="flex items-center space-x-2 text-sm">
                       <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                      <span>스타트업 React 포지션 <span className="text-green-600">24개 발견</span></span>
+                      <span>이유식 시작 가이드 <span className="text-green-600">32개 레시피</span></span>
                     </div>
                     <div className="flex items-center space-x-2 text-sm">
-                      <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                      <span>TypeScript 우대 회사 <span className="text-blue-600">18개 발견</span></span>
+                      <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                      <span>아기 발달 체크리스트 <span className="text-yellow-600">15개 항목</span></span>
                     </div>
                   </>
                 )}
@@ -112,16 +125,23 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <Link href={selectedUserType === 'recruiter' ? '/write' : '/jobs'}>
+            <Link href={
+              selectedUserType === 'pregnant' ? '/pregnancy' : 
+              selectedUserType === 'newMom' ? '/newborn' : 
+              selectedUserType === 'growingMom' ? '/development' : 
+              '/community'
+            }>
               <Button size="lg" className="w-full sm:w-auto font-semibold text-lg px-8 py-4">
                 <div className="flex items-center space-x-2">
                   <ArrowRight className="w-5 h-5" />
                   <span>
-                    {selectedUserType === 'recruiter' 
-                      ? '채용 공고 등록하기' 
-                      : selectedUserType === 'community'
-                      ? '커뮤니티 참여하기'
-                      : '맞춤 채용정보 보기'
+                    {selectedUserType === 'pregnant' 
+                      ? '임신 정보 보기' 
+                      : selectedUserType === 'newMom'
+                      ? '신생아 케어 가이드'
+                      : selectedUserType === 'growingMom'
+                      ? '성장 발달 정보'
+                      : '커뮤니티 참여하기'
                     }
                   </span>
                 </div>
