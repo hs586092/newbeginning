@@ -79,7 +79,7 @@ export function HeroSection({ userType = null, onUserTypeSelect }: HeroSectionPr
       <div className="relative max-w-7xl mx-auto px-4 py-20">
         {/* User Type Selector */}
         <div className="flex justify-center mb-8 md:mb-12 px-4">
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 bg-black/10 backdrop-blur-md rounded-2xl p-2 border border-white/20 shadow-2xl w-full max-w-2xl">
+          <div className="inline-flex flex-col sm:flex-row gap-1 sm:gap-2 bg-black/10 backdrop-blur-md rounded-2xl p-1.5 sm:p-2 border border-white/20 shadow-2xl max-w-fit">
             {[
               { key: 'seeker', label: '구직자', icon: <Briefcase className="w-4 h-4 sm:w-5 sm:h-5" /> },
               { key: 'recruiter', label: '채용담당자', icon: <Users className="w-4 h-4 sm:w-5 sm:h-5" /> },
@@ -88,7 +88,7 @@ export function HeroSection({ userType = null, onUserTypeSelect }: HeroSectionPr
               <button
                 key={key}
                 onClick={() => handleTypeSelect(key as UserType)}
-                className={`group relative flex items-center justify-center space-x-2 sm:space-x-3 px-4 py-3 sm:px-6 sm:py-4 rounded-xl font-semibold transition-all duration-300 transform flex-1 sm:flex-none ${
+                className={`group relative flex items-center justify-center space-x-2 px-3 py-2.5 sm:px-4 sm:py-3 rounded-xl font-semibold transition-all duration-300 transform min-w-0 whitespace-nowrap ${
                   selectedType === key
                     ? 'bg-white text-blue-600 shadow-xl scale-[1.02] sm:scale-105 ring-2 ring-white/30'
                     : 'text-white/90 hover:text-white hover:bg-white/20 hover:scale-[1.01] sm:hover:scale-102 hover:shadow-lg active:scale-[0.98] sm:active:scale-95'
@@ -97,7 +97,7 @@ export function HeroSection({ userType = null, onUserTypeSelect }: HeroSectionPr
                 <div className={`transition-transform duration-300 ${selectedType === key ? 'scale-110' : 'group-hover:scale-110'}`}>
                   {icon}
                 </div>
-                <span className="text-sm sm:text-base whitespace-nowrap">{label}</span>
+                <span className="text-sm sm:text-base">{label}</span>
                 
                 {/* Subtle glow effect for active button */}
                 {selectedType === key && (
