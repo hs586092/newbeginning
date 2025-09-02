@@ -33,7 +33,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <p className="text-gray-600 mt-2">
             {hasSearchParams 
               ? '검색 조건에 맞는 게시글을 찾고 있습니다...'
-              : '구인구직과 커뮤니티 소식을 확인하세요'
+              : '육아 정보와 커뮤니티 소식을 확인하세요'
             }
           </p>
         </div>

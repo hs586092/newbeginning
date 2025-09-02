@@ -55,10 +55,10 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
               <span>지금 바로 시작해보세요</span>
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              완벽한 매칭을 찾는 가장 빠른 방법
+              필요한 정보를 찾는 가장 빠른 방법
             </h2>
             <p className="text-xl text-gray-600">
-              AI 추천으로 시간을 절약하고, 더 나은 기회를 발견하세요
+              맞춤 정보로 시간을 절약하고, 더 나은 육아 방법을 발견하세요
             </p>
           </div>
 
@@ -188,7 +188,7 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
             지금 바로 시작하세요
           </h2>
           <p className="text-xl text-gray-300 mb-8">
-            5,000+ 개발자들이 선택한 신뢰할 수 있는 플랫폼
+            12,000+ 엄마들이 선택한 신뢰할 수 있는 육아 커뮤니티
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">

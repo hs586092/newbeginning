@@ -194,11 +194,11 @@ export function HeroSection({ userType = null, onUserTypeSelect }: HeroSectionPr
 
         {/* Trust Indicators */}
         <div className="mt-20 text-center">
-          <p className="text-white/60 text-sm mb-6">5,000+ 개발자들이 신뢰하는 플랫폼</p>
+          <p className="text-white/60 text-sm mb-6">12,000+ 엄마들이 함께하는 따뜻한 커뮤니티</p>
           <div className="flex justify-center items-center space-x-8 opacity-60">
-            {['네이버', '카카오', '쿠팡', '토스', '당근마켓'].map((company) => (
-              <div key={company} className="text-white font-semibold text-lg">
-                {company}
+            {['마리아병원', '세브란스', '삼성서울병원', '차병원', '강남여성병원'].map((hospital) => (
+              <div key={hospital} className="text-white font-semibold text-lg">
+                {hospital}
               </div>
             ))}
           </div>

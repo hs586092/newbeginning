@@ -5,72 +5,72 @@ import { Star, Users, Building, TrendingUp, Quote } from 'lucide-react'
 const TESTIMONIALS = [
   {
     id: 1,
-    name: "김민수",
-    role: "프론트엔드 개발자",
-    company: "네이버",
-    avatar: "KM",
+    name: "김소아",
+    role: "예비맘",
+    company: "생후 3개월",
+    avatar: "KS",
     rating: 5,
-    content: "3개월 동안 구직활동을 했는데, 여기서 딱 2주 만에 원하던 회사에 합격했어요. 맞춤 추천이 정말 정확해서 시간을 많이 절약했습니다.",
-    highlight: "2주 만에 합격",
-    tags: ["React", "TypeScript", "Next.js"]
+    content: "초보맘이라 너무 많은 게 궁금했는데, 여기서 꽤 많은 도움을 받았어요. 신생아 케어부터 수유까지 매일 겁나던 일들을 선배맘들이 친절하게 알려주셔서 많이 편해졌어요.",
+    highlight: "육아 스트레스 80% 감소",
+    tags: ["수유", "신생아케어", "초보맘"]
   },
   {
     id: 2,
-    name: "박지영",
-    role: "인사팀장",
-    company: "토스",
+    name: "박지은",
+    role: "성장기맘",
+    company: "둘째 아기 8개월",
     avatar: "PJ",
     rating: 5,
-    content: "개발자 채용이 이렇게 쉬울 줄 몰랐어요. 검증된 후보자들만 추천받아서 면접 진행이 훨씬 수월했습니다. 1주일 만에 팀에 딱 맞는 개발자를 찾았어요.",
-    highlight: "1주일 만에 채용완료",
-    tags: ["백엔드", "Node.js", "팀핏"]
+    content: "첫째와 달리 둘째는 이유식을 너무 안 먹어서 고민이 많았는데, 여기서 만난 선배맘들 덕분에 단계별로 차근차근 시도해서 결국 성공했어요! 같은 고민하는 엄마들에게 정말 도움이 되는 커뮤니티예요.",
+    highlight: "이유식 성공 달성",
+    tags: ["이유식", "편식개선", "둑째아이"]
   },
   {
     id: 3,
-    name: "이현우",
-    role: "백엔드 개발자",
-    company: "카카오",
-    avatar: "LH",
+    name: "이미영",
+    role: "선배맘",
+    company: "세듸맘 (첫째 5세, 둘째 3세)",
+    avatar: "LM",
     rating: 5,
-    content: "커뮤니티에서 시니어 개발자들의 조언을 듣고 커리어 방향을 잡을 수 있었어요. 덕분에 더 좋은 조건으로 이직에 성공했습니다.",
-    highlight: "연봉 30% 상승",
-    tags: ["Spring", "AWS", "커리어전환"]
+    content: "초보맘일 때의 기억을 떠올리며 후배맘들에게 도움을 주고 싶어 가입했어요. 제 경험이 누군가에게 도움이 되고, 저도 다른 엄마들의 새로운 아이디어를 배울 수 있어서 보람있어요.",
+    highlight: "경험 공유를 통한 성장",
+    tags: ["뒤늹생활", "유치원", "멘토링"]
   }
 ]
 
-const COMPANY_LOGOS = [
-  { name: "네이버", employees: "850+", logo: "N" },
-  { name: "카카오", employees: "420+", logo: "K" },
-  { name: "토스", employees: "280+", logo: "T" },
-  { name: "쿠팡", employees: "190+", logo: "C" },
-  { name: "당근마켓", employees: "150+", logo: "🥕" },
-  { name: "라인", employees: "320+", logo: "L" }
+const PARTNER_HOSPITALS = [
+  { name: "마리아 대학병원", members: "300+", logo: "🏥" },
+  { name: "삼성서울병원", members: "250+", logo: "🏥" },
+  { name: "세브란스병원", members: "180+", logo: "🏥" },
+  { name: "강남여성병원", members: "220+", logo: "🏥" },
+  { name: "차병원", members: "150+", logo: "🏥" },
+  { name: "민으로산부인과", members: "90+", logo: "🏥" }
 ]
 
 const TRUST_METRICS = [
   {
-    icon: <Users className="w-8 h-8 text-blue-600" />,
-    value: "5,000+",
-    label: "활성 사용자",
-    description: "매월 새로운 기회를 찾는 개발자들"
+    icon: <Users className="w-8 h-8 text-pink-600" />,
+    value: "12,000+",
+    label: "전체 맘버",
+    description: "임신부터 첫돌까지 함께하는 엄마들"
   },
   {
-    icon: <Building className="w-8 h-8 text-green-600" />,
-    value: "500+",
-    label: "파트너 기업",
-    description: "스타트업부터 대기업까지"
+    icon: <Building className="w-8 h-8 text-blue-600" />,
+    value: "50+",
+    label: "파트너 병원",
+    description: "신뢰할 수 있는 산부인과 및 소아과"
   },
   {
     icon: <TrendingUp className="w-8 h-8 text-purple-600" />,
-    value: "85%",
-    label: "매칭 성공률",
-    description: "지난 6개월 평균 성과"
+    value: "94%",
+    label: "도움이 되었어요",
+    description: "지난 6개월 엄마들의 만족도"
   },
   {
     icon: <Star className="w-8 h-8 text-orange-600" />,
-    value: "4.8/5",
-    label: "만족도 평점",
-    description: "2,500+ 실제 이용자 평가"
+    value: "4.9/5",
+    label: "커뮤니티 평점",
+    description: "3,200+ 엄마들의 진심 평가"
   }
 ]
 
@@ -81,10 +81,10 @@ export function SocialProof() {
         {/* Trust Metrics */}
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            개발자들이 신뢰하는 이유
+            엄마들이 신뢰하는 이유
           </h2>
           <p className="text-xl text-gray-600 mb-12">
-            실제 데이터로 증명되는 성과와 만족도
+            진심 어린 마음으로 만든 따뜻한 커뮤니티
           </p>
           
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
@@ -110,21 +110,21 @@ export function SocialProof() {
         {/* Company Logos */}
         <div className="mb-16">
           <p className="text-center text-gray-600 mb-8">
-            이미 많은 유명 기업들이 함께하고 있습니다
+            이미 많은 신뢰할 수 있는 병원들이 함께하고 있습니다
           </p>
           <div className="grid grid-cols-3 lg:grid-cols-6 gap-6">
-            {COMPANY_LOGOS.map((company, index) => (
+            {PARTNER_HOSPITALS.map((hospital, index) => (
               <div key={index} className="text-center group">
                 <div className="w-16 h-16 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center mb-3 mx-auto group-hover:shadow-md transition-shadow duration-300">
-                  <span className="text-2xl font-bold text-gray-700">
-                    {company.logo}
+                  <span className="text-2xl">
+                    {hospital.logo}
                   </span>
                 </div>
                 <div className="text-sm font-medium text-gray-800">
-                  {company.name}
+                  {hospital.name}
                 </div>
                 <div className="text-xs text-gray-500">
-                  {company.employees} 개발자
+                  {hospital.members} 엄마들
                 </div>
               </div>
             ))}
@@ -135,10 +135,10 @@ export function SocialProof() {
         <div className="mb-16">
           <div className="text-center mb-12">
             <h3 className="text-3xl font-bold text-gray-900 mb-4">
-              실제 이용자들의 생생한 후기
+              엄마들의 진심 어린 후기
             </h3>
             <p className="text-xl text-gray-600">
-              진짜 경험담을 들어보세요
+              같은 길을 걸어온 선배맘들의 이야기
             </p>
           </div>
 
@@ -205,14 +205,14 @@ export function SocialProof() {
         <div className="text-center">
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
             <h3 className="text-2xl font-bold mb-4">
-              당신도 성공 스토리의 주인공이 되어보세요
+              당신도 행복한 엄마가 되어보세요
             </h3>
             <p className="text-white/90 mb-6">
-              매주 100+ 새로운 성공 사례가 만들어지고 있습니다
+              매주 200+ 새로운 엄마들이 우리와 함께 여정을 시작하고 있습니다
             </p>
             <div className="flex justify-center items-center space-x-2 text-sm">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span>실시간으로 업데이트되는 새로운 기회들</span>
+              <span>실시간으로 공유되는 엄마들의 소중한 경험들</span>
             </div>
           </div>
         </div>

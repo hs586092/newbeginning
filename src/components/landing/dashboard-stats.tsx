@@ -1,35 +1,35 @@
 'use client'
 
-import { Users, Briefcase, MessageCircle, Star, ArrowUp } from 'lucide-react'
+import { Users, Heart, MessageCircle, Star, ArrowUp, Baby, Calendar } from 'lucide-react'
 import Link from 'next/link'
 
 const STATS_DATA = [
   {
     id: 'posts',
-    icon: <Briefcase className="w-6 h-6" />,
-    label: '이번 주 신규 구인',
-    value: '24',
-    change: '+12%',
+    icon: <Heart className="w-6 h-6" />,
+    label: '이번 주 새로운 이야기',
+    value: '48',
+    change: '+15%',
+    color: 'bg-pink-500',
+    bgColor: 'bg-pink-50',
+    textColor: 'text-pink-700'
+  },
+  {
+    id: 'moms', 
+    icon: <Users className="w-6 h-6" />,
+    label: '활동중인 엄마들',
+    value: '2,847',
+    change: '+23%',
     color: 'bg-blue-500',
     bgColor: 'bg-blue-50',
     textColor: 'text-blue-700'
   },
   {
-    id: 'jobseekers', 
-    icon: <Users className="w-6 h-6" />,
-    label: '활성 구직자',
-    value: '156',
-    change: '+8%',
-    color: 'bg-green-500',
-    bgColor: 'bg-green-50',
-    textColor: 'text-green-700'
-  },
-  {
-    id: 'success-rate',
+    id: 'satisfaction',
     icon: <Star className="w-6 h-6" />,
-    label: '매칭 성공률',
-    value: '78%',
-    change: '+5%',
+    label: '도움이 되었어요',
+    value: '94%',
+    change: '+8%',
     color: 'bg-purple-500',
     bgColor: 'bg-purple-50',
     textColor: 'text-purple-700'
@@ -37,9 +37,9 @@ const STATS_DATA = [
   {
     id: 'community',
     icon: <MessageCircle className="w-6 h-6" />,
-    label: '전체 활동수',
-    value: '92',
-    change: '+15%',
+    label: '월간 소통',
+    value: '1,234',
+    change: '+18%',
     color: 'bg-orange-500',
     bgColor: 'bg-orange-50',
     textColor: 'text-orange-700'
@@ -48,38 +48,38 @@ const STATS_DATA = [
 
 const QUICK_ACTIONS = [
   {
-    id: 'job-post',
-    label: '채용',
-    subtitle: '모든 곳',
-    count: '24개',
-    icon: <Briefcase className="w-5 h-5" />,
+    id: 'write-post',
+    label: '글쓰기',
+    subtitle: '경험 공유',
+    count: '새로운 이야기',
+    icon: <Heart className="w-5 h-5" />,
     primary: true,
-    bgColor: 'bg-blue-600',
+    bgColor: 'bg-pink-600',
     textColor: 'text-white',
     href: '/write'
   },
   {
-    id: 'job-search',
-    label: '구인',
-    count: '24개',
-    icon: <Briefcase className="w-5 h-5" />,
+    id: 'pregnancy',
+    label: '임신 정보',
+    count: '주차별 가이드',
+    icon: <Baby className="w-5 h-5" />,
     bgColor: 'bg-gray-100',
     textColor: 'text-gray-700',
-    href: '/jobs'
+    href: '/pregnancy'
   },
   {
-    id: 'community-search',
-    label: '구직',
-    count: '156개',
+    id: 'newborn',
+    label: '신생아 케어',
+    count: '월령별 정보',
     icon: <Users className="w-5 h-5" />,
     bgColor: 'bg-gray-100',
     textColor: 'text-gray-700',
-    href: '/community'
+    href: '/newborn'
   },
   {
     id: 'community',
     label: '커뮤니티',
-    count: '89개',
+    count: '엄마들의 소통',
     icon: <MessageCircle className="w-5 h-5" />,
     bgColor: 'bg-gray-100',
     textColor: 'text-gray-700',
@@ -96,11 +96,11 @@ export function DashboardStats({ className = '' }: DashboardStatsProps) {
     <div className={`bg-white ${className}`}>
       {/* Header */}
       <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-blue-600 mb-2">
-          BUDICONNECTS 커뮤니티
+        <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-500 to-blue-500 text-transparent bg-clip-text mb-2">
+          첫돌까지 함께하는 여정
         </h2>
         <p className="text-gray-600">
-          새로운 기회를 발견하고, 커뮤니티와 함께 성장하세요
+          소중한 21개월을 따뜻한 엄마들과 함께 걸어가세요
         </p>
       </div>
 
@@ -178,41 +178,41 @@ export function DashboardStats({ className = '' }: DashboardStatsProps) {
       {/* Latest Activity Preview */}
       <div className="bg-gray-50 rounded-2xl p-6">
         <div className="flex items-start space-x-4">
-          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-            <span className="text-blue-700 font-semibold text-sm">H</span>
+          <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center">
+            <span className="text-pink-700 font-semibold text-sm">민</span>
           </div>
           <div className="flex-1">
             <div className="flex items-center space-x-2 mb-2">
-              <span className="font-semibold text-gray-900">hyeonsoo</span>
-              <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">
-                구인
+              <span className="font-semibold text-gray-900">민지맘</span>
+              <span className="px-2 py-1 bg-pink-100 text-pink-700 text-xs rounded-full font-medium">
+                신생아맘
               </span>
-              <span className="text-gray-500 text-sm">8월 31일 08:05</span>
+              <span className="text-gray-500 text-sm">9월 1일 14:25</span>
             </div>
             <h3 className="font-bold text-gray-900 mb-2">
-              React 개발자 채용합니다 (경력 2-5년)
+              신생아 수유텀 조절 성공 후기 ✨
             </h3>
             <p className="text-gray-600 text-sm leading-relaxed mb-4">
-              저희 스타트업에서 React 개발자를 모집합니다. 프론트엔드 개발 경험이 2-5년 있으신 분을 찾고 있으며, 
-              TypeScript와 Next.js 경험이 있으시면 우대합니다.
+              생후 2개월 우리 아기가 드디어 3시간 텀으로 수유하게 되었어요! 처음엔 정말 힘들었는데 
+              선배맘들의 조언 덕분에 차근차근 해낼 수 있었답니다. 같은 고민하시는 분들께 도움이 되길 바라며 경험을 공유해요.
             </p>
             
-            {/* Job Details */}
+            {/* Baby Info */}
             <div className="bg-white rounded-lg p-4 mb-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="flex items-center space-x-2">
-                  <Briefcase className="w-4 h-4 text-gray-400" />
-                  <span className="text-gray-600">(주)테크스타트업</span>
+                  <Baby className="w-4 h-4 text-gray-400" />
+                  <span className="text-gray-600">생후 2개월 17일</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Users className="w-4 h-4 text-gray-400" />
-                  <span className="text-gray-600">서울 강남구</span>
+                  <Calendar className="w-4 h-4 text-gray-400" />
+                  <span className="text-gray-600">7월 15일 출생</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-gray-600">💰 연봉 4500-6500만원</span>
+                  <span className="text-gray-600">🍼 모유+분유 혼합</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className="text-gray-600">📅 2/15까지</span>
+                  <span className="text-gray-600">😴 밤잠 5시간</span>
                 </div>
               </div>
             </div>
@@ -220,16 +220,16 @@ export function DashboardStats({ className = '' }: DashboardStatsProps) {
             {/* Engagement */}
             <div className="flex items-center space-x-4 text-sm text-gray-500">
               <div className="flex items-center space-x-1">
-                <span>♥️</span>
-                <span>8</span>
+                <span>💖</span>
+                <span>24</span>
               </div>
               <div className="flex items-center space-x-1">
                 <MessageCircle className="w-4 h-4" />
-                <span>0</span>
+                <span>8</span>
               </div>
               <div className="flex items-center space-x-1">
                 <span>👁️</span>
-                <span>127</span>
+                <span>156</span>
               </div>
             </div>
           </div>
