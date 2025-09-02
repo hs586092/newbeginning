@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "mcp-server-playwright",
+      "args": [
+        "--headless",
+        "--port",
+        "3001", 
+        "--isolated",
+        "--browser",
+        "chrome",
+        "--viewport-size",
+        "1280,720",
+        "--ignore-https-errors",
+        "--save-trace",
+        "--output-dir",
+        "./playwright-outputs"
+      ],
+      "env": {}
+    }
+  }
+}

@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { Header } from '@/components/layout/header'
 import { WebsiteStructuredData } from '@/components/seo/structured-data'
+import { ThemeProvider } from '@/components/providers/theme-provider'
 import { Toaster } from 'sonner'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -83,15 +84,17 @@ export default function RootLayout({
         <WebsiteStructuredData />
       </head>
       <body className={inter.className}>
-        <div className="min-h-screen bg-gray-50">
-          <Header />
-          <main>{children}</main>
-        </div>
-        <Toaster 
-          position="top-right"
-          richColors
-          theme="light"
-        />
+        <ThemeProvider>
+          <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+            <Header />
+            <main>{children}</main>
+          </div>
+          <Toaster 
+            position="top-right"
+            richColors
+            theme="system"
+          />
+        </ThemeProvider>
       </body>
     </html>
   )

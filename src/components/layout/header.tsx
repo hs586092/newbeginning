@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { 
   User, 
   LogOut, 
@@ -60,32 +61,32 @@ export function Header() {
   }
 
   return (
-    <header className="bg-white shadow-sm border-b">
+    <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo and Navigation */}
           <div className="flex items-center space-x-8">
             <Link href="/" className="flex items-center">
-              <h1 className="text-2xl font-bold text-blue-600">BUDICONNECTS</h1>
+              <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400">BUDICONNECTS</h1>
             </Link>
             
             <nav className="hidden md:flex space-x-6">
               <Link 
                 href="/" 
-                className="text-gray-700 hover:text-blue-600 font-medium"
+                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors"
               >
                 전체
               </Link>
               <Link 
                 href="/jobs" 
-                className="text-gray-700 hover:text-blue-600 font-medium flex items-center"
+                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium flex items-center transition-colors"
               >
                 <Briefcase className="w-4 h-4 mr-1" />
                 구인구직
               </Link>
               <Link 
                 href="/community" 
-                className="text-gray-700 hover:text-blue-600 font-medium flex items-center"
+                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium flex items-center transition-colors"
               >
                 <Users className="w-4 h-4 mr-1" />
                 커뮤니티
@@ -95,6 +96,8 @@ export function Header() {
 
           {/* User Actions */}
           <div className="flex items-center space-x-4">
+            <ThemeToggle />
+            
             {user ? (
               <>
                 <Link href="/write">
@@ -105,7 +108,7 @@ export function Header() {
                 </Link>
                 
                 <div className="relative group">
-                  <button className="flex items-center space-x-2 text-gray-700 hover:text-blue-600">
+                  <button className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                     <User className="w-5 h-5" />
                     <span className="text-sm font-medium">
                       {profile?.username || user.email}
@@ -113,25 +116,25 @@ export function Header() {
                   </button>
                   
                   {/* Dropdown Menu */}
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                     <div className="py-1">
                       <Link 
                         href="/my-posts"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       >
                         <FileText className="w-4 h-4 mr-2" />
                         내 게시글
                       </Link>
                       <Link 
                         href="/profile"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       >
                         <User className="w-4 h-4 mr-2" />
                         프로필
                       </Link>
                       <button
                         onClick={handleSignOut}
-                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
+                        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 text-left transition-colors"
                       >
                         <LogOut className="w-4 h-4 mr-2" />
                         로그아웃
@@ -150,24 +153,24 @@ export function Header() {
       </div>
 
       {/* Mobile Navigation */}
-      <div className="md:hidden border-t bg-gray-50">
+      <div className="md:hidden border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 transition-colors">
         <div className="max-w-7xl mx-auto px-4">
           <nav className="flex space-x-6 py-4 overflow-x-auto">
             <Link 
               href="/" 
-              className="text-gray-700 hover:text-blue-600 font-medium whitespace-nowrap py-2 px-1 min-w-0 flex-shrink-0"
+              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium whitespace-nowrap py-2 px-1 min-w-0 flex-shrink-0 transition-colors"
             >
               전체
             </Link>
             <Link 
               href="/jobs" 
-              className="text-gray-700 hover:text-blue-600 font-medium whitespace-nowrap py-2 px-1 min-w-0 flex-shrink-0"
+              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium whitespace-nowrap py-2 px-1 min-w-0 flex-shrink-0 transition-colors"
             >
               구인구직
             </Link>
             <Link 
               href="/community" 
-              className="text-gray-700 hover:text-blue-600 font-medium whitespace-nowrap py-2 px-1 min-w-0 flex-shrink-0"
+              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 font-medium whitespace-nowrap py-2 px-1 min-w-0 flex-shrink-0 transition-colors"
             >
               커뮤니티
             </Link>

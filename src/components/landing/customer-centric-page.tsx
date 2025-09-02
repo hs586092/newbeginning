@@ -5,7 +5,7 @@ import { HeroSection } from './hero-section'
 import { DashboardStats } from './dashboard-stats'
 import { ValueProposition } from './value-proposition'
 import { SocialProof } from './social-proof'
-import { SearchBar } from '@/components/search/search-bar'
+import { SearchBarEnhanced } from '@/components/ui/search-bar-enhanced'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import Link from 'next/link'
@@ -68,7 +68,8 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
               <label className="block text-sm font-medium text-gray-700 mb-2 text-left">
                 어떤 기회를 찾고 계신가요?
               </label>
-              <SearchBar 
+              <SearchBarEnhanced 
+                size="lg"
                 placeholder={
                   selectedUserType === 'recruiter' 
                     ? "예: React 개발자, 3년차 이상, 서울" 

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { SearchBarEnhanced } from '@/components/ui/search-bar-enhanced'
 import { ArrowRight, Briefcase, Users, TrendingUp, Star } from 'lucide-react'
 
 type UserType = 'seeker' | 'recruiter' | 'community' | null
@@ -130,6 +131,21 @@ export function HeroSection({ userType = null, onUserTypeSelect }: HeroSectionPr
               </div>
             </div>
           </div>
+
+          {/* Quick Search */}
+          {selectedType && selectedType !== 'community' && (
+            <div className="mb-8">
+              <SearchBarEnhanced 
+                size="lg"
+                placeholder={
+                  selectedType === 'recruiter' 
+                    ? "찾는 개발자 유형을 입력하세요..." 
+                    : "원하는 직무나 회사를 검색하세요..."
+                }
+                className="max-w-lg"
+              />
+            </div>
+          )}
 
           {/* CTA Button */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4 max-w-lg sm:max-w-none mx-auto">
