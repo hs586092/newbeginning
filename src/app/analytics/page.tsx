@@ -4,9 +4,11 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { 
   ArrowLeft, BarChart3, TrendingUp, TrendingDown, Users, Briefcase, 
-  DollarSign, MapPin, Clock, Filter, Download, RefreshCw, Eye 
+  DollarSign, MapPin, Clock, Filter, Download, RefreshCw
 } from 'lucide-react'
 import Link from 'next/link'
+
+export const dynamic = 'force-dynamic'
 
 interface TrendData {
   category: string

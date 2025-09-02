@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button'
 import { ArrowLeft, Target, Zap, Users, TrendingUp, Check, Star, Briefcase, MapPin, Clock, DollarSign } from 'lucide-react'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 interface MatchingResult {
   id: string
   title: string

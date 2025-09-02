@@ -3,6 +3,8 @@ import { PostList } from '@/components/posts/post-list'
 import { RealtimeProvider } from '@/components/providers/realtime-provider'
 import type { PostWithDetails } from '@/types/database.types'
 
+export const dynamic = 'force-dynamic'
+
 async function getCommunityPosts(): Promise<PostWithDetails[]> {
   try {
     const supabase = await createServerSupabaseClient()

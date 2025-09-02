@@ -9,6 +9,8 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 interface Consultant {
   id: string
   name: string
@@ -144,10 +146,10 @@ export default function ConsultingPage() {
           <h3 className="text-2xl font-bold text-center mb-8">컨설팅 서비스</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {CONSULTATION_TYPES.map((type) => (
-              <div
+              <button
                 key={type.type}
                 onClick={() => setSelectedType(type.type)}
-                className={`p-6 bg-white rounded-xl border cursor-pointer transition-all hover:shadow-md ${
+                className={`p-6 bg-white rounded-xl border cursor-pointer transition-all hover:shadow-md text-left w-full ${
                   selectedType === type.type ? 'border-blue-500 ring-2 ring-blue-100' : 'border-gray-200'
                 }`}
               >
@@ -160,7 +162,7 @@ export default function ConsultingPage() {
                   <Clock className="w-4 h-4" />
                   <span>{type.duration}</span>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
@@ -170,10 +172,10 @@ export default function ConsultingPage() {
           <h3 className="text-2xl font-bold text-center mb-8">전문 컨설턴트</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {CONSULTANTS.map((consultant) => (
-              <div
+              <button
                 key={consultant.id}
                 onClick={() => setSelectedConsultant(consultant)}
-                className={`bg-white rounded-xl p-6 border cursor-pointer transition-all hover:shadow-md ${
+                className={`bg-white rounded-xl p-6 border cursor-pointer transition-all hover:shadow-md text-left w-full ${
                   selectedConsultant?.id === consultant.id ? 'border-blue-500 ring-2 ring-blue-100' : 'border-gray-200'
                 }`}
               >
@@ -216,7 +218,7 @@ export default function ConsultingPage() {
                   </p>
                   <p className="text-xs text-gray-500">1회 상담</p>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
