@@ -62,38 +62,8 @@ export async function signUp(formData: FormData) {
       }
     }
 
-    if (data.user) {
-      // Try to create profile, but don't fail the signup if it fails
-      try {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: data.user.id,
-            username: validatedData.username
-          } as any)
-
-        if (profileError) {
-          console.error('Profile creation failed, but signup succeeded:', {
-            error: profileError,
-            message: profileError.message,
-            details: profileError.details,
-            hint: profileError.hint,
-            code: profileError.code,
-            user_id: data.user.id,
-            username: validatedData.username
-          })
-          
-          // Profile creation failed, but user account is created successfully
-          // User can still login and we'll handle profile creation later
-          console.log('User account created successfully, profile creation will be retried on first login')
-        } else {
-          console.log('Profile created successfully for user:', data.user.id)
-        }
-      } catch (profileCreationError) {
-        console.error('Profile creation threw an exception:', profileCreationError)
-        // Continue anyway - user account is still created
-      }
-    }
+    // Profile creation is handled automatically by Supabase trigger
+    // No manual profile creation needed
 
     return { success: true }
   } catch (error) {
