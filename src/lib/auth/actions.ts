@@ -92,15 +92,57 @@ export async function signIn(formData: FormData) {
   try {
     const validatedData = signInSchema.parse(rawData)
 
-    const { error } = await supabase.auth.signInWithPassword({
+    console.log('로그인 시도:', { email: validatedData.email })
+
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: validatedData.email,
       password: validatedData.password,
     })
 
     if (error) {
+      console.error('Supabase Auth Error:', {
+        error,
+        message: error.message,
+        status: error.status,
+        code: error.code || 'no-code'
+      })
+      
+      // 더 구체적인 에러 메시지
+      if (error.message?.includes('Invalid login credentials')) {
+        return { 
+          error: '이메일 또는 비밀번호가 올바르지 않습니다.',
+          type: 'auth' as const
+        }
+      }
+      
+      if (error.message?.includes('Email not confirmed')) {
+        return { 
+          error: '이메일 확인이 필요합니다.',
+          type: 'auth' as const
+        }
+      }
+      
       return { 
-        error: '이메일 또는 비밀번호가 올바르지 않습니다.',
+        error: `인증 오류: ${error.message}`,
         type: 'auth' as const
+      }
+    }
+
+    if (data.user) {
+      console.log('로그인 성공:', { userId: data.user.id, email: data.user.email })
+      
+      // 프로필 존재 여부 확인 (Best Practice)
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', data.user.id)
+        .single()
+
+      if (profileError || !profile) {
+        console.warn('프로필 조회 실패, but proceeding with login:', profileError)
+        // 프로필 없어도 로그인은 진행 (Best Practice)
+      } else {
+        console.log('프로필 확인됨:', { username: (profile as any).username })
       }
     }
 
@@ -108,14 +150,28 @@ export async function signIn(formData: FormData) {
     redirect('/')
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.error('유효성 검증 오류:', error.issues)
       return {
         error: error.issues[0].message,
         type: 'validation' as const
       }
     }
     
+    // redirect() 함수에서 발생하는 NEXT_REDIRECT 에러는 정상
+    if (error && typeof error === 'object' && 'digest' in error && error.digest === 'NEXT_REDIRECT') {
+      console.log('정상적인 리다이렉트 발생')
+      throw error // redirect는 다시 throw해야 함
+    }
+    
+    console.error('예상치 못한 로그인 오류:', {
+      error,
+      message: (error as any)?.message || 'Unknown error',
+      stack: (error as any)?.stack,
+      name: (error as any)?.name
+    })
+    
     return { 
-      error: '로그인 중 오류가 발생했습니다.',
+      error: `로그인 처리 중 오류가 발생했습니다: ${(error as any)?.message || 'Unknown error'}`,
       type: 'unknown' as const
     }
   }
