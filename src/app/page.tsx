@@ -25,32 +25,39 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   // 기존 대시보드형 페이지 (로그인 사용자 또는 검색 중)
   return (
     <RealtimeProvider>
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            {hasSearchParams ? '검색 결과' : '최신 게시글'}
-          </h1>
-          <p className="text-gray-600 mt-2">
-            {hasSearchParams 
-              ? '검색 조건에 맞는 게시글을 찾고 있습니다...'
-              : '육아 정보와 커뮤니티 소식을 확인하세요'
-            }
-          </p>
-        </div>
-
-        {/* 검색 바 */}
-        <div className="mb-6">
-          <SearchBar className="max-w-2xl" />
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* 필터 사이드바 */}
-          <div className="lg:col-span-1">
-            <SearchFilters />
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        {/* 컴팩트한 헤더 */}
+        <div className="max-w-5xl mx-auto px-4 py-4">
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">
+              {hasSearchParams ? '검색 결과' : '📱 최신 피드'}
+            </h1>
+            {!hasSearchParams && (
+              <p className="text-gray-500 text-sm">
+                유용한 정보와 커뮤니티 소식을 만나보세요
+              </p>
+            )}
           </div>
 
-          {/* 메인 콘텐츠 */}
-          <div className="lg:col-span-3">
+          {/* 검색 바 - 더 컴팩트 */}
+          {hasSearchParams && (
+            <div className="mb-4">
+              <SearchBar className="max-w-xl mx-auto" />
+            </div>
+          )}
+        </div>
+
+        {/* 메인 피드 영역 - 전체 너비 활용 */}
+        <div className="max-w-4xl mx-auto px-4">
+          {/* 필터는 검색 시에만 표시 */}
+          {hasSearchParams && (
+            <div className="mb-4">
+              <SearchFilters />
+            </div>
+          )}
+
+          {/* 메인 콘텐츠 - 시선 집중을 위한 중앙 배치 */}
+          <div className="w-full">
             <Suspense fallback={<PostListSkeleton />}>
               <PostsWrapper searchParams={searchParams} currentUserId={user?.id} />
             </Suspense>

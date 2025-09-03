@@ -20,8 +20,8 @@ const getCategoryColorClasses = (item: NavigationItem, isActive: boolean) => {
   
   if (item.color === 'featured') {
     return isActive 
-      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' 
-      : 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 hover:from-blue-100 hover:to-indigo-100 border-blue-200 shadow-sm'
+      ? 'bg-blue-600 text-white shadow-md' 
+      : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200'
   }
   
   return isActive
@@ -82,26 +82,17 @@ export default function FeedTabNavigation({
   }, [])
 
   return (
-    <div className={`relative bg-white/80 backdrop-blur-sm border-b border-gray-200 ${className}`}>
-      {/* Tab Navigation Header */}
-      <div className="max-w-7xl mx-auto px-4 py-4">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">
-            카테고리별 정보
-          </h2>
-          <div className="text-sm text-gray-500">
-            {NAVIGATION_ITEMS.find(item => item.id === activeTab)?.name || '전체'}
-          </div>
-        </div>
+    <div className={`relative bg-white/90 backdrop-blur-sm border-b border-gray-100 ${className}`}>
+      <div className="max-w-7xl mx-auto px-4 py-3">
 
         <div className="relative">
           {/* Left Arrow */}
           {showLeftArrow && (
             <button
               onClick={() => scroll('left')}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors"
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-6 h-6 bg-white shadow-md rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors"
             >
-              <ChevronLeft className="w-4 h-4 text-gray-600" />
+              <ChevronLeft className="w-3 h-3 text-gray-600" />
             </button>
           )}
 
@@ -109,28 +100,28 @@ export default function FeedTabNavigation({
           {showRightArrow && (
             <button
               onClick={() => scroll('right')}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white shadow-lg rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors"
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-6 h-6 bg-white shadow-md rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors"
             >
-              <ChevronRight className="w-4 h-4 text-gray-600" />
+              <ChevronRight className="w-3 h-3 text-gray-600" />
             </button>
           )}
 
           {/* Navigation Tabs */}
           <div
             ref={scrollRef}
-            className="flex space-x-3 overflow-x-auto scrollbar-hide pb-2"
+            className="flex space-x-2 overflow-x-auto scrollbar-hide"
             onScroll={checkScroll}
           >
             {/* 전체 탭 */}
             <button
               onClick={() => onTabChange('all', 'all')}
-              className={`flex-shrink-0 flex items-center space-x-2 px-4 py-3 rounded-lg transition-all duration-200 border ${
+              className={`flex-shrink-0 flex items-center space-x-1.5 px-3 py-2 rounded-lg transition-all duration-200 border text-sm ${
                 activeTab === 'all'
-                  ? 'bg-gray-600 text-white shadow-lg'
+                  ? 'bg-gray-600 text-white shadow-md'
                   : 'bg-white text-gray-700 hover:bg-gray-50 border-gray-200'
               }`}
             >
-              <span className="text-xl">🏠</span>
+              <span className="text-sm">🏠</span>
               <span className="font-medium whitespace-nowrap">전체</span>
             </button>
 
@@ -139,26 +130,17 @@ export default function FeedTabNavigation({
               <button
                 key={item.id}
                 onClick={() => handleTabClick(item)}
-                className={`flex-shrink-0 flex items-center space-x-2 px-4 py-3 rounded-lg transition-all duration-200 border ${
+                className={`flex-shrink-0 flex items-center space-x-1.5 px-3 py-2 rounded-lg transition-all duration-200 border text-sm ${
                   getCategoryColorClasses(item, activeTab === item.id)
                 }`}
                 title={item.description}
               >
-                <span className="text-xl">{item.emoji}</span>
+                <span className="text-sm">{item.emoji}</span>
                 <span className="font-medium whitespace-nowrap">{item.name}</span>
               </button>
             ))}
           </div>
         </div>
-
-        {/* Active Category Description */}
-        {activeTab !== 'all' && (
-          <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-600">
-              {NAVIGATION_ITEMS.find(item => item.id === activeTab)?.description || '다양한 정보를 확인하세요'}
-            </p>
-          </div>
-        )}
       </div>
 
       <style jsx>{`
