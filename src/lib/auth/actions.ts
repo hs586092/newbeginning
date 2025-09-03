@@ -63,12 +63,14 @@ export async function signUp(formData: FormData) {
     }
 
     if (data.user) {
-      // Create profile
+      // Create profile with explicit fields
       const { error: profileError } = await supabase
         .from('profiles')
         .insert({
           id: data.user.id,
-          username: validatedData.username
+          username: validatedData.username,
+          full_name: null,
+          avatar_url: null
         } as any)
 
       if (profileError) {
