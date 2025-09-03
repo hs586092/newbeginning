@@ -82,17 +82,17 @@ export async function signUp(formData: FormData) {
 }
 
 export async function signIn(formData: FormData) {
-  const supabase = await createServerSupabaseClient()
-
-  const rawData = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string
-  }
-
   try {
+    const supabase = await createServerSupabaseClient()
+
+    const rawData = {
+      email: formData.get('email') as string,
+      password: formData.get('password') as string
+    }
+
     const validatedData = signInSchema.parse(rawData)
 
-    console.log('로그인 시도:', { email: validatedData.email })
+    console.log('🔑 로그인 시도:', { email: validatedData.email })
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email: validatedData.email,
@@ -100,14 +100,13 @@ export async function signIn(formData: FormData) {
     })
 
     if (error) {
-      console.error('Supabase Auth Error:', {
-        error,
+      console.error('❌ Supabase Auth Error:', {
         message: error.message,
         status: error.status,
-        code: error.code || 'no-code'
+        code: error.code
       })
       
-      // 더 구체적인 에러 메시지
+      // 구체적인 에러 메시지 매핑
       if (error.message?.includes('Invalid login credentials')) {
         return { 
           error: '이메일 또는 비밀번호가 올바르지 않습니다.',
@@ -128,51 +127,73 @@ export async function signIn(formData: FormData) {
       }
     }
 
-    if (data.user) {
-      console.log('로그인 성공:', { userId: data.user.id, email: data.user.email })
-      
-      // 프로필 존재 여부 확인 (Best Practice)
-      const { data: profile, error: profileError } = await supabase
+    if (!data.user) {
+      console.error('❌ 인증 성공했지만 사용자 데이터 없음')
+      return { 
+        error: '로그인 처리 중 문제가 발생했습니다.',
+        type: 'auth' as const
+      }
+    }
+
+    console.log('✅ 로그인 성공:', { 
+      userId: data.user.id, 
+      email: data.user.email,
+      emailConfirmed: data.user.email_confirmed_at ? '✅' : '❌'
+    })
+
+    // 프로필 확인 (Best Practice - 실패해도 로그인 진행)
+    try {
+      const { data: profile } = await supabase
         .from('profiles')
         .select('username')
         .eq('id', data.user.id)
         .single()
 
-      if (profileError || !profile) {
-        console.warn('프로필 조회 실패, but proceeding with login:', profileError)
-        // 프로필 없어도 로그인은 진행 (Best Practice)
+      if (profile) {
+        console.log('✅ 프로필 확인:', { username: (profile as any).username })
       } else {
-        console.log('프로필 확인됨:', { username: (profile as any).username })
+        console.warn('⚠️ 프로필 없음, 하지만 로그인 진행')
       }
+    } catch (profileError) {
+      console.warn('⚠️ 프로필 조회 실패, 하지만 로그인 진행:', profileError)
     }
 
+    console.log('🔄 페이지 리다이렉트 준비')
     revalidatePath('/', 'layout')
     redirect('/')
+    
   } catch (error) {
+    // 유효성 검증 에러
     if (error instanceof z.ZodError) {
-      console.error('유효성 검증 오류:', error.issues)
+      console.error('❌ 유효성 검증 실패:', error.issues[0].message)
       return {
         error: error.issues[0].message,
         type: 'validation' as const
       }
     }
     
-    // redirect() 함수에서 발생하는 NEXT_REDIRECT 에러는 정상
-    if (error && typeof error === 'object' && 'digest' in error && error.digest === 'NEXT_REDIRECT') {
-      console.log('정상적인 리다이렉트 발생')
-      throw error // redirect는 다시 throw해야 함
+    // Next.js redirect는 정상 동작 (에러가 아님)
+    if (error && typeof error === 'object') {
+      const errorObj = error as any
+      if (errorObj.digest === 'NEXT_REDIRECT' || 
+          errorObj.message?.includes('NEXT_REDIRECT') ||
+          errorObj.__NEXT_REDIRECT_ERROR__) {
+        console.log('✅ 로그인 성공 - 메인 페이지로 리다이렉트')
+        throw error // 정상적인 redirect이므로 다시 throw
+      }
     }
     
-    console.error('예상치 못한 로그인 오류:', {
-      error,
-      message: (error as any)?.message || 'Unknown error',
-      stack: (error as any)?.stack,
+    // 진짜 예외 상황
+    console.error('💥 예상치 못한 로그인 오류:', {
+      errorType: typeof error,
+      message: (error as any)?.message,
+      digest: (error as any)?.digest,
       name: (error as any)?.name
     })
     
     return { 
-      error: `로그인 처리 중 오류가 발생했습니다: ${(error as any)?.message || 'Unknown error'}`,
-      type: 'unknown' as const
+      error: '로그인 처리 중 시스템 오류가 발생했습니다.',
+      type: 'system' as const
     }
   }
 }
