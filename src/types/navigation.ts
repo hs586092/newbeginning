@@ -4,11 +4,19 @@ export interface NavigationItem {
   emoji: string
   href: string
   description?: string
-  color?: 'default' | 'danger'
+  color?: 'default' | 'danger' | 'featured'
   category?: string
 }
 
 export const NAVIGATION_ITEMS: NavigationItem[] = [
+  {
+    id: 'educational',
+    name: '정보센터',
+    emoji: '📚',
+    href: '/educational',
+    description: '전문가가 검증한 임신·육아 정보',
+    color: 'featured'
+  },
   {
     id: 'pregnancy',
     name: '임신',

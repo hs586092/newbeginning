@@ -18,6 +18,12 @@ const getCategoryColorClasses = (item: NavigationItem, isActive: boolean) => {
       : 'bg-white text-red-600 hover:bg-red-50 border-red-200'
   }
   
+  if (item.color === 'featured') {
+    return isActive 
+      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' 
+      : 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 hover:from-blue-100 hover:to-indigo-100 border-blue-200 shadow-sm'
+  }
+  
   return isActive
     ? 'bg-gradient-to-r from-pink-500 to-blue-500 text-white shadow-lg'
     : 'bg-white text-gray-700 hover:bg-gray-50 border-gray-200'

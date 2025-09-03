@@ -7,8 +7,7 @@ import {
   User, 
   LogOut, 
   PenSquare, 
-  FileText,
-  BookOpen
+  FileText
 } from 'lucide-react'
 import { signOut } from '@/lib/auth/actions'
 import { createClient } from '@/lib/supabase/client'
@@ -70,17 +69,6 @@ export function Header() {
               <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-blue-500 text-transparent bg-clip-text">
                 첫돌까지
               </h1>
-            </Link>
-          </div>
-
-          {/* Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
-            <Link 
-              href="/educational" 
-              className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              <BookOpen className="w-5 h-5" />
-              <span className="font-medium">정보센터</span>
             </Link>
           </div>
 
