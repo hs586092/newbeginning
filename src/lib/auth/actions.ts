@@ -63,42 +63,35 @@ export async function signUp(formData: FormData) {
     }
 
     if (data.user) {
-      // Create profile - try with minimal required fields first
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: data.user.id,
-          username: validatedData.username
-        } as any)
+      // Try to create profile, but don't fail the signup if it fails
+      try {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: data.user.id,
+            username: validatedData.username
+          } as any)
 
-      if (profileError) {
-        console.error('Profile creation error details:', {
-          error: profileError,
-          message: profileError.message,
-          details: profileError.details,
-          hint: profileError.hint,
-          code: profileError.code
-        })
-        
-        // Return more specific error message based on error code
-        if (profileError.code === '23505') {
-          return { 
-            error: '이미 사용중인 사용자 ID입니다. 다시 시도해주세요.',
-            type: 'profile' as const
-          }
+        if (profileError) {
+          console.error('Profile creation failed, but signup succeeded:', {
+            error: profileError,
+            message: profileError.message,
+            details: profileError.details,
+            hint: profileError.hint,
+            code: profileError.code,
+            user_id: data.user.id,
+            username: validatedData.username
+          })
+          
+          // Profile creation failed, but user account is created successfully
+          // User can still login and we'll handle profile creation later
+          console.log('User account created successfully, profile creation will be retried on first login')
+        } else {
+          console.log('Profile created successfully for user:', data.user.id)
         }
-        
-        if (profileError.code === '42501') {
-          return { 
-            error: '프로필 생성 권한이 없습니다. 관리자에게 문의해주세요.',
-            type: 'profile' as const
-          }
-        }
-        
-        return { 
-          error: `프로필 생성 중 오류가 발생했습니다. (${profileError.code || 'Unknown'})`,
-          type: 'profile' as const
-        }
+      } catch (profileCreationError) {
+        console.error('Profile creation threw an exception:', profileCreationError)
+        // Continue anyway - user account is still created
       }
     }
 
