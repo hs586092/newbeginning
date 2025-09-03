@@ -3,7 +3,7 @@
 import { useState, useOptimistic } from 'react'
 import Link from 'next/link'
 import { Heart, MessageCircle, Eye, MoreHorizontal, Edit, Trash2 } from 'lucide-react'
-import { formatDate, getCategoryLabel, getCategoryColor, truncateText } from '@/lib/utils'
+import { formatDate, getCategoryLabel, getCategoryColor, truncateText, isEducationalContent, getCategoryIcon, formatReadTime, getTargetAudienceLabel } from '@/lib/utils'
 import { toggleLike, deletePost } from '@/lib/posts/actions'
 import { Button } from '@/components/ui/button'
 import type { PostWithDetails } from '@/types/database.types'
@@ -20,6 +20,9 @@ export function PostCard({ post, currentUserId, isOwner }: PostCardProps) {
   const router = useRouter()
   const [showActions, setShowActions] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  
+  const isEducational = isEducationalContent(post.category)
+  const metadata = post.educational_metadata
   
   const initialLiked = currentUserId ? 
     post.likes.some(like => like.id === currentUserId) : 
@@ -64,7 +67,11 @@ export function PostCard({ post, currentUserId, isOwner }: PostCardProps) {
   }
 
   return (
-    <article className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+    <article className={`rounded-lg shadow-sm border p-6 hover:shadow-md transition-shadow ${
+      isEducational 
+        ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200' 
+        : 'bg-white border-gray-200'
+    }`}>
       {/* Header */}
       <div className="flex justify-between items-start mb-4">
         <div className="flex items-center space-x-3">
@@ -80,9 +87,22 @@ export function PostCard({ post, currentUserId, isOwner }: PostCardProps) {
         </div>
 
         <div className="flex items-center space-x-2">
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(post.category)}`}>
+          <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${getCategoryColor(post.category)}`}>
+            {isEducational && <span>{getCategoryIcon(post.category)}</span>}
             {getCategoryLabel(post.category)}
           </span>
+          
+          {isEducational && metadata?.expert_verified && (
+            <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 flex items-center gap-1">
+              ✓ 전문가 검증
+            </span>
+          )}
+          
+          {isEducational && metadata?.is_featured && (
+            <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 flex items-center gap-1">
+              ⭐ 추천
+            </span>
+          )}
           
           {isOwner && (
             <div className="relative">
@@ -161,6 +181,44 @@ export function PostCard({ post, currentUserId, isOwner }: PostCardProps) {
             )}
           </div>
         )}
+        
+        {/* Educational Content Details */}
+        {isEducational && metadata && (
+          <div className="bg-white/70 rounded-lg p-3 mt-4">
+            <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
+              {metadata.estimated_read_time && (
+                <div className="flex items-center gap-1">
+                  <span>🕒</span>
+                  <span>{formatReadTime(metadata.estimated_read_time)}</span>
+                </div>
+              )}
+              
+              {metadata.target_audience && (
+                <div className="flex items-center gap-1">
+                  <span>👥</span>
+                  <span>{getTargetAudienceLabel(metadata.target_audience)}</span>
+                </div>
+              )}
+              
+              {metadata.difficulty_level && (
+                <div className="flex items-center gap-1">
+                  <span>📊</span>
+                  <span className="capitalize">{metadata.difficulty_level}</span>
+                </div>
+              )}
+            </div>
+            
+            {metadata.keywords && metadata.keywords.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-2">
+                {metadata.keywords.slice(0, 4).map((keyword) => (
+                  <span key={keyword} className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
+                    #{keyword}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </Link>
 
       {/* Actions */}
@@ -194,9 +252,13 @@ export function PostCard({ post, currentUserId, isOwner }: PostCardProps) {
 
         <Link 
           href={`/post/${post.id}`}
-          className="text-sm text-blue-600 hover:text-blue-500 font-medium"
+          className={`text-sm font-medium flex items-center gap-1 ${
+            isEducational 
+              ? 'text-indigo-600 hover:text-indigo-500' 
+              : 'text-blue-600 hover:text-blue-500'
+          }`}
         >
-          자세히 보기
+          {isEducational ? '📚 정보 보기' : '자세히 보기'}
         </Link>
       </div>
     </article>

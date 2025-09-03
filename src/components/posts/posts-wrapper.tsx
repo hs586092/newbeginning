@@ -1,11 +1,93 @@
 import { PostList } from './post-list'
-import { searchPosts } from '@/lib/posts/actions'
+import { searchPosts, getEducationalPosts } from '@/lib/posts/actions'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import type { PostWithDetails } from '@/types/database.types'
 
 interface PostsWrapperProps {
   searchParams: { [key: string]: string | undefined }
   currentUserId?: string
+}
+
+// Smart feed algorithm - mix regular posts with educational content
+async function getMixedFeedPosts(): Promise<PostWithDetails[]> {
+  try {
+    const supabase = await createServerSupabaseClient()
+    
+    // Get regular posts (non-educational categories)
+    const { data: regularPosts, error: regularError } = await supabase
+      .from('posts')
+      .select(`
+        *,
+        profiles!posts_user_id_fkey (
+          username,
+          avatar_url
+        ),
+        likes (id),
+        comments (id)
+      `)
+      .in('category', ['job_offer', 'job_seek', 'community'])
+      .order('created_at', { ascending: false })
+      .limit(20)
+
+    // Get educational posts with metadata
+    const educationalResult = await getEducationalPosts({
+      featured_only: false,
+      limit: 8
+    })
+    
+    const educationalPosts = educationalResult.posts as PostWithDetails[]
+    
+    if (regularError) {
+      console.log('Regular posts fetch failed')
+      return educationalPosts
+    }
+    
+    // Mix posts using smart algorithm
+    return mixPostsIntelligently(regularPosts || [], educationalPosts)
+  } catch (error) {
+    console.log('Mixed feed failed, showing demo content')
+    return getDemoPosts()
+  }
+}
+
+// Intelligent post mixing algorithm
+function mixPostsIntelligently(regularPosts: PostWithDetails[], educationalPosts: PostWithDetails[]): PostWithDetails[] {
+  if (educationalPosts.length === 0) return regularPosts
+  if (regularPosts.length === 0) return educationalPosts
+  
+  const mixedFeed: PostWithDetails[] = []
+  let regularIndex = 0
+  let educationalIndex = 0
+  
+  // Sort educational posts by priority (featured first, then by display_priority)
+  const sortedEducational = [...educationalPosts].sort((a, b) => {
+    const aPriority = a.educational_metadata?.is_featured ? 1000 : (a.educational_metadata?.display_priority || 0)
+    const bPriority = b.educational_metadata?.is_featured ? 1000 : (b.educational_metadata?.display_priority || 0)
+    return bPriority - aPriority
+  })
+  
+  let postsAddedSinceLastEducational = 0
+  const insertInterval = 3 + Math.floor(Math.random() * 3) // Random between 3-5 posts
+  
+  while (regularIndex < regularPosts.length || educationalIndex < sortedEducational.length) {
+    // Add educational content if it's time and we have educational posts available
+    if (educationalIndex < sortedEducational.length && 
+        (postsAddedSinceLastEducational >= insertInterval || regularIndex >= regularPosts.length)) {
+      mixedFeed.push(sortedEducational[educationalIndex])
+      educationalIndex++
+      postsAddedSinceLastEducational = 0
+      continue
+    }
+    
+    // Add regular post
+    if (regularIndex < regularPosts.length) {
+      mixedFeed.push(regularPosts[regularIndex])
+      regularIndex++
+      postsAddedSinceLastEducational++
+    }
+  }
+  
+  return mixedFeed
 }
 
 async function getPosts(searchParams: { [key: string]: string | undefined }): Promise<PostWithDetails[]> {
@@ -22,33 +104,8 @@ async function getPosts(searchParams: { [key: string]: string | undefined }): Pr
     }
   }
 
-  // 기본 게시글 로딩
-  try {
-    const supabase = await createServerSupabaseClient()
-    
-    const { data: posts, error } = await supabase
-      .from('posts')
-      .select(`
-        *,
-        profiles!posts_user_id_fkey (
-          username,
-          avatar_url
-        ),
-        likes (id),
-        comments (id)
-      `)
-      .order('created_at', { ascending: false })
-
-    if (error) {
-      console.log('Supabase connection failed (using placeholder credentials)')
-      return getDemoPosts()
-    }
-
-    return posts || []
-  } catch (error) {
-    console.log('Database connection unavailable, showing demo content')
-    return getDemoPosts()
-  }
+  // Use smart mixed feed for default view
+  return getMixedFeedPosts()
 }
 
 function getDemoPosts(): PostWithDetails[] {

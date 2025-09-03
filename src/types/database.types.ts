@@ -5,18 +5,21 @@ export type Database = {
         Row: {
           id: string
           username: string
+          full_name?: string
           avatar_url?: string
           created_at: string
         }
         Insert: {
           id: string
           username: string
+          full_name?: string
           avatar_url?: string
           created_at?: string
         }
         Update: {
           id?: string
           username?: string
+          full_name?: string
           avatar_url?: string
           created_at?: string
         }
@@ -28,7 +31,7 @@ export type Database = {
           author_name: string
           title: string
           content: string
-          category: 'job_offer' | 'job_seek' | 'community'
+          category: 'job_offer' | 'job_seek' | 'community' | 'pregnancy_info' | 'parenting_guide' | 'health_tips' | 'nutrition_guide' | 'development_info' | 'safety_tips'
           company?: string
           location?: string
           salary?: string
@@ -45,7 +48,7 @@ export type Database = {
           author_name: string
           title: string
           content: string
-          category: 'job_offer' | 'job_seek' | 'community'
+          category: 'job_offer' | 'job_seek' | 'community' | 'pregnancy_info' | 'parenting_guide' | 'health_tips' | 'nutrition_guide' | 'development_info' | 'safety_tips'
           company?: string
           location?: string
           salary?: string
@@ -120,6 +123,50 @@ export type Database = {
           created_at?: string
         }
       }
+      educational_metadata: {
+        Row: {
+          id: string
+          post_id: string
+          display_priority: number
+          target_audience: 'expecting_parents' | 'new_parents' | 'toddler_parents' | 'all_parents'
+          content_type: 'article' | 'infographic' | 'checklist' | 'guide' | 'tips'
+          difficulty_level: 'beginner' | 'intermediate' | 'advanced'
+          estimated_read_time: number
+          keywords: string[]
+          is_featured: boolean
+          expert_verified: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          post_id: string
+          display_priority?: number
+          target_audience: 'expecting_parents' | 'new_parents' | 'toddler_parents' | 'all_parents'
+          content_type: 'article' | 'infographic' | 'checklist' | 'guide' | 'tips'
+          difficulty_level?: 'beginner' | 'intermediate' | 'advanced'
+          estimated_read_time?: number
+          keywords?: string[]
+          is_featured?: boolean
+          expert_verified?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          post_id?: string
+          display_priority?: number
+          target_audience?: 'expecting_parents' | 'new_parents' | 'toddler_parents' | 'all_parents'
+          content_type?: 'article' | 'infographic' | 'checklist' | 'guide' | 'tips'
+          difficulty_level?: 'beginner' | 'intermediate' | 'advanced'
+          estimated_read_time?: number
+          keywords?: string[]
+          is_featured?: boolean
+          expert_verified?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
     }
   }
 }
@@ -131,6 +178,7 @@ export type PostWithDetails = Database['public']['Tables']['posts']['Row'] & {
   }
   likes: { id: string }[]
   comments: { id: string }[]
+  educational_metadata?: Database['public']['Tables']['educational_metadata']['Row']
   _count?: {
     likes: number
     comments: number

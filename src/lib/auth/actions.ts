@@ -136,6 +136,30 @@ export async function signIn(formData: FormData) {
   }
 }
 
+export async function signInWithGoogle() {
+  const supabase = await createServerSupabaseClient()
+  
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent',
+      },
+    }
+  })
+
+  if (error) {
+    console.error('Google OAuth error:', error)
+    return { error: 'Google 로그인 중 오류가 발생했습니다.' }
+  }
+
+  if (data?.url) {
+    redirect(data.url)
+  }
+}
+
 export async function signOut() {
   const supabase = await createServerSupabaseClient()
   
