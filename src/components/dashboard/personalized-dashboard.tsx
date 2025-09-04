@@ -1,19 +1,18 @@
 'use client'
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { Suspense } from 'react'
-import { PostListSkeleton } from '@/components/posts/post-list-skeleton'
-import ClientPostsWrapper from './client-posts-wrapper'
+import FeedTabNavigation from '@/components/navigation/feed-tab-navigation'
 import { RealtimeProvider } from '@/components/providers/realtime-provider'
 import { SearchBar } from '@/components/search/search-bar'
 import { SearchFilters } from '@/components/search/search-filters'
 import PersonalSidebar from '@/components/sidebar/personal-sidebar'
+import { RealtimeTest } from '@/components/test/realtime-test'
 import { Button } from '@/components/ui/button'
-import { PenSquare } from 'lucide-react'
-import FeedTabNavigation from '@/components/navigation/feed-tab-navigation'
 import type { CommunityCategory } from '@/types/navigation'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
+import { PenSquare } from 'lucide-react'
+import Link from 'next/link'
+import { useState } from 'react'
+import ClientPostsWrapper from './client-posts-wrapper'
 
 interface PersonalizedDashboardProps {
   searchParams: { [key: string]: string | undefined }
@@ -60,7 +59,7 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
                   </p>
                 )}
               </div>
-              
+
               {/* 빠른 액션 버튼 (모바일용) */}
               <div className="lg:hidden">
                 <Link href="/write">
@@ -101,6 +100,11 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
                 </div>
               )}
 
+              {/* Real-time Test Component (for development) */}
+              <div className="mb-6">
+                <RealtimeTest />
+              </div>
+
               {/* 피드 컨텐츠 */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center justify-between mb-4">
@@ -111,7 +115,7 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
                     실시간 업데이트
                   </div>
                 </div>
-                
+
                 <ClientPostsWrapper searchParams={effectiveSearchParams} currentUserId={user?.id} />
               </div>
             </div>
