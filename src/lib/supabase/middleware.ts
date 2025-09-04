@@ -7,9 +7,21 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
+  // Check if environment variables are properly configured
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  
+  // If environment variables are not configured, continue without auth
+  if (!supabaseUrl || !supabaseKey || 
+      supabaseUrl === 'https://placeholder.supabase.co' || 
+      supabaseKey === 'placeholder-key') {
+    console.log('Supabase environment variables not configured, continuing without auth')
+    return supabaseResponse
+  }
+
   const supabase = createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key',
+    supabaseUrl,
+    supabaseKey,
     {
       cookies: {
         getAll() {
