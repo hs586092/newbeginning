@@ -1,0 +1,12 @@
+{
+  "timestamp": "2025-09-05T08:23:36.724Z",
+  "finalUrl": "https://newbeginning-seven.vercel.app/login",
+  "totalAuthRequests": 1,
+  "authRequests": [
+    {
+      "url": "https://newbeginning-seven.vercel.app/login",
+      "method": "POST",
+      "timestamp": "2025-09-05T08:23:32.719Z"
+    }
+  ]
+}

@@ -19,7 +19,7 @@ module.exports = defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'https://newbeginning-8i9lzjth2-hs586092s-projects.vercel.app',
+    baseURL: 'https://newbeginning-seven.vercel.app',
     
     /* Show browser window for debugging */
     headless: false,

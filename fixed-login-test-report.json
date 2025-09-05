@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-09-05T08:22:04.166Z",
+  "finalUrl": "https://newbeginning-seven.vercel.app/login",
+  "consoleMessages": [],
+  "errors": [],
+  "networkRequests": 1,
+  "authRequests": [
+    {
+      "url": "https://newbeginning-seven.vercel.app/login",
+      "method": "POST",
+      "headers": {
+        "sec-ch-ua-platform": "\"macOS\"",
+        "next-action": "4024a1c6b567e336cf8b2a0dc4012e0e46565f7380",
+        "referer": "https://newbeginning-seven.vercel.app/login",
+        "sec-ch-ua": "\"Not=A?Brand\";v=\"24\", \"Chromium\";v=\"140\"",
+        "sec-ch-ua-mobile": "?0",
+        "next-router-state-tree": "%5B%22%22%2C%7B%22children%22%3A%5B%22login%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+        "accept": "text/x-component",
+        "content-type": "multipart/form-data; boundary=----WebKitFormBoundaryPRaKHjRTumzTUji1",
+        "x-deployment-id": "dpl_GQCQ6v3bEPGDv2adyuyLfjVoF12J"
+      },
+      "timestamp": "2025-09-05T08:21:58.159Z"
+    }
+  ],
+  "testStatus": "REMAINED_ON_LOGIN"
+}
