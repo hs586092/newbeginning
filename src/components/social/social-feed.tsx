@@ -95,9 +95,62 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Mock data for demonstration
+  // Load posts data (try from database, fallback to mock data)
   useEffect(() => {
-    const mockPosts: Post[] = [
+    const loadPosts = async () => {
+      try {
+        setLoading(true)
+        
+        // Try to fetch from database first
+        const { createClient } = await import('@/lib/supabase/client')
+        const supabase = createClient()
+        
+        const { data: postsData, error } = await supabase
+          .from('posts')
+          .select(`
+            *,
+            profiles!posts_user_id_fkey (
+              username,
+              avatar_url
+            ),
+            likes (id),
+            comments (id)
+          `)
+          .order('created_at', { ascending: false })
+          .limit(10)
+          
+        if (postsData && !error && postsData.length > 0) {
+          // Transform database posts to match our Post interface
+          const transformedPosts: Post[] = postsData.map((post: any) => ({
+            id: post.id,
+            content: post.content || post.title || '내용을 불러올 수 없습니다',
+            category_id: post.category || 'daily',
+            category_name: post.category || '일상',
+            category_icon: '📝',
+            category_color: 'blue',
+            hugs: post.likes?.length || 0,
+            views: post.views || 0,
+            is_question: post.category === 'job_seek',
+            created_at: post.created_at,
+            author: {
+              id: post.user_id,
+              username: post.profiles?.username || '익명',
+              avatar_url: post.profiles?.avatar_url
+            },
+            is_hugged_by_me: false,
+            is_bookmarked_by_me: false
+          }))
+          
+          setPosts(transformedPosts)
+          setLoading(false)
+          return
+        }
+      } catch (error) {
+        console.log('Database connection failed, using mock data')
+      }
+      
+      // Fallback to mock data
+      const mockPosts: Post[] = [
       {
         id: '1',
         content: '첫 이유식 시작했는데 아기가 잘 안 먹어요 😭 다른 엄마들은 어떻게 하셨나요?',
@@ -114,7 +167,7 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
         created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
         author: {
           id: 'user1',
-          username: '새내기엄마',
+          username: '새내기엄마🥄',
           avatar_url: '/avatars/mom1.jpg',
           baby_birth_date: new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000).toISOString(),
           baby_name: '도윤이'
@@ -138,7 +191,7 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
         created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
         author: {
           id: 'user2',
-          username: '수면교육성공맘',
+          username: '수면교육성공맘💤',
           avatar_url: '/avatars/mom2.jpg',
           baby_birth_date: new Date(Date.now() - 3 * 30 * 24 * 60 * 60 * 1000).toISOString(),
           baby_name: '서준이'
@@ -160,7 +213,7 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
         created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
         author: {
           id: 'user3',
-          username: '예비맘29주',
+          username: '예비맘29주🤰',
           avatar_url: '/avatars/pregnant.jpg',
           is_pregnant: true,
           pregnancy_week: 29
@@ -170,10 +223,14 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
       }
     ]
     
-    setTimeout(() => {
-      setPosts(mockPosts)
-      setLoading(false)
-    }, 1000)
+      // Shorter timeout for better user experience
+      setTimeout(() => {
+        setPosts(mockPosts)
+        setLoading(false)
+      }, 500)
+    }
+    
+    loadPosts()
   }, [])
 
   const handleHug = (postId: string) => {
