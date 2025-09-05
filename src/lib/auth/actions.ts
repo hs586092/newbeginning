@@ -201,10 +201,15 @@ export async function signIn(formData: FormData) {
 export async function signInWithGoogle() {
   const supabase = await createServerSupabaseClient()
   
+  // Get the correct base URL for production and development
+  const baseUrl = process.env.NODE_ENV === 'production' 
+    ? 'https://newbeginning-seven.vercel.app'
+    : (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000')
+  
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
+      redirectTo: `${baseUrl}/auth/callback`,
       queryParams: {
         access_type: 'offline',
         prompt: 'consent',

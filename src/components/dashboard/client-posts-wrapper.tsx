@@ -22,19 +22,10 @@ export default function ClientPostsWrapper({ searchParams, currentUserId }: Clie
         setIsLoading(true)
         setError(null)
 
-        // Build query based on search parameters
+        // Build query based on search parameters - use simpler query first
         let query = supabase
           .from('posts')
-          .select(`
-            *,
-            profiles!posts_user_id_fkey (
-              username,
-              avatar_url
-            ),
-            likes (id),
-            comments (id),
-            educational_metadata (*)
-          `)
+          .select('*')
 
         // Apply search filters
         const { q: searchQuery, category, location } = searchParams

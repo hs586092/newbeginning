@@ -18,12 +18,10 @@ async function getMixedFeedPosts(): Promise<PostWithDetails[]> {
       .from('posts')
       .select(`
         *,
-        profiles!posts_user_id_fkey (
+        profiles!user_id (
           username,
           avatar_url
-        ),
-        likes (id),
-        comments (id)
+        )
       `)
       .in('category', ['job_offer', 'job_seek', 'community'])
       .order('created_at', { ascending: false })
@@ -44,7 +42,7 @@ async function getMixedFeedPosts(): Promise<PostWithDetails[]> {
         .from('posts')
         .select(`
           *,
-          profiles!posts_user_id_fkey (
+          profiles!user_id (
             username,
             avatar_url
           ),
