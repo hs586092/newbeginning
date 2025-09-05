@@ -109,12 +109,10 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
           .from('posts')
           .select(`
             *,
-            profiles!posts_user_id_fkey (
+            profiles!user_id (
               username,
               avatar_url
-            ),
-            likes (id),
-            comments (id)
+            )
           `)
           .order('created_at', { ascending: false })
           .limit(10)
@@ -124,17 +122,21 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
           const transformedPosts: Post[] = postsData.map((post: any) => ({
             id: post.id,
             content: post.content || post.title || '내용을 불러올 수 없습니다',
-            category_id: post.category || 'daily',
-            category_name: post.category || '일상',
-            category_icon: '📝',
+            category_id: post.category || 'community',
+            category_name: post.category === 'community' ? '커뮤니티' : 
+                           post.category === 'job_offer' ? '구인구직' :
+                           post.category === 'educational' ? '교육' : '일상',
+            category_icon: post.category === 'community' ? '💬' :
+                          post.category === 'job_offer' ? '💼' :
+                          post.category === 'educational' ? '📚' : '📝',
             category_color: 'blue',
-            hugs: post.likes?.length || 0,
-            views: post.views || 0,
+            hugs: 0,
+            views: post.view_count || 0,
             is_question: post.category === 'job_seek',
             created_at: post.created_at,
             author: {
               id: post.user_id,
-              username: post.profiles?.username || '익명',
+              username: post.profiles?.username || post.author_name || '익명',
               avatar_url: post.profiles?.avatar_url
             },
             is_hugged_by_me: false,
@@ -145,8 +147,14 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
           setLoading(false)
           return
         }
+        
+        // If error occurred or no data found, continue to fallback
+        if (error) {
+          console.log('Supabase query error:', error)
+        }
       } catch (error) {
-        console.log('Database connection failed, using mock data')
+        console.log('Database connection failed, using mock data:', error)
+        // Continue to fallback mock data
       }
       
       // Fallback to mock data
@@ -183,7 +191,7 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
         category_icon: '😴',
         category_color: 'indigo',
         baby_month: 3,
-        images: ['/posts/sleeping-baby.jpg'],
+        images: [],
         hugs: 89,
         views: 234,
         is_question: false,
@@ -206,7 +214,7 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
         category_name: '임신',
         category_icon: '🤰',
         category_color: 'purple',
-        images: ['/posts/ultrasound.jpg'],
+        images: [],
         hugs: 156,
         views: 445,
         is_question: false,
