@@ -87,3 +87,26 @@ Error: Route "/" used `Object.keys(searchParams)` or similar. `searchParams` sho
  GET /?code=1e95c5db-a9cc-4a2d-bab8-9702eeb2eade 200 in 96ms
  GET /sw.js 404 in 56ms
  GET /sw.js 404 in 52ms
+ GET /?code=da46d8f4-4637-4cec-bb17-a3c56c869853 200 in 259ms
+ GET /sw.js 404 in 52ms
+ GET /login 200 in 124ms
+ POST /login 303 in 43ms
+ ✓ Compiled /auth/callback in 137ms
+ GET /auth/callback?code=6b373a00-a6eb-45ce-8536-ae3d8d117372 307 in 635ms
+ GET /icons/icon-144x144.png 404 in 47ms
+ GET /sw.js 404 in 56ms
+ GET /?code=41dfc175-0fb6-4fd4-9a05-e1d96b14ada2 200 in 167ms
+ GET /sw.js 404 in 59ms
+ POST /login 303 in 42ms
+ GET /auth/callback?code=7bfaa90f-8441-4d65-b3c0-ae6ba9a7dd1b 307 in 418ms
+ GET /icons/icon-144x144.png 404 in 44ms
+ GET /sw.js 404 in 41ms
+ GET /icons/icon-144x144.png 404 in 41ms
+ GET /icons/icon-144x144.png 404 in 50ms
+ GET /icons/icon-144x144.png 404 in 51ms
+ GET /icons/icon-144x144.png 404 in 47ms
+ GET /icons/icon-144x144.png 404 in 49ms
+ GET /icons/icon-144x144.png 404 in 49ms
+ GET /icons/icon-144x144.png 404 in 43ms
+ GET /sw.js 404 in 56ms
+[?25h

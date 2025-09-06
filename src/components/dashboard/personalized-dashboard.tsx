@@ -175,8 +175,8 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
 
               {/* Main Feed Area */}
               <div className="flex-1">
-                {/* Remove development component for production feel */}
-                {process.env.NODE_ENV === 'development' && (
+                {/* Development component temporarily disabled due to API issues */}
+                {false && process.env.NODE_ENV === 'development' && (
                   <div className="mb-6">
                     <RealtimeTest />
                   </div>
