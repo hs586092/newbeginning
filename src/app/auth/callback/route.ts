@@ -10,15 +10,32 @@ export async function GET(request: NextRequest) {
     ? 'https://newbeginning-seven.vercel.app'
     : (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000')
 
+  console.log('🔄 Auth callback started:', {
+    hasCode: !!code,
+    baseUrl,
+    url: request.url
+  })
+
   if (code) {
     const supabase = await createServerSupabaseClient()
     
+    console.log('🔑 Exchanging code for session...')
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
     
     if (error) {
-      console.error('Auth callback error:', error)
+      console.error('❌ Auth callback error:', {
+        message: error.message,
+        status: error.status,
+        code: error.code
+      })
       return NextResponse.redirect(new URL('/login?error=auth_callback_error', baseUrl))
     }
+
+    console.log('✅ Session exchange successful:', {
+      hasUser: !!data.user,
+      userId: data.user?.id,
+      email: data.user?.email
+    })
 
     if (data.user) {
       // Google OAuth로 로그인한 경우 프로필 생성 또는 업데이트
@@ -44,14 +61,20 @@ export async function GET(request: NextRequest) {
           } as any)
 
         if (profileError) {
-          console.error('Profile creation error:', profileError)
+          console.error('⚠️ Profile creation error:', profileError)
           // 프로필 생성 실패해도 로그인은 성공으로 처리
+        } else {
+          console.log('✅ Profile created successfully')
         }
+      } else {
+        console.log('ℹ️ Profile already exists')
       }
     }
 
+    console.log('🏠 Redirecting to home page:', baseUrl)
     return NextResponse.redirect(new URL('/', baseUrl))
   }
 
+  console.log('❌ No code parameter found')
   return NextResponse.redirect(new URL('/login?error=no_code', baseUrl))
 }
