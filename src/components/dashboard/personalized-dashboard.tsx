@@ -16,10 +16,25 @@ import ClientPostsWrapper from './client-posts-wrapper'
 
 interface PersonalizedDashboardProps {
   searchParams: { [key: string]: string | undefined }
-  user: SupabaseUser
+  user: SupabaseUser | null
 }
 
 export default function PersonalizedDashboard({ searchParams, user }: PersonalizedDashboardProps) {
+  // Safety guard - if no user, show error or redirect
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-4xl mx-auto px-4 py-20 text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">로그인이 필요합니다</h1>
+          <p className="text-gray-600 mb-8">개인화된 대시보드를 보려면 먼저 로그인해주세요.</p>
+          <Link href="/login">
+            <Button>로그인하기</Button>
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
   const [activeTab, setActiveTab] = useState<string>('all')
   const [currentCategory, setCurrentCategory] = useState<string | undefined>()
   const hasSearchParams = Object.keys(searchParams).length > 0

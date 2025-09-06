@@ -11,13 +11,11 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const searchParamsObj = await searchParams
   const hasSearchParams = Object.keys(searchParamsObj).length > 0
   
-  // 새 방문자나 검색 파라미터가 없을 때는 Customer-Centric 랜딩페이지 표시
-  const showLandingPage = !user && !hasSearchParams
-
-  if (showLandingPage) {
+  // 사용자가 로그인하지 않은 경우 항상 랜딩 페이지 표시
+  if (!user) {
     return <CustomerCentricPage />
   }
 
   // 로그인 사용자용 개인화된 대시보드
-  return <PersonalizedDashboard searchParams={searchParams} user={user!} />
+  return <PersonalizedDashboard searchParams={searchParams} user={user} />
 }
