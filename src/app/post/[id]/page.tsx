@@ -13,7 +13,7 @@ async function getPost(id: string): Promise<PostWithDetails | null> {
     .from('posts')
     .select(`
       *,
-      profiles!user_id (
+      profiles!posts_user_id_fkey (
         username,
         avatar_url
       ),

@@ -18,7 +18,7 @@ async function getMixedFeedPosts(): Promise<PostWithDetails[]> {
       .from('posts')
       .select(`
         *,
-        profiles!user_id (
+        profiles!posts_user_id_fkey (
           username,
           avatar_url
         )
@@ -42,7 +42,7 @@ async function getMixedFeedPosts(): Promise<PostWithDetails[]> {
         .from('posts')
         .select(`
           *,
-          profiles!user_id (
+          profiles!posts_user_id_fkey (
             username,
             avatar_url
           ),
