@@ -8,8 +8,6 @@ interface HomePageProps {
 
 export default async function HomePage({ searchParams }: HomePageProps) {
   const { user } = await getUser()
-  const searchParamsObj = await searchParams
-  const hasSearchParams = Object.keys(searchParamsObj).length > 0
   
   // 사용자가 로그인하지 않은 경우 항상 랜딩 페이지 표시
   if (!user) {

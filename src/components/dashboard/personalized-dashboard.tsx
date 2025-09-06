@@ -20,6 +20,10 @@ interface PersonalizedDashboardProps {
 }
 
 export default function PersonalizedDashboard({ searchParams, user }: PersonalizedDashboardProps) {
+  const [activeTab, setActiveTab] = useState<string>('all')
+  const [currentCategory, setCurrentCategory] = useState<string | undefined>()
+  const hasSearchParams = Object.keys(searchParams).length > 0
+
   // Safety guard - if no user, show error or redirect
   if (!user) {
     return (
@@ -34,10 +38,6 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
       </div>
     )
   }
-
-  const [activeTab, setActiveTab] = useState<string>('all')
-  const [currentCategory, setCurrentCategory] = useState<string | undefined>()
-  const hasSearchParams = Object.keys(searchParams).length > 0
 
   const handleTabChange = (tab: string, category?: CommunityCategory) => {
     setActiveTab(tab)
