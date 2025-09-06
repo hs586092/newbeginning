@@ -4,6 +4,11 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
+  
+  // Get the correct base URL for production and development
+  const baseUrl = process.env.NODE_ENV === 'production' 
+    ? 'https://newbeginning-seven.vercel.app'
+    : (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000')
 
   if (code) {
     const supabase = await createServerSupabaseClient()
@@ -12,7 +17,7 @@ export async function GET(request: NextRequest) {
     
     if (error) {
       console.error('Auth callback error:', error)
-      return NextResponse.redirect(new URL('/login?error=auth_callback_error', requestUrl.origin))
+      return NextResponse.redirect(new URL('/login?error=auth_callback_error', baseUrl))
     }
 
     if (data.user) {
@@ -45,8 +50,8 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    return NextResponse.redirect(new URL('/', requestUrl.origin))
+    return NextResponse.redirect(new URL('/', baseUrl))
   }
 
-  return NextResponse.redirect(new URL('/login?error=no_code', requestUrl.origin))
+  return NextResponse.redirect(new URL('/login?error=no_code', baseUrl))
 }
