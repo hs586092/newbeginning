@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { signIn, signUp, signInWithGoogle } from '@/lib/auth/actions'
+import { signIn, signUp, signInWithGoogle, signInWithKakao } from '@/lib/auth/actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -46,6 +46,33 @@ function GoogleSignInButton() {
         />
       </svg>
       Google로 로그인
+    </Button>
+  )
+}
+
+function KakaoSignInButton() {
+  const [isPending, startTransition] = useTransition()
+
+  async function handleKakaoSignIn() {
+    startTransition(async () => {
+      const result = await signInWithKakao()
+      if (result?.error) {
+        toast.error(result.error)
+      }
+    })
+  }
+
+  return (
+    <Button
+      type="button"
+      className="w-full bg-yellow-300 hover:bg-yellow-400 text-gray-900 border-yellow-300"
+      onClick={handleKakaoSignIn}
+      loading={isPending}
+    >
+      <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 0 1-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3z"/>
+      </svg>
+      카카오로 로그인
     </Button>
   )
 }
@@ -114,7 +141,10 @@ export function SignInForm() {
         </div>
       </div>
 
-      <GoogleSignInButton />
+      <div className="space-y-3">
+        <GoogleSignInButton />
+        <KakaoSignInButton />
+      </div>
     </div>
   )
 }
@@ -196,7 +226,10 @@ export function SignUpForm() {
         </div>
       </div>
 
-      <GoogleSignInButton />
+      <div className="space-y-3">
+        <GoogleSignInButton />
+        <KakaoSignInButton />
+      </div>
     </div>
   )
 }

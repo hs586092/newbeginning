@@ -227,6 +227,31 @@ export async function signInWithGoogle() {
   }
 }
 
+export async function signInWithKakao() {
+  const supabase = await createServerSupabaseClient()
+  
+  // Get the correct base URL for production and development
+  const baseUrl = process.env.NODE_ENV === 'production' 
+    ? 'https://newbeginning-seven.vercel.app'
+    : (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000')
+  
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'kakao',
+    options: {
+      redirectTo: `${baseUrl}/auth/callback`,
+    }
+  })
+
+  if (error) {
+    console.error('Kakao OAuth error:', error)
+    return { error: '카카오 로그인 중 오류가 발생했습니다.' }
+  }
+
+  if (data?.url) {
+    redirect(data.url)
+  }
+}
+
 export async function signOut() {
   const supabase = await createServerSupabaseClient()
   
