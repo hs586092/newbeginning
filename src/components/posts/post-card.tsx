@@ -25,11 +25,11 @@ export function PostCard({ post, currentUserId, isOwner }: PostCardProps) {
   const metadata = post.educational_metadata
   
   const initialLiked = currentUserId ? 
-    post.likes.some(like => like.id === currentUserId) : 
+    post.likes?.some(like => like.id === currentUserId) || false : 
     false
   
   const [optimisticLike, toggleOptimisticLike] = useOptimistic(
-    { liked: initialLiked, count: post.likes.length },
+    { liked: initialLiked, count: post.likes?.length || 0 },
     (state) => ({
       liked: !state.liked,
       count: state.liked ? state.count - 1 : state.count + 1
@@ -241,7 +241,7 @@ export function PostCard({ post, currentUserId, isOwner }: PostCardProps) {
             className="flex items-center space-x-1 text-sm text-gray-500 hover:text-blue-600 transition-colors"
           >
             <MessageCircle className="w-5 h-5" />
-            <span>{post.comments.length}</span>
+            <span>{post.comments?.length || 0}</span>
           </Link>
           
           <div className="flex items-center space-x-1 text-sm text-gray-500">

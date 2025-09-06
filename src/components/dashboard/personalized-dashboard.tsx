@@ -24,8 +24,6 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
   const [currentCategory, setCurrentCategory] = useState<string | undefined>()
   const hasSearchParams = Object.keys(searchParams).length > 0
 
-  // 디버깅용: PersonalizedDashboard가 렌더링되는지 확인
-  console.log('🎯 PersonalizedDashboard rendering for user:', user?.email || 'unknown')
 
   // Safety guard - if no user, show error or redirect
   if (!user) {
