@@ -44,6 +44,11 @@ export default function PersonalSidebar({ user, className = '' }: PersonalSideba
       }
 
       try {
+        // Additional safety check
+        if (!user || !user.id) {
+          setIsLoading(false)
+          return
+        }
         // 프로필 정보 로드
         const { data: profileData } = await supabase
           .from('profiles')
