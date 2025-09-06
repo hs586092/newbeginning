@@ -76,3 +76,8 @@ Error: Route "/" used `Object.keys(searchParams)` or similar. `searchParams` sho
  ✓ Compiled in 67ms
  GET /sw.js 404 in 60ms
  ✓ Compiled in 62ms
+ ✓ Compiled / in 21ms
+ GET /?code=691e6b82-0262-4118-9156-58f57acd31c1 200 in 257ms
+ GET /sw.js 404 in 57ms
+ GET /sw.js 404 in 65ms
+ ✓ Compiled in 67ms
