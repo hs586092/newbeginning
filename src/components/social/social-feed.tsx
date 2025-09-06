@@ -109,7 +109,7 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
           .from('posts')
           .select(`
             *,
-            profiles!user_id (
+            profiles (
               username,
               avatar_url
             )
