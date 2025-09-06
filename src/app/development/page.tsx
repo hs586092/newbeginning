@@ -63,7 +63,7 @@ export default function DevelopmentPage() {
                 발달 이야기 나누기
               </Button>
             </Link>
-            <Link href="/">
+            <Link href="https://newbeginning-seven.vercel.app/">
               <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 홈으로 돌아가기
               </Button>

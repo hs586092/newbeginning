@@ -27,7 +27,7 @@ export default function NotFound() {
 
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/">
+            <Link href="https://newbeginning-seven.vercel.app/">
               <Button className="w-full sm:w-auto">
                 <Home className="w-4 h-4 mr-2" />
                 홈으로 이동

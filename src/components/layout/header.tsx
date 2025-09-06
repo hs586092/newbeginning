@@ -64,7 +64,7 @@ export function Header() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="https://newbeginning-seven.vercel.app/" className="flex items-center gap-2">
               <span className="text-3xl">🤱</span>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-blue-500 text-transparent bg-clip-text">
                 첫돌까지

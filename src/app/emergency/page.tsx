@@ -82,7 +82,7 @@ export default function EmergencyPage() {
                 안전 정보 공유하기
               </Button>
             </Link>
-            <Link href="/">
+            <Link href="https://newbeginning-seven.vercel.app/">
               <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 홈으로 돌아가기
               </Button>

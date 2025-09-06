@@ -29,7 +29,7 @@ export default function LoginPage() {
 
           <div className="mt-4 text-center">
             <Link 
-              href="/"
+              href="https://newbeginning-seven.vercel.app/"
               className="text-sm text-gray-500 hover:text-gray-700"
             >
               메인으로 돌아가기

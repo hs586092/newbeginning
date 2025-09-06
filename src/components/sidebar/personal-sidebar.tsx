@@ -26,7 +26,7 @@ interface UserStats {
 }
 
 interface PersonalSidebarProps {
-  user: SupabaseUser
+  user: SupabaseUser | null
   className?: string
 }
 
@@ -38,6 +38,11 @@ export default function PersonalSidebar({ user, className = '' }: PersonalSideba
 
   useEffect(() => {
     async function loadUserData() {
+      if (!user?.id) {
+        setIsLoading(false)
+        return
+      }
+
       try {
         // 프로필 정보 로드
         const { data: profileData } = await supabase
@@ -100,7 +105,12 @@ export default function PersonalSidebar({ user, className = '' }: PersonalSideba
     }
 
     loadUserData()
-  }, [user.id, supabase])
+  }, [user?.id, supabase])
+
+  // user가 없는 경우 렌더링하지 않음
+  if (!user) {
+    return null
+  }
 
   if (isLoading) {
     return (

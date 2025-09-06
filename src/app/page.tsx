@@ -8,7 +8,8 @@ interface HomePageProps {
 
 export default async function HomePage({ searchParams }: HomePageProps) {
   const { user } = await getUser()
-  const hasSearchParams = Object.keys(searchParams).length > 0
+  const searchParamsObj = await searchParams
+  const hasSearchParams = Object.keys(searchParamsObj).length > 0
   
   // 새 방문자나 검색 파라미터가 없을 때는 Customer-Centric 랜딩페이지 표시
   const showLandingPage = !user && !hasSearchParams

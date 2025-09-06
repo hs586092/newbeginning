@@ -63,7 +63,7 @@ export default function BabyFoodPage() {
                 이유식 고민 나누기
               </Button>
             </Link>
-            <Link href="/">
+            <Link href="https://newbeginning-seven.vercel.app/">
               <Button variant="outline" size="lg" className="w-full sm:w-auto">
                 홈으로 돌아가기
               </Button>

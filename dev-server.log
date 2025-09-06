@@ -1,0 +1,69 @@
+
+> newbeginning@0.1.0 dev
+> next dev --turbopack
+
+   ▲ Next.js 15.5.2 (Turbopack)
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.0.141:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Compiled middleware in 83ms
+ ✓ Ready in 818ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1540ms
+Error: Route "/" used `Object.keys(searchParams)` or similar. `searchParams` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.keys (<anonymous>)
+    at HomePage (src/app/page.tsx:11:34)
+   9 | export default async function HomePage({ searchParams }: HomePageProps) {
+  10 |   const { user } = await getUser()
+> 11 |   const hasSearchParams = Object.keys(searchParams).length > 0
+     |                                  ^
+  12 |   
+  13 |   // 새 방문자나 검색 파라미터가 없을 때는 Customer-Centric 랜딩페이지 표시
+  14 |   const showLandingPage = !user && !hasSearchParams
+ GET / 200 in 1835ms
+Error: Route "/" used `Object.keys(searchParams)` or similar. `searchParams` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Function.keys (<anonymous>)
+    at HomePage (src/app/page.tsx:11:34)
+   9 | export default async function HomePage({ searchParams }: HomePageProps) {
+  10 |   const { user } = await getUser()
+> 11 |   const hasSearchParams = Object.keys(searchParams).length > 0
+     |                                  ^
+  12 |   
+  13 |   // 새 방문자나 검색 파라미터가 없을 때는 Customer-Centric 랜딩페이지 표시
+  14 |   const showLandingPage = !user && !hasSearchParams
+ GET / 200 in 137ms
+ ✓ Compiled /login in 208ms
+ GET /login 200 in 321ms
+ GET /login 200 in 323ms
+ POST /login 303 in 26ms
+🔑 로그인 시도: { email: 'test@example.com' }
+❌ Supabase Auth Error: {
+  message: 'Invalid login credentials',
+  status: 400,
+  code: 'invalid_credentials'
+}
+ POST /login 200 in 394ms
+ ✓ Compiled in 72ms
+ ✓ Compiled / in 22ms
+ ⨯ TypeError: Cannot read properties of null (reading 'id')
+    at PersonalSidebar (src/components/sidebar/personal-sidebar.tsx:103:12)
+  101 |
+  102 |     loadUserData()
+> 103 |   }, [user.id, supabase])
+      |            ^
+  104 |
+  105 |   if (isLoading) {
+  106 |     return ( {
+  digest: '468007359'
+}
+ GET /?code=9196df38-a8ee-4f77-88f6-73278746481b 200 in 251ms
+ ✓ Compiled /_not-found/page in 148ms
+ GET /sw.js 404 in 198ms
+ GET /sw.js 404 in 48ms
+ ✓ Compiled in 74ms
+ GET /icons/icon-144x144.png 404 in 51ms
+ GET /sw.js 404 in 60ms
+ GET /sw.js 404 in 54ms
+ GET / 200 in 223ms
