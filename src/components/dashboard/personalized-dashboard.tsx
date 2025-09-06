@@ -5,7 +5,6 @@ import { RealtimeProvider } from '@/components/providers/realtime-provider'
 import { SearchBar } from '@/components/search/search-bar'
 import { SearchFilters } from '@/components/search/search-filters'
 import PersonalSidebar from '@/components/sidebar/personal-sidebar'
-import { RealtimeTest } from '@/components/test/realtime-test'
 import { Button } from '@/components/ui/button'
 import type { CommunityCategory } from '@/types/navigation'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
@@ -175,12 +174,6 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
 
               {/* Main Feed Area */}
               <div className="flex-1">
-                {/* Development component temporarily disabled due to API issues */}
-                {false && process.env.NODE_ENV === 'development' && (
-                  <div className="mb-6">
-                    <RealtimeTest />
-                  </div>
-                )}
 
                 {/* Feed Content with warm styling */}
                 <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-gray-100 p-6">
