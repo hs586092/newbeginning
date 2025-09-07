@@ -1,0 +1,60 @@
+/* 🎨 newbeginning 브랜드 색상 시스템 - 4개 핵심 색상 */
+
+:root {
+  /* 1️⃣ Primary - 따뜻한 핑크 (메인 액션, 브랜딩) */
+  --primary: #ec4899;        /* pink-500 */
+  --primary-light: #f3e8ff;  /* pink-50 */
+  --primary-dark: #be185d;   /* pink-700 */
+  
+  /* 2️⃣ Secondary - 차분한 블루 (보조 액션, 정보) */
+  --secondary: #3b82f6;      /* blue-500 */
+  --secondary-light: #eff6ff; /* blue-50 */
+  --secondary-dark: #1d4ed8;  /* blue-700 */
+  
+  /* 3️⃣ Neutral - 그레이 (텍스트, 배경, 경계선) */
+  --neutral: #6b7280;        /* gray-500 */
+  --neutral-light: #f9fafb;  /* gray-50 */
+  --neutral-dark: #374151;   /* gray-700 */
+  
+  /* 4️⃣ Accent - 보라 (하이라이트, 특별한 요소) */
+  --accent: #8b5cf6;         /* violet-500 */
+  --accent-light: #f5f3ff;   /* violet-50 */
+  --accent-dark: #5b21b6;    /* violet-700 */
+}
+
+/* 색상 유틸리티 클래스 */
+.bg-brand-primary { background-color: var(--primary); }
+.bg-brand-primary-light { background-color: var(--primary-light); }
+.bg-brand-primary-dark { background-color: var(--primary-dark); }
+
+.bg-brand-secondary { background-color: var(--secondary); }
+.bg-brand-secondary-light { background-color: var(--secondary-light); }
+.bg-brand-secondary-dark { background-color: var(--secondary-dark); }
+
+.bg-brand-neutral { background-color: var(--neutral); }
+.bg-brand-neutral-light { background-color: var(--neutral-light); }
+.bg-brand-neutral-dark { background-color: var(--neutral-dark); }
+
+.bg-brand-accent { background-color: var(--accent); }
+.bg-brand-accent-light { background-color: var(--accent-light); }
+.bg-brand-accent-dark { background-color: var(--accent-dark); }
+
+.text-brand-primary { color: var(--primary); }
+.text-brand-secondary { color: var(--secondary); }
+.text-brand-neutral { color: var(--neutral); }
+.text-brand-accent { color: var(--accent); }
+
+.border-brand-primary { border-color: var(--primary); }
+.border-brand-secondary { border-color: var(--secondary); }
+.border-brand-neutral { border-color: var(--neutral); }
+.border-brand-accent { border-color: var(--accent); }
+
+/* 카테고리별 색상 매핑 (기존 19개 → 4개 핵심 색상) */
+.category-pregnancy { @apply bg-brand-accent-light text-brand-accent-dark; }
+.category-newborn { @apply bg-brand-primary-light text-brand-primary-dark; }
+.category-infant { @apply bg-brand-secondary-light text-brand-secondary-dark; }
+.category-babyfood { @apply bg-brand-secondary-light text-brand-secondary-dark; }
+.category-sleep { @apply bg-brand-accent-light text-brand-accent-dark; }
+.category-health { @apply bg-brand-primary-light text-brand-primary-dark; }
+.category-daily { @apply bg-brand-neutral-light text-brand-neutral-dark; }
+.category-emergency { @apply bg-brand-primary-light text-brand-primary-dark; }

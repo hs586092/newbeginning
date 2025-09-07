@@ -47,14 +47,14 @@ interface SocialFeedProps {
 }
 
 const CATEGORY_COLORS = {
-  pregnancy: 'bg-purple-100 text-purple-700',
-  newborn: 'bg-pink-100 text-pink-700', 
-  infant: 'bg-blue-100 text-blue-700',
-  babyfood: 'bg-green-100 text-green-700',
-  sleep: 'bg-indigo-100 text-indigo-700',
-  health: 'bg-red-100 text-red-700',
-  daily: 'bg-yellow-100 text-yellow-700',
-  emergency: 'bg-red-100 text-red-700'
+  pregnancy: 'bg-violet-100 text-violet-700',    // accent 색상 
+  newborn: 'bg-pink-100 text-pink-700',         // primary 색상
+  infant: 'bg-blue-100 text-blue-700',          // secondary 색상
+  babyfood: 'bg-blue-100 text-blue-700',        // secondary 색상
+  sleep: 'bg-violet-100 text-violet-700',       // accent 색상
+  health: 'bg-pink-100 text-pink-700',          // primary 색상
+  daily: 'bg-gray-100 text-gray-700',           // neutral 색상
+  emergency: 'bg-pink-100 text-pink-700'        // primary 색상
 }
 
 const formatTimeAgo = (timestamp: string) => {
@@ -291,17 +291,17 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
   return (
     <div className="space-y-6">
       {posts.map(post => (
-        <article key={post.id} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+        <article key={post.id} className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
           {/* Post Header */}
           <header className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-pink-100 to-blue-100 rounded-full flex items-center justify-center">
-                <Baby className="w-6 h-6 text-pink-600" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-pink-100 to-blue-100 rounded-full flex items-center justify-center">
+                <Baby className="w-5 h-5 sm:w-6 sm:h-6 text-pink-600" />
               </div>
               <div className="flex-1">
-                <div className="flex items-center space-x-2">
-                  <h3 className="font-semibold text-gray-900">{post.author.username}</h3>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${CATEGORY_COLORS[post.category_id as keyof typeof CATEGORY_COLORS]}`}>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
+                  <h3 className="font-semibold text-gray-900 text-sm sm:text-base">{post.author.username}</h3>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium mt-1 sm:mt-0 self-start ${CATEGORY_COLORS[post.category_id as keyof typeof CATEGORY_COLORS]}`}>
                     {post.category_icon} {post.category_name}
                   </span>
                 </div>
@@ -323,14 +323,14 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
                 </div>
               </div>
             </div>
-            <button className="p-2 hover:bg-gray-100 rounded-full">
+            <button className="p-2 hover:bg-gray-100 rounded-full min-h-[44px] min-w-[44px] touch-manipulation">
               <MoreVertical className="w-5 h-5 text-gray-400" />
             </button>
           </header>
 
           {/* Post Content */}
           <div className="mb-4">
-            <p className="text-gray-900 leading-relaxed">{post.content}</p>
+            <p className="text-gray-900 leading-relaxed text-sm sm:text-base">{post.content}</p>
             
             {post.tags && post.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-3">
@@ -366,11 +366,11 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
           )}
 
           {/* Post Actions */}
-          <footer className="flex items-center justify-between pt-3 border-t border-gray-100">
-            <div className="flex items-center space-x-6">
+          <footer className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-3 border-t border-gray-100 space-y-3 sm:space-y-0">
+            <div className="flex items-center space-x-4 sm:space-x-6">
               <button
                 onClick={() => handleHug(post.id)}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-colors ${
+                className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-colors min-h-[44px] touch-manipulation ${
                   post.is_hugged_by_me
                     ? 'bg-pink-100 text-pink-600'
                     : 'text-gray-500 hover:bg-gray-100'
@@ -380,14 +380,14 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
                 <span className="text-sm font-medium">{post.hugs}</span>
               </button>
               
-              <button className="flex items-center space-x-2 text-gray-500 hover:bg-gray-100 px-3 py-2 rounded-full transition-colors">
+              <button className="flex items-center space-x-2 text-gray-500 hover:bg-gray-100 px-3 py-2 rounded-full transition-colors min-h-[44px] touch-manipulation">
                 <MessageCircle className="w-5 h-5" />
                 <span className="text-sm font-medium">댓글</span>
               </button>
               
               <button
                 onClick={() => handleBookmark(post.id)}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-colors ${
+                className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-colors min-h-[44px] touch-manipulation ${
                   post.is_bookmarked_by_me
                     ? 'bg-blue-100 text-blue-600'
                     : 'text-gray-500 hover:bg-gray-100'
@@ -397,7 +397,7 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
               </button>
             </div>
             
-            <div className="text-sm text-gray-400">
+            <div className="text-xs sm:text-sm text-gray-400 text-center sm:text-right">
               조회 {post.views.toLocaleString()}
             </div>
           </footer>

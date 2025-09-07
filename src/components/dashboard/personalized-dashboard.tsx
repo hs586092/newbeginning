@@ -96,22 +96,22 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
         </section>
 
         {/* Community Feed Section */}
-        <section className="py-16 bg-gradient-to-b from-pink-50 via-white to-blue-50">
-          <div className="max-w-7xl mx-auto px-4">
-            {/* Community Header - matching landing page */}
-            <div className="text-center mb-12">
+        <section className="py-8 md:py-12 lg:py-16 bg-gradient-to-b from-pink-50 via-white to-blue-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Community Header - Responsive */}
+            <div className="text-center mb-8 md:mb-12">
               <div className="inline-flex items-center space-x-2 bg-pink-100 px-4 py-2 rounded-full text-pink-700 font-medium mb-4">
                 <span className="text-lg">👥</span>
                 <span>나만의 맞춤 피드</span>
               </div>
               
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
                 <span className="bg-gradient-to-r from-pink-500 to-blue-500 text-transparent bg-clip-text">
                   {hasSearchParams ? '찾으시는 정보예요' : '오늘의 따뜻한 이야기들'}
                 </span>
               </h2>
               
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed px-4">
                 {hasSearchParams 
                   ? '검색하신 내용과 관련된 엄마들의 경험을 모았어요' 
                   : '엄마들의 실시간 고민과 기쁨을 함께 나누어요'}
@@ -125,10 +125,10 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
               className="mb-8"
             />
 
-            {/* Sidebar Layout - matching landing page */}
-            <div className="flex flex-col lg:flex-row gap-8">
-              {/* Sidebar - Complete Landing Page Style */}
-              <div className="lg:w-80 space-y-6">
+            {/* Responsive Layout - Mobile First */}
+            <div className="flex flex-col xl:flex-row gap-6 lg:gap-8">
+              {/* Sidebar - Mobile Optimized */}
+              <div className="w-full xl:w-80 xl:flex-shrink-0 space-y-4 md:space-y-6">
                 {/* Personal Stats Card - 소중한 순간들을 함께 기록하고 있어요 */}
                 <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-gray-100">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">
@@ -136,61 +136,61 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
                   </h3>
                   <div className="text-center text-sm text-gray-600 mb-6">소중한 순간들을 함께 기록하고 있어요</div>
                   
-                  <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-2 gap-3 md:gap-4 mb-4">
                     <div className="text-center">
-                      <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <span className="text-lg">❤️</span>
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <span className="text-sm sm:text-lg">❤️</span>
                       </div>
-                      <div className="text-lg font-bold text-gray-900">89.2K</div>
+                      <div className="text-sm sm:text-lg font-bold text-gray-900">89.2K</div>
                       <div className="text-xs text-gray-600">+15%</div>
                       <div className="text-xs text-gray-500">포근한 응원</div>
                     </div>
                     
                     <div className="text-center">
-                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <span className="text-lg">👥</span>
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <span className="text-sm sm:text-lg">👥</span>
                       </div>
-                      <div className="text-lg font-bold text-gray-900">2,847</div>
+                      <div className="text-sm sm:text-lg font-bold text-gray-900">2,847</div>
                       <div className="text-xs text-gray-600">+23%</div>
                       <div className="text-xs text-gray-500">활성 엄마들</div>
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-2 gap-3 md:gap-4">
                     <div className="text-center">
-                      <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <span className="text-lg">⭐</span>
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <span className="text-sm sm:text-lg">⭐</span>
                       </div>
-                      <div className="text-lg font-bold text-gray-900">94%</div>
+                      <div className="text-sm sm:text-lg font-bold text-gray-900">94%</div>
                       <div className="text-xs text-gray-600">+4%</div>
                       <div className="text-xs text-gray-500">만족도 지수</div>
                     </div>
                     
                     <div className="text-center">
-                      <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <span className="text-lg">⏰</span>
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <span className="text-sm sm:text-lg">⏰</span>
                       </div>
-                      <div className="text-lg font-bold text-gray-900">1,234</div>
+                      <div className="text-sm sm:text-lg font-bold text-gray-900">1,234</div>
                       <div className="text-xs text-gray-600">+38%</div>
                       <div className="text-xs text-gray-500">월간 글</div>
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="grid grid-cols-2 gap-3 mt-6">
-                    <button className="flex items-center justify-center space-x-1 px-3 py-2 bg-pink-500 text-white rounded-lg text-sm font-medium hover:bg-pink-600 transition-colors">
+                  {/* Action Buttons - Touch Friendly */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
+                    <button className="flex items-center justify-center space-x-2 px-4 py-3 bg-pink-500 text-white rounded-lg text-sm font-medium hover:bg-pink-600 transition-colors min-h-[44px] touch-manipulation">
                       <Heart className="w-4 h-4" />
                       <span>응원하기</span>
                     </button>
-                    <button className="flex items-center justify-center space-x-1 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                    <button className="flex items-center justify-center space-x-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors min-h-[44px] touch-manipulation">
                       <span>⏰</span>
                       <span>신속한 피드</span>
                     </button>
-                    <button className="flex items-center justify-center space-x-1 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                    <button className="flex items-center justify-center space-x-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors min-h-[44px] touch-manipulation">
                       <span>🎭</span>
                       <span>커뮤니티 소식</span>
                     </button>
-                    <button className="flex items-center justify-center space-x-1 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
+                    <button className="flex items-center justify-center space-x-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors min-h-[44px] touch-manipulation">
                       <span>📘</span>
                       <span>진료기록</span>
                     </button>
@@ -212,7 +212,7 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
                       <button
                         key={category.name}
                         onClick={() => setCurrentCategory(category.name)}
-                        className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors text-left ${
+                        className={`w-full flex items-center justify-between p-4 rounded-lg transition-colors text-left min-h-[48px] touch-manipulation ${
                           currentCategory === category.name
                             ? 'bg-pink-100 text-pink-700 border border-pink-200'
                             : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
@@ -263,8 +263,8 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
                 )}
               </div>
 
-              {/* Main Feed Area - Clean and Simple */}
-              <div className="flex-1">
+              {/* Main Feed Area - Responsive */}
+              <div className="flex-1 min-w-0">
                 <SocialFeed
                   selectedCategory={currentCategory}
                 />
