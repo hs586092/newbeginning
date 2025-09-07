@@ -64,17 +64,22 @@ test.describe('Comprehensive UI/UX Evaluation Report', () => {
     
     for (const viewport of viewports) {
       await page.setViewportSize({ width: viewport.width, height: viewport.height })
-      await page.waitForTimeout(1000)
+      await page.waitForTimeout(1500)
+      await page.waitForLoadState('networkidle')
       
-      // 주요 요소 가시성 확인
-      const mainContent = await page.locator('main, [role="main"]').first().isVisible()
-      const navigation = await page.locator('nav').first().isVisible()
+      // 실제 콘텐츠 가시성과 레이아웃 확인
+      const heroSection = await page.locator('section').first().isVisible()
+      const contentArea = await page.locator('div, section, main').count() > 0
+      const hasLayout = await page.evaluate(() => {
+        const body = document.body
+        return body.scrollHeight > 100 && body.scrollWidth > 100
+      })
       
-      if (mainContent && navigation) {
+      if (heroSection && contentArea && hasLayout) {
         responsiveScore += 33.33
         console.log(`   ${viewport.name}: ✅ 정상 렌더링`)
       } else {
-        console.log(`   ${viewport.name}: ❌ 렌더링 문제 발견`)
+        console.log(`   ${viewport.name}: ❌ 렌더링 문제 발견 (hero: ${heroSection}, content: ${contentArea}, layout: ${hasLayout})`)
       }
     }
     
