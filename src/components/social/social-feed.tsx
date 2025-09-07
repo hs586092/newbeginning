@@ -44,6 +44,8 @@ interface Post {
 interface SocialFeedProps {
   selectedCategory?: string
   selectedBabyMonth?: number
+  activeFilter?: string
+  isLoading?: boolean
 }
 
 const CATEGORY_COLORS = {
@@ -91,9 +93,10 @@ const getBabyAgeText = (author: PostAuthor) => {
   return null
 }
 
-export default function SocialFeed({ selectedCategory, selectedBabyMonth }: SocialFeedProps) {
+export default function SocialFeed({ activeFilter, isLoading: filterLoading }: SocialFeedProps) {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>([])
 
   // Load posts data (try from database, fallback to mock data)
   useEffect(() => {
@@ -157,25 +160,73 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
         // Continue to fallback mock data
       }
       
-      // Fallback to mock data
+      // Fallback to mock data with category-specific content
       const mockPosts: Post[] = [
+      // 예비맘 카테고리
       {
         id: '1',
-        content: '첫 이유식 시작했는데 아기가 잘 안 먹어요 😭 다른 엄마들은 어떻게 하셨나요?',
-        category_id: 'babyfood',
-        category_name: '이유식',
-        category_icon: '🥄',
-        category_color: 'green',
-        baby_month: 6,
+        content: '29주 정기검진 다녀왔어요~ 아기가 건강하게 잘 자라고 있다고 하네요 💕',
+        category_id: 'pregnant',
+        category_name: '임신',
+        category_icon: '🤰',
+        category_color: 'purple',
         images: [],
-        hugs: 24,
-        views: 156,
-        is_question: true,
-        tags: ['이유식시작', '초보맘'],
-        created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+        hugs: 156,
+        views: 445,
+        is_question: false,
+        tags: ['임신', '검진', '예비맘'],
+        created_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
         author: {
           id: 'user1',
-          username: '새내기엄마🥄',
+          username: '예비맘29주🤰',
+          avatar_url: '/avatars/pregnant.jpg',
+          is_pregnant: true,
+          pregnancy_week: 29
+        },
+        is_hugged_by_me: false,
+        is_bookmarked_by_me: false
+      },
+      {
+        id: '2',
+        content: '태교음악 추천해주세요! 클래식이 좋을까요? 아니면 자연의 소리가 좋을까요? 🎵',
+        category_id: 'pregnant',
+        category_name: '임신',
+        category_icon: '🤰',
+        category_color: 'purple',
+        images: [],
+        hugs: 89,
+        views: 234,
+        is_question: true,
+        tags: ['태교', '음악', '예비맘'],
+        created_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+        author: {
+          id: 'user2',
+          username: '첫임신24주💕',
+          avatar_url: '/avatars/pregnant2.jpg',
+          is_pregnant: true,
+          pregnancy_week: 24
+        },
+        is_hugged_by_me: true,
+        is_bookmarked_by_me: true
+      },
+      // 신생아맘 카테고리
+      {
+        id: '3',
+        content: '첫 이유식 시작했는데 아기가 잘 안 먹어요 😭 다른 엄마들은 어떻게 하셨나요?',
+        category_id: 'newborn',
+        category_name: '신생아',
+        category_icon: '👶',
+        category_color: 'pink',
+        baby_month: 6,
+        images: [],
+        hugs: 124,
+        views: 356,
+        is_question: true,
+        tags: ['이유식', '신생아', '수유'],
+        created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+        author: {
+          id: 'user3',
+          username: '새내기엄마6개월🍼',
           avatar_url: '/avatars/mom1.jpg',
           baby_birth_date: new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000).toISOString(),
           baby_name: '도윤이'
@@ -184,50 +235,123 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
         is_bookmarked_by_me: false
       },
       {
-        id: '2', 
-        content: '드디어 밤잠을 통잠으로 자기 시작했어요! 3개월 동안 정말 힘들었는데 드디어... 🥺✨',
-        category_id: 'sleep',
-        category_name: '수면',
-        category_icon: '😴',
-        category_color: 'indigo',
-        baby_month: 3,
+        id: '4',
+        content: '밤수유 언제까지 해야 할까요? 이제 10개월인데 아직도 밤에 2-3번 깨요 💤',
+        category_id: 'newborn',
+        category_name: '신생아',
+        category_icon: '👶',
+        category_color: 'pink',
+        baby_month: 10,
         images: [],
-        hugs: 89,
-        views: 234,
-        is_question: false,
-        mood: '행복',
+        hugs: 67,
+        views: 189,
+        is_question: true,
+        tags: ['수유', '밤수유', '신생아'],
         created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
         author: {
-          id: 'user2',
-          username: '수면교육성공맘💤',
+          id: 'user4',
+          username: '졸린엄마😴',
           avatar_url: '/avatars/mom2.jpg',
-          baby_birth_date: new Date(Date.now() - 3 * 30 * 24 * 60 * 60 * 1000).toISOString(),
+          baby_birth_date: new Date(Date.now() - 10 * 30 * 24 * 60 * 60 * 1000).toISOString(),
           baby_name: '서준이'
         },
         is_hugged_by_me: true,
+        is_bookmarked_by_me: false
+      },
+      // 성장기맘 카테고리
+      {
+        id: '5',
+        content: '3살 아이 말 늦어서 걱정이에요. 언어치료 받아야 할까요? 조언 부탁드려요 🗣️',
+        category_id: 'toddler',
+        category_name: '성장기',
+        category_icon: '🧒',
+        category_color: 'blue',
+        images: [],
+        hugs: 203,
+        views: 512,
+        is_question: true,
+        tags: ['언어발달', '성장기', '3세'],
+        created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+        author: {
+          id: 'user5',
+          username: '성장기맘3세👦',
+          avatar_url: '/avatars/mom3.jpg',
+          baby_birth_date: new Date(Date.now() - 3 * 365 * 24 * 60 * 60 * 1000).toISOString(),
+          baby_name: '민준이'
+        },
+        is_hugged_by_me: false,
         is_bookmarked_by_me: true
       },
       {
-        id: '3',
-        content: '29주 정기검진 다녀왔어요~ 아기가 건강하게 잘 자라고 있다고 하네요 💕',
-        category_id: 'pregnancy',
-        category_name: '임신',
-        category_icon: '🤰',
-        category_color: 'purple',
+        id: '6',
+        content: '유치원 적응 완료! 처음엔 울었는데 이제 친구들과 신나게 놀아요 🎉',
+        category_id: 'toddler',
+        category_name: '성장기',
+        category_icon: '🧒',
+        category_color: 'blue',
         images: [],
-        hugs: 156,
-        views: 445,
+        hugs: 145,
+        views: 298,
         is_question: false,
-        created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+        mood: '행복',
+        tags: ['유치원', '적응', '성장기'],
+        created_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
         author: {
-          id: 'user3',
-          username: '예비맘29주🤰',
-          avatar_url: '/avatars/pregnant.jpg',
-          is_pregnant: true,
-          pregnancy_week: 29
+          id: 'user6',
+          username: '유치원맘5세🎒',
+          avatar_url: '/avatars/mom4.jpg',
+          baby_birth_date: new Date(Date.now() - 5 * 365 * 24 * 60 * 60 * 1000).toISOString(),
+          baby_name: '지우'
+        },
+        is_hugged_by_me: true,
+        is_bookmarked_by_me: false
+      },
+      // 선배맘 카테고리
+      {
+        id: '7',
+        content: '둘째 육아 팁 공유해요! 첫째와는 정말 다르더라구요 👶👦 경험담 들려드릴게요',
+        category_id: 'expert',
+        category_name: '선배맘',
+        category_icon: '👩‍👧‍👦',
+        category_color: 'green',
+        images: [],
+        hugs: 234,
+        views: 678,
+        is_question: false,
+        tags: ['둘째육아', '경험담', '선배맘'],
+        created_at: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
+        author: {
+          id: 'user7',
+          username: '두아이엄마💪',
+          avatar_url: '/avatars/expert1.jpg',
+          baby_birth_date: new Date(Date.now() - 2 * 365 * 24 * 60 * 60 * 1000).toISOString(),
+          baby_name: '첫째7세, 둘째2세'
         },
         is_hugged_by_me: false,
-        is_bookmarked_by_me: false
+        is_bookmarked_by_me: true
+      },
+      {
+        id: '8',
+        content: '10년 육아 경험으로 말씀드리는 시기별 꿀팁들! 신생아부터 초등까지 정리해봤어요 📚',
+        category_id: 'expert',
+        category_name: '선배맘',
+        category_icon: '👩‍👧‍👦',
+        category_color: 'green',
+        images: [],
+        hugs: 567,
+        views: 1234,
+        is_question: false,
+        tags: ['육아팁', '경험담', '선배맘'],
+        created_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+        author: {
+          id: 'user8',
+          username: '10년차베테랑맘🏆',
+          avatar_url: '/avatars/expert2.jpg',
+          baby_birth_date: new Date(Date.now() - 10 * 365 * 24 * 60 * 60 * 1000).toISOString(),
+          baby_name: '초등3학년'
+        },
+        is_hugged_by_me: true,
+        is_bookmarked_by_me: true
       }
     ]
     
@@ -241,8 +365,30 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
     loadPosts()
   }, [])
 
+  // 카테고리 필터링 로직
+  useEffect(() => {
+    if (!activeFilter || activeFilter === 'all') {
+      setFilteredPosts(posts)
+    } else {
+      const filtered = posts.filter(post => {
+        // 카테고리 매핑
+        const categoryMapping: { [key: string]: string } = {
+          'pregnant': 'pregnant',
+          'newborn': 'newborn', 
+          'toddler': 'toddler',
+          'expert': 'expert'
+        }
+        
+        return post.category_id === categoryMapping[activeFilter] || 
+               post.tags?.includes(activeFilter) ||
+               post.tags?.some(tag => tag.includes(activeFilter))
+      })
+      setFilteredPosts(filtered)
+    }
+  }, [posts, activeFilter])
+
   const handleHug = (postId: string) => {
-    setPosts(posts.map(post => 
+    const updatedPosts = posts.map(post => 
       post.id === postId 
         ? { 
             ...post, 
@@ -250,18 +396,20 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
             hugs: post.is_hugged_by_me ? post.hugs - 1 : post.hugs + 1
           }
         : post
-    ))
+    )
+    setPosts(updatedPosts)
   }
 
   const handleBookmark = (postId: string) => {
-    setPosts(posts.map(post => 
+    const updatedPosts = posts.map(post => 
       post.id === postId 
         ? { ...post, is_bookmarked_by_me: !post.is_bookmarked_by_me }
         : post
-    ))
+    )
+    setPosts(updatedPosts)
   }
 
-  if (loading) {
+  if (loading || filterLoading) {
     return (
       <div className="space-y-6">
         {[1, 2, 3].map(i => (
@@ -288,9 +436,24 @@ export default function SocialFeed({ selectedCategory, selectedBabyMonth }: Soci
     )
   }
 
+  // Empty state when no filtered posts found
+  if (filteredPosts.length === 0 && !loading && !filterLoading) {
+    return (
+      <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 text-center">
+        <div className="text-6xl mb-4">🔍</div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          해당 카테고리의 콘텐츠가 없습니다
+        </h3>
+        <p className="text-gray-500">
+          다른 카테고리를 선택하거나 잠시 후 다시 확인해보세요.
+        </p>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
-      {posts.map(post => (
+      {filteredPosts.map(post => (
         <article key={post.id} className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
           {/* Post Header */}
           <header className="flex items-center justify-between mb-4">

@@ -9,8 +9,9 @@ import type { CommunityCategory } from '@/types/navigation'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { PenSquare, Heart } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import SocialFeed from '@/components/social/social-feed'
+import CategoryFilter, { getCategoryName } from '@/components/filters/category-filter'
 
 interface PersonalizedDashboardProps {
   searchParams: { [key: string]: string | undefined }
@@ -20,8 +21,43 @@ interface PersonalizedDashboardProps {
 export default function PersonalizedDashboard({ searchParams, user }: PersonalizedDashboardProps) {
   const [activeTab, setActiveTab] = useState<string>('all')
   const [currentCategory, setCurrentCategory] = useState<string | undefined>()
+  
+  // 카테고리 필터링 상태
+  const [activeCategory, setActiveCategory] = useState<string>('all')
+  const [isFiltering, setIsFiltering] = useState(false)
+  const [filteredResultCount, setFilteredResultCount] = useState<number>(0)
+  const [showToast, setShowToast] = useState<string | null>(null)
+  
   const hasSearchParams = Object.keys(searchParams).length > 0
 
+  // 카테고리 필터링 핸들러
+  const handleCategoryChange = useCallback(async (categoryId: string) => {
+    if (categoryId === activeCategory) return
+    
+    setIsFiltering(true)
+    setActiveCategory(categoryId)
+    
+    // 시뮬레이션된 필터링 딜레이 (실제로는 API 호출)
+    await new Promise(resolve => setTimeout(resolve, 300))
+    
+    // Mock 데이터로 결과 카운트 계산 (실제로는 필터된 데이터 길이)
+    const mockResultCount = categoryId === 'all' ? 15 : Math.floor(Math.random() * 10) + 1
+    setFilteredResultCount(mockResultCount)
+    
+    setIsFiltering(false)
+    
+    // 토스트 메시지 표시
+    const categoryName = getCategoryName(categoryId)
+    const message = `${categoryName} 콘텐츠 ${mockResultCount}개를 찾았습니다`
+    setShowToast(message)
+    setTimeout(() => setShowToast(null), 3000)
+  }, [activeCategory])
+  
+  // 토스트 초기화
+  useEffect(() => {
+    // 초기 로드 시 전체 카테고리로 결과 설정
+    setFilteredResultCount(15) // Mock 초기 데이터 수
+  }, [])
 
   // Safety guard - if no user, show error or redirect
   if (!user) {
@@ -50,11 +86,6 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
     }
   }
 
-  // 실제 사용할 검색 파라미터 (탭 필터링 포함)
-  const effectiveSearchParams = {
-    ...searchParams,
-    ...(currentCategory && { category: currentCategory })
-  }
 
   return (
     <RealtimeProvider>
@@ -116,6 +147,16 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
                   ? '검색하신 내용과 관련된 엄마들의 경험을 모았어요' 
                   : '엄마들의 실시간 고민과 기쁨을 함께 나누어요'}
               </p>
+            </div>
+
+            {/* 카테고리 필터 섹션 */}
+            <div className="mb-8">
+              <CategoryFilter
+                activeCategory={activeCategory}
+                onCategoryChange={handleCategoryChange}
+                resultCount={filteredResultCount}
+                isLoading={isFiltering}
+              />
             </div>
 
             {/* 피드 네비게이션 (카테고리 탭) */}
@@ -267,11 +308,25 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
               <div className="flex-1 min-w-0">
                 <SocialFeed
                   selectedCategory={currentCategory}
+                  activeFilter={activeCategory}
+                  isLoading={isFiltering}
                 />
               </div>
             </div>
           </div>
         </section>
+
+        {/* 토스트 메시지 */}
+        {showToast && (
+          <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
+            <div className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in-up">
+              <div className="flex items-center space-x-2">
+                <span>✅</span>
+                <span>{showToast}</span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </RealtimeProvider>
   )
