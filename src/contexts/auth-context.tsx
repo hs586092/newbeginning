@@ -142,7 +142,7 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
   }, [log, logError])
 
   /**
-   * Initialize authentication state
+   * Initialize authentication state with aggressive retry for OAuth scenarios
    */
   const initializeAuth = useCallback(async (): Promise<void> => {
     if (initializationPromise.current) {
@@ -154,14 +154,37 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
         log('Initializing authentication state')
         dispatch({ type: 'SET_LOADING', payload: true })
 
-        // Get current session and user
-        const [{ session }, { user }] = await Promise.all([
-          authClient.current!.getCurrentSession(),
-          authClient.current!.getCurrentUser()
-        ])
+        let retryCount = 0
+        const maxRetries = 3
+        let session: any = null
+        let user: any = null
+
+        // Retry logic for OAuth callback scenarios where session might be delayed
+        while (retryCount < maxRetries) {
+          const [sessionResult, userResult] = await Promise.all([
+            authClient.current!.getCurrentSession(),
+            authClient.current!.getCurrentUser()
+          ])
+
+          session = sessionResult.session
+          user = userResult.user
+
+          if (session && user) {
+            log(`Found session and user on attempt ${retryCount + 1}`)
+            break
+          }
+
+          // If no session/user found, wait a bit and retry (for OAuth callback cases)
+          if (retryCount < maxRetries - 1) {
+            log(`No session found on attempt ${retryCount + 1}, retrying...`)
+            await new Promise(resolve => setTimeout(resolve, 500))
+          }
+          
+          retryCount++
+        }
 
         if (session && user) {
-          log('Found existing session and user')
+          log('Successfully authenticated user found')
           dispatch({ 
             type: 'SET_USER', 
             payload: { user, session } 
@@ -172,16 +195,18 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
             await loadProfile(user.id)
           }
         } else {
-          log('No existing session found')
+          log('No authenticated session found after retries')
           dispatch({ type: 'RESET_STATE' })
         }
 
         dispatch({ type: 'SET_INITIALIZED', payload: true })
+        dispatch({ type: 'SET_LOADING', payload: false })
         log('Authentication initialization completed')
       } catch (error) {
         logError('Failed to initialize auth:', error)
         dispatch({ type: 'RESET_STATE' })
         dispatch({ type: 'SET_INITIALIZED', payload: true })
+        dispatch({ type: 'SET_LOADING', payload: false })
       }
     })()
 
