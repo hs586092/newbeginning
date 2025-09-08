@@ -279,13 +279,13 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
                 무료로 시작하기
               </Button>
             </Link>
-            <Link href="/community">
+            <Link href="/">
               <Button 
                 variant="outline" 
                 size="lg" 
                 className="w-full sm:w-auto border-white text-white hover:bg-white hover:text-gray-900 font-semibold text-lg px-8 py-4"
               >
-                커뮤니티 둘러보기
+                둘러보기
               </Button>
             </Link>
           </div>

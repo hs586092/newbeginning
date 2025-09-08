@@ -180,13 +180,13 @@ export function HeroSection({ userType = null, onUserTypeSelect }: HeroSectionPr
               </Button>
             </Link>
             
-            <Link href="/community" className="w-full sm:w-auto">
+            <Link href="/" className="w-full sm:w-auto">
               <Button
                 variant="ghost"
                 size="lg"
                 className="w-full sm:w-auto text-white border-2 border-white/30 hover:border-white/50 hover:bg-white/10 font-semibold text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full transition-all duration-300 min-h-[48px]"
               >
-                커뮤니티 둘러보기
+                둘러보기
               </Button>
             </Link>
           </div>

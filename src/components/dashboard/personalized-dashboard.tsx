@@ -76,10 +76,7 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
 
   const handleTabChange = (tab: string, category?: CommunityCategory) => {
     setActiveTab(tab)
-    if (tab === 'educational') {
-      // 정보센터로 이동
-      window.location.href = '/educational'
-    } else if (category && category !== 'all') {
+    if (category && category !== 'all') {
       setCurrentCategory(category)
     } else {
       setCurrentCategory(undefined)

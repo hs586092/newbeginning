@@ -62,11 +62,8 @@ export default function FeedTabNavigation({
   }
 
   const handleTabClick = (item: NavigationItem) => {
-    if (item.id === 'community') {
-      // 커뮤니티는 피드 필터링
-      onTabChange(item.id, 'all')
-    } else if (item.category) {
-      // 다른 카테고리들은 피드 필터링
+    if (item.category) {
+      // 카테고리들은 피드 필터링
       onTabChange(item.id, item.category as CommunityCategory)
     } else {
       // 전용 페이지로 이동
