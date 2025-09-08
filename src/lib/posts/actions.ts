@@ -102,7 +102,7 @@ export async function createPost(formData: FormData) {
 
     const { data, error } = await supabase
       .from('posts')
-      .insert(postData)
+      .insert(postData as any)
       .select()
       .single()
 
