@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Heart, MessageCircle, Bookmark, MoreVertical, Baby, Clock } from 'lucide-react'
+import { MoreVertical, Baby, Clock } from 'lucide-react'
 import Image from 'next/image'
+import { PostInteractions } from '@/components/posts/post-interactions'
 
 interface PostAuthor {
   id: string
@@ -45,6 +46,7 @@ interface SocialFeedProps {
   selectedCategory?: string
   selectedBabyMonth?: number
   activeFilter?: string
+  smartFilter?: string
   isLoading?: boolean
 }
 
@@ -93,7 +95,7 @@ const getBabyAgeText = (author: PostAuthor) => {
   return null
 }
 
-export default function SocialFeed({ activeFilter, isLoading: filterLoading }: SocialFeedProps) {
+export default function SocialFeed({ activeFilter, smartFilter, isLoading: filterLoading }: SocialFeedProps) {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [filteredPosts, setFilteredPosts] = useState<Post[]>([])
@@ -127,10 +129,10 @@ export default function SocialFeed({ activeFilter, isLoading: filterLoading }: S
             content: post.content || post.title || '내용을 불러올 수 없습니다',
             category_id: post.category || 'community',
             category_name: post.category === 'community' ? '커뮤니티' : 
-                           post.category === 'expecting' ? '예비맘' :
-                           post.category === 'newborn' ? '신생아맘' :
-                           post.category === 'toddler' ? '성장기맘' :
-                           post.category === 'expert' ? '선배맘' : '커뮤니티',
+                           post.category === 'expecting' ? '예비양육자' :
+                           post.category === 'newborn' ? '신생아 양육자' :
+                           post.category === 'toddler' ? '성장기 양육자' :
+                           post.category === 'expert' ? '선배 양육자' : '커뮤니티',
             category_icon: post.category === 'community' ? '💬' :
                           post.category === 'expecting' ? '🤰' :
                           post.category === 'newborn' ? '👶' :
@@ -166,23 +168,23 @@ export default function SocialFeed({ activeFilter, isLoading: filterLoading }: S
       
       // Fallback to mock data with category-specific content
       const mockPosts: Post[] = [
-      // 예비맘 카테고리
+      // 예비양육자 카테고리
       {
         id: '1',
         content: '29주 정기검진 다녀왔어요~ 아기가 건강하게 잘 자라고 있다고 하네요 💕',
         category_id: 'pregnant',
-        category_name: '임신',
+        category_name: '예비양육자',
         category_icon: '🤰',
         category_color: 'purple',
         images: [],
         hugs: 156,
         views: 445,
         is_question: false,
-        tags: ['임신', '검진', '예비맘'],
+        tags: ['임신', '검진', '예비양육자'],
         created_at: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
         author: {
           id: 'user1',
-          username: '예비맘29주🤰',
+          username: '29주차양육준비자🤰',
           avatar_url: '/avatars/pregnant.jpg',
           is_pregnant: true,
           pregnancy_week: 29
@@ -194,14 +196,14 @@ export default function SocialFeed({ activeFilter, isLoading: filterLoading }: S
         id: '2',
         content: '태교음악 추천해주세요! 클래식이 좋을까요? 아니면 자연의 소리가 좋을까요? 🎵',
         category_id: 'pregnant',
-        category_name: '임신',
+        category_name: '예비양육자',
         category_icon: '🤰',
         category_color: 'purple',
         images: [],
         hugs: 89,
         views: 234,
         is_question: true,
-        tags: ['태교', '음악', '예비맘'],
+        tags: ['태교', '음악', '예비양육자'],
         created_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
         author: {
           id: 'user2',
@@ -213,12 +215,12 @@ export default function SocialFeed({ activeFilter, isLoading: filterLoading }: S
         is_hugged_by_me: true,
         is_bookmarked_by_me: true
       },
-      // 신생아맘 카테고리
+      // 신생아 양육자 카테고리
       {
         id: '3',
-        content: '첫 이유식 시작했는데 아기가 잘 안 먹어요 😭 다른 엄마들은 어떻게 하셨나요?',
+        content: '첫 이유식 시작했는데 아기가 잘 안 먹어요 😭 다른 양육자분들은 어떻게 하셨나요?',
         category_id: 'newborn',
-        category_name: '신생아',
+        category_name: '신생아 양육자',
         category_icon: '👶',
         category_color: 'pink',
         baby_month: 6,
@@ -230,7 +232,7 @@ export default function SocialFeed({ activeFilter, isLoading: filterLoading }: S
         created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
         author: {
           id: 'user3',
-          username: '새내기엄마6개월🍼',
+          username: '신생아양육자6개월🍼',
           avatar_url: '/avatars/mom1.jpg',
           baby_birth_date: new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000).toISOString(),
           baby_name: '도윤이'
@@ -242,7 +244,7 @@ export default function SocialFeed({ activeFilter, isLoading: filterLoading }: S
         id: '4',
         content: '밤수유 언제까지 해야 할까요? 이제 10개월인데 아직도 밤에 2-3번 깨요 💤',
         category_id: 'newborn',
-        category_name: '신생아',
+        category_name: '신생아 양육자',
         category_icon: '👶',
         category_color: 'pink',
         baby_month: 10,
@@ -254,7 +256,7 @@ export default function SocialFeed({ activeFilter, isLoading: filterLoading }: S
         created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
         author: {
           id: 'user4',
-          username: '졸린엄마😴',
+          username: '졸린양육자😴',
           avatar_url: '/avatars/mom2.jpg',
           baby_birth_date: new Date(Date.now() - 10 * 30 * 24 * 60 * 60 * 1000).toISOString(),
           baby_name: '서준이'
@@ -262,12 +264,12 @@ export default function SocialFeed({ activeFilter, isLoading: filterLoading }: S
         is_hugged_by_me: true,
         is_bookmarked_by_me: false
       },
-      // 성장기맘 카테고리
+      // 성장기 양육자 카테고리
       {
         id: '5',
         content: '3살 아이 말 늦어서 걱정이에요. 언어치료 받아야 할까요? 조언 부탁드려요 🗣️',
         category_id: 'toddler',
-        category_name: '성장기',
+        category_name: '성장기 양육자',
         category_icon: '🧒',
         category_color: 'blue',
         images: [],
@@ -278,7 +280,7 @@ export default function SocialFeed({ activeFilter, isLoading: filterLoading }: S
         created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
         author: {
           id: 'user5',
-          username: '성장기맘3세👦',
+          username: '성장기양육자3세👦',
           avatar_url: '/avatars/mom3.jpg',
           baby_birth_date: new Date(Date.now() - 3 * 365 * 24 * 60 * 60 * 1000).toISOString(),
           baby_name: '민준이'
@@ -290,7 +292,7 @@ export default function SocialFeed({ activeFilter, isLoading: filterLoading }: S
         id: '6',
         content: '유치원 적응 완료! 처음엔 울었는데 이제 친구들과 신나게 놀아요 🎉',
         category_id: 'toddler',
-        category_name: '성장기',
+        category_name: '성장기 양육자',
         category_icon: '🧒',
         category_color: 'blue',
         images: [],
@@ -302,7 +304,7 @@ export default function SocialFeed({ activeFilter, isLoading: filterLoading }: S
         created_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
         author: {
           id: 'user6',
-          username: '유치원맘5세🎒',
+          username: '유치원양육자5세🎒',
           avatar_url: '/avatars/mom4.jpg',
           baby_birth_date: new Date(Date.now() - 5 * 365 * 24 * 60 * 60 * 1000).toISOString(),
           baby_name: '지우'
@@ -310,23 +312,23 @@ export default function SocialFeed({ activeFilter, isLoading: filterLoading }: S
         is_hugged_by_me: true,
         is_bookmarked_by_me: false
       },
-      // 선배맘 카테고리
+      // 선배 양육자 카테고리
       {
         id: '7',
         content: '둘째 육아 팁 공유해요! 첫째와는 정말 다르더라구요 👶👦 경험담 들려드릴게요',
         category_id: 'expert',
-        category_name: '선배맘',
+        category_name: '선배 양육자',
         category_icon: '👩‍👧‍👦',
         category_color: 'green',
         images: [],
         hugs: 234,
         views: 678,
         is_question: false,
-        tags: ['둘째육아', '경험담', '선배맘'],
+        tags: ['둘째육아', '경험담', '선배양육자'],
         created_at: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
         author: {
           id: 'user7',
-          username: '두아이엄마💪',
+          username: '두아이양육자💪',
           avatar_url: '/avatars/expert1.jpg',
           baby_birth_date: new Date(Date.now() - 2 * 365 * 24 * 60 * 60 * 1000).toISOString(),
           baby_name: '첫째7세, 둘째2세'
@@ -338,18 +340,18 @@ export default function SocialFeed({ activeFilter, isLoading: filterLoading }: S
         id: '8',
         content: '10년 육아 경험으로 말씀드리는 시기별 꿀팁들! 신생아부터 초등까지 정리해봤어요 📚',
         category_id: 'expert',
-        category_name: '선배맘',
+        category_name: '선배 양육자',
         category_icon: '👩‍👧‍👦',
         category_color: 'green',
         images: [],
         hugs: 567,
         views: 1234,
         is_question: false,
-        tags: ['육아팁', '경험담', '선배맘'],
+        tags: ['육아팁', '경험담', '선배양육자'],
         created_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
         author: {
           id: 'user8',
-          username: '10년차베테랑맘🏆',
+          username: '10년차베테랑양육자🏆',
           avatar_url: '/avatars/expert2.jpg',
           baby_birth_date: new Date(Date.now() - 10 * 365 * 24 * 60 * 60 * 1000).toISOString(),
           baby_name: '초등3학년'
@@ -369,12 +371,49 @@ export default function SocialFeed({ activeFilter, isLoading: filterLoading }: S
     loadPosts()
   }, [])
 
-  // 카테고리 필터링 로직
+  // 스마트 필터 적용 함수
+  const applySmartFilter = (postsToFilter: Post[], filter?: string) => {
+    if (!filter || filter === 'latest') {
+      // 최신글: 생성 시간 기준 내림차순 (기본값)
+      return [...postsToFilter].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    }
+    
+    if (filter === 'popular') {
+      // 인기글: 좋아요(hugs) + 조회수 기준 내림차순
+      return [...postsToFilter].sort((a, b) => {
+        const scoreA = a.hugs * 2 + Math.floor(a.views / 10) // hugs에 더 높은 가중치
+        const scoreB = b.hugs * 2 + Math.floor(b.views / 10)
+        return scoreB - scoreA
+      })
+    }
+    
+    if (filter === 'comments') {
+      // 댓글많은글: 현재는 hugs를 기준으로 정렬 (댓글 수 데이터가 없으므로)
+      // 실제로는 댓글 수를 기준으로 정렬해야 함
+      return [...postsToFilter].sort((a, b) => b.hugs - a.hugs)
+    }
+    
+    if (filter === 'expert') {
+      // 전문가글: expert 카테고리 우선, 그 다음 hugs 높은 순
+      return [...postsToFilter].sort((a, b) => {
+        // expert 카테고리인 글을 우선 배치
+        if (a.category_id === 'expert' && b.category_id !== 'expert') return -1
+        if (a.category_id !== 'expert' && b.category_id === 'expert') return 1
+        // 같은 카테고리면 hugs 기준으로 정렬
+        return b.hugs - a.hugs
+      })
+    }
+    
+    return postsToFilter
+  }
+
+  // 카테고리 필터링 및 스마트 필터 적용 로직
   useEffect(() => {
-    if (!activeFilter || activeFilter === 'all') {
-      setFilteredPosts(posts)
-    } else {
-      const filtered = posts.filter(post => {
+    let filtered = posts
+    
+    // 1단계: 카테고리 필터 적용
+    if (activeFilter && activeFilter !== 'all') {
+      filtered = posts.filter(post => {
         // 카테고리 매핑
         const categoryMapping: { [key: string]: string } = {
           'pregnant': 'pregnant',
@@ -387,31 +426,14 @@ export default function SocialFeed({ activeFilter, isLoading: filterLoading }: S
                post.tags?.includes(activeFilter) ||
                post.tags?.some(tag => tag.includes(activeFilter))
       })
-      setFilteredPosts(filtered)
     }
-  }, [posts, activeFilter])
+    
+    // 2단계: 스마트 필터 적용
+    const finalFiltered = applySmartFilter(filtered, smartFilter)
+    
+    setFilteredPosts(finalFiltered)
+  }, [posts, activeFilter, smartFilter])
 
-  const handleHug = (postId: string) => {
-    const updatedPosts = posts.map(post => 
-      post.id === postId 
-        ? { 
-            ...post, 
-            is_hugged_by_me: !post.is_hugged_by_me,
-            hugs: post.is_hugged_by_me ? post.hugs - 1 : post.hugs + 1
-          }
-        : post
-    )
-    setPosts(updatedPosts)
-  }
-
-  const handleBookmark = (postId: string) => {
-    const updatedPosts = posts.map(post => 
-      post.id === postId 
-        ? { ...post, is_bookmarked_by_me: !post.is_bookmarked_by_me }
-        : post
-    )
-    setPosts(updatedPosts)
-  }
 
   if (loading || filterLoading) {
     return (
@@ -533,41 +555,15 @@ export default function SocialFeed({ activeFilter, isLoading: filterLoading }: S
           )}
 
           {/* Post Actions */}
-          <footer className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-3 border-t border-gray-100 space-y-3 sm:space-y-0">
-            <div className="flex items-center space-x-4 sm:space-x-6">
-              <button
-                onClick={() => handleHug(post.id)}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-colors min-h-[44px] touch-manipulation ${
-                  post.is_hugged_by_me
-                    ? 'bg-pink-100 text-pink-600'
-                    : 'text-gray-500 hover:bg-gray-100'
-                }`}
-              >
-                <Heart className={`w-5 h-5 ${post.is_hugged_by_me ? 'fill-current' : ''}`} />
-                <span className="text-sm font-medium">{post.hugs}</span>
-              </button>
-              
-              <button className="flex items-center space-x-2 text-gray-500 hover:bg-gray-100 px-3 py-2 rounded-full transition-colors min-h-[44px] touch-manipulation">
-                <MessageCircle className="w-5 h-5" />
-                <span className="text-sm font-medium">댓글</span>
-              </button>
-              
-              <button
-                onClick={() => handleBookmark(post.id)}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-colors min-h-[44px] touch-manipulation ${
-                  post.is_bookmarked_by_me
-                    ? 'bg-blue-100 text-blue-600'
-                    : 'text-gray-500 hover:bg-gray-100'
-                }`}
-              >
-                <Bookmark className={`w-5 h-5 ${post.is_bookmarked_by_me ? 'fill-current' : ''}`} />
-              </button>
-            </div>
-            
-            <div className="text-xs sm:text-sm text-gray-400 text-center sm:text-right">
-              조회 {post.views.toLocaleString()}
-            </div>
-          </footer>
+          <PostInteractions 
+            postId={post.id}
+            initialLiked={post.is_hugged_by_me}
+            initialBookmarked={post.is_bookmarked_by_me}
+            likesCount={post.hugs}
+            commentsCount={0}
+            viewsCount={post.views}
+            isLoggedIn={false}
+          />
         </article>
       ))}
     </div>

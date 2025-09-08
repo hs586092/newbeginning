@@ -11,7 +11,7 @@ export interface NavigationItem {
 export const NAVIGATION_ITEMS: NavigationItem[] = [
   {
     id: 'expecting',
-    name: '예비맘',
+    name: '예비양육자',
     emoji: '🤰',
     href: '/expecting',
     description: '임신~출산 준비 정보',
@@ -19,7 +19,7 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   },
   {
     id: 'newborn',
-    name: '신생아맘',
+    name: '신생아 양육자',
     emoji: '👶',
     href: '/newborn',
     description: '0-6개월 신생아 돌봄',
@@ -27,7 +27,7 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   },
   {
     id: 'toddler',
-    name: '성장기맘',
+    name: '성장기 양육자',
     emoji: '🧒',
     href: '/toddler',
     description: '7개월-5세 성장기 가이드',
@@ -35,10 +35,10 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   },
   {
     id: 'expert',
-    name: '선배맘',
+    name: '선배 양육자',
     emoji: '👩‍👧‍👦',
     href: '/expert',
-    description: '경험 많은 선배맘들의 노하우',
+    description: '경험 많은 양육자들의 노하우',
     category: 'expert'
   }
 ]

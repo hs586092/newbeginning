@@ -9,7 +9,16 @@ interface FeedTabNavigationProps {
   activeTab: string
   onTabChange: (tab: string, category?: CommunityCategory) => void
   className?: string
+  onSmartFilterChange?: (filter: string) => void
+  activeSmartFilter?: string
 }
+
+const SMART_FILTERS = [
+  { value: 'latest', label: '최신글', icon: '⏰', color: 'text-blue-600' },
+  { value: 'popular', label: '인기글', icon: '🔥', color: 'text-red-600' },
+  { value: 'comments', label: '댓글많은글', icon: '💬', color: 'text-green-600' },
+  { value: 'expert', label: '전문가글', icon: '⭐', color: 'text-yellow-600' }
+]
 
 const getCategoryColorClasses = (item: NavigationItem, isActive: boolean) => {
   if (item.color === 'danger') {
@@ -32,7 +41,9 @@ const getCategoryColorClasses = (item: NavigationItem, isActive: boolean) => {
 export default function FeedTabNavigation({ 
   activeTab, 
   onTabChange, 
-  className = '' 
+  className = '',
+  onSmartFilterChange,
+  activeSmartFilter = 'latest'
 }: FeedTabNavigationProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [showLeftArrow, setShowLeftArrow] = useState(false)
@@ -136,6 +147,31 @@ export default function FeedTabNavigation({
                 <span className="font-medium whitespace-nowrap">{item.name}</span>
               </button>
             ))}
+
+            {/* 스마트 필터 구분선 및 필터들 */}
+            {onSmartFilterChange && (
+              <>
+                <div className="flex-shrink-0 w-px h-8 bg-gray-300 mx-2"></div>
+                
+                {SMART_FILTERS.map(filter => (
+                  <button
+                    key={filter.value}
+                    onClick={() => onSmartFilterChange(filter.value)}
+                    className={`flex-shrink-0 flex items-center space-x-1.5 px-3 py-2 rounded-lg transition-all duration-200 border text-sm ${
+                      activeSmartFilter === filter.value
+                        ? 'bg-blue-600 text-white shadow-md border-blue-600'
+                        : 'bg-white text-gray-600 hover:bg-gray-50 border-gray-200'
+                    }`}
+                    title={`${filter.label} 순으로 정렬`}
+                  >
+                    <span className={`text-sm ${activeSmartFilter === filter.value ? 'text-white' : filter.color}`}>
+                      {filter.icon}
+                    </span>
+                    <span className="font-medium whitespace-nowrap">{filter.label}</span>
+                  </button>
+                ))}
+              </>
+            )}
           </div>
         </div>
       </div>

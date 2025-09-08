@@ -28,6 +28,9 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
   const [filteredResultCount, setFilteredResultCount] = useState<number>(0)
   const [showToast, setShowToast] = useState<string | null>(null)
   
+  // 스마트 필터 상태
+  const [activeSmartFilter, setActiveSmartFilter] = useState<string>('latest')
+  
   const hasSearchParams = Object.keys(searchParams).length > 0
 
   // 카테고리 필터링 핸들러
@@ -52,6 +55,23 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
     setShowToast(message)
     setTimeout(() => setShowToast(null), 3000)
   }, [activeCategory])
+  
+  // 스마트 필터 변경 핸들러
+  const handleSmartFilterChange = (filter: string) => {
+    setActiveSmartFilter(filter)
+    
+    // 토스트 메시지 표시
+    const filterNames: { [key: string]: string } = {
+      'latest': '최신글',
+      'popular': '인기글', 
+      'comments': '댓글많은글',
+      'expert': '전문가글'
+    }
+    
+    const filterName = filterNames[filter] || '최신글'
+    setShowToast(`${filterName} 순으로 정렬했습니다`)
+    setTimeout(() => setShowToast(null), 2000)
+  }
   
   // 토스트 초기화
   useEffect(() => {
@@ -100,7 +120,7 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
               <div className="flex items-center justify-center space-x-2 mb-4">
                 <span className="text-2xl">🤱</span>
                 <h1 className="text-3xl md:text-4xl font-bold">
-                  안녕하세요, {user.user_metadata?.full_name || user.email?.split('@')[0] || '엄마'}님!
+                  안녕하세요, {user.user_metadata?.full_name || user.email?.split('@')[0] || '양육자'}님!
                 </h1>
               </div>
               <p className="text-lg md:text-xl text-white/90 mb-6">
@@ -141,8 +161,8 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
               
               <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed px-4">
                 {hasSearchParams 
-                  ? '검색하신 내용과 관련된 엄마들의 경험을 모았어요' 
-                  : '엄마들의 실시간 고민과 기쁨을 함께 나누어요'}
+                  ? '검색하신 내용과 관련된 양육자들의 경험을 모았어요' 
+                  : '양육자들의 실시간 고민과 기쁨을 함께 나누어요'}
               </p>
             </div>
 
@@ -156,10 +176,12 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
               />
             </div>
 
-            {/* 피드 네비게이션 (카테고리 탭) */}
+            {/* 피드 네비게이션 (카테고리 탭 + 스마트 필터) */}
             <FeedTabNavigation
               activeTab={activeTab}
               onTabChange={handleTabChange}
+              onSmartFilterChange={handleSmartFilterChange}
+              activeSmartFilter={activeSmartFilter}
               className="mb-8"
             />
 
@@ -170,7 +192,7 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
                 {/* Personal Stats Card - 소중한 순간들을 함께 기록하고 있어요 */}
                 <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-gray-100">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">
-                    {user.user_metadata?.full_name || user.email?.split('@')[0] || '엄마'}님의 여정
+                    {user.user_metadata?.full_name || user.email?.split('@')[0] || '양육자'}님의 여정
                   </h3>
                   <div className="text-center text-sm text-gray-600 mb-6">소중한 순간들을 함께 기록하고 있어요</div>
                   
@@ -190,7 +212,7 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
                       </div>
                       <div className="text-sm sm:text-lg font-bold text-gray-900">2,847</div>
                       <div className="text-xs text-gray-600">+23%</div>
-                      <div className="text-xs text-gray-500">활성 엄마들</div>
+                      <div className="text-xs text-gray-500">활성 양육자들</div>
                     </div>
                   </div>
                   
@@ -235,35 +257,10 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
                   </div>
                 </div>
 
-                {/* Smart Filters - Always Visible */}
-                <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-gray-100">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">스마트 필터</h3>
-                  <div className="text-sm text-gray-600 mb-4">원하는 글을 빠르게 찾아보세요</div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {[
-                      { label: '최신글', icon: '⏰', color: 'text-blue-600', description: '방금 올라온 따끈한 이야기' },
-                      { label: '인기글', icon: '🔥', color: 'text-red-600', description: '많은 맘들이 공감한 글' },
-                      { label: '댓글많은글', icon: '💬', color: 'text-green-600', description: '활발한 토론이 있는 글' },
-                      { label: '전문가글', icon: '⭐', color: 'text-yellow-600', description: '전문가가 인증한 정보' }
-                    ].map((filter, index) => (
-                      <button
-                        key={filter.label}
-                        className="flex flex-col items-start p-4 rounded-xl bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 hover:shadow-md transition-all duration-200 text-left min-h-[72px] touch-manipulation group"
-                      >
-                        <div className="flex items-center space-x-3 mb-1">
-                          <span className={`text-xl ${filter.color} group-hover:scale-110 transition-transform`}>{filter.icon}</span>
-                          <span className="font-semibold text-gray-900">{filter.label}</span>
-                        </div>
-                        <span className="text-xs text-gray-500 leading-tight">{filter.description}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
 
                 {/* Useful Tools - Customer Centric */}
                 <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-gray-100">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">👩‍💻 맘들을 위한 도구</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">👩‍💻 양육자를 위한 도구</h3>
                   <div className="text-sm text-gray-600 mb-4">육아에 도움되는 유용한 기능들</div>
                   
                   <div className="space-y-3">
@@ -329,6 +326,7 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
                 <SocialFeed
                   selectedCategory={currentCategory}
                   activeFilter={activeCategory}
+                  smartFilter={activeSmartFilter}
                   isLoading={isFiltering}
                 />
               </div>

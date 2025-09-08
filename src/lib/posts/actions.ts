@@ -9,6 +9,10 @@ const createPostSchema = z.object({
   title: z.string().min(1, '제목을 입력해주세요').max(200, '제목은 200자 이하로 입력해주세요'),
   content: z.string().min(1, '내용을 입력해주세요'),
   category: z.enum(['community', 'expecting', 'newborn', 'toddler', 'expert']),
+  is_question: z.boolean().optional(),
+  baby_month: z.number().min(0).max(24).optional(),
+  tags: z.array(z.string()).optional(),
+  mood: z.string().optional(),
 })
 
 const updatePostSchema = createPostSchema.partial().extend({
@@ -54,6 +58,10 @@ export async function createPost(formData: FormData) {
     title: formData.get('title') as string,
     content: formData.get('content') as string,
     category: formData.get('category') as string,
+    is_question: formData.get('is_question') === 'true',
+    baby_month: formData.get('baby_month') ? parseInt(formData.get('baby_month') as string) : undefined,
+    tags: formData.get('tags') ? JSON.parse(formData.get('tags') as string) : undefined,
+    mood: formData.get('mood') as string || undefined,
   }
 
   try {
@@ -107,6 +115,10 @@ export async function updatePost(formData: FormData) {
     title: formData.get('title') as string,
     content: formData.get('content') as string,
     category: formData.get('category') as string,
+    is_question: formData.get('is_question') === 'true',
+    baby_month: formData.get('baby_month') ? parseInt(formData.get('baby_month') as string) : undefined,
+    tags: formData.get('tags') ? JSON.parse(formData.get('tags') as string) : undefined,
+    mood: formData.get('mood') as string || undefined,
   }
 
   try {
@@ -319,9 +331,9 @@ export async function toggleLike(postId: string) {
   }
 
   try {
-    // Check if like exists
+    // Check if like exists (using post_hugs table based on schema)
     const { data: existingLike } = await supabase
-      .from('likes')
+      .from('post_hugs')
       .select('id')
       .eq('post_id', postId)
       .eq('user_id', user.id)
@@ -330,35 +342,35 @@ export async function toggleLike(postId: string) {
     if (existingLike) {
       // Unlike
       const { error } = await supabase
-        .from('likes')
+        .from('post_hugs')
         .delete()
         .eq('post_id', postId)
         .eq('user_id', user.id)
 
       if (error) {
-        return { error: '좋아요 취소 중 오류가 발생했습니다.', type: 'database' as const }
+        return { error: '포근함 취소 중 오류가 발생했습니다.', type: 'database' as const }
       }
 
       revalidatePath('/')
-        revalidatePath('/community')
+      revalidatePath('/community')
       revalidatePath(`/post/${postId}`)
       
       return { liked: false }
     } else {
       // Like
       const { error } = await supabase
-        .from('likes')
+        .from('post_hugs')
         .insert({
           post_id: postId,
           user_id: user.id
         } as any)
 
       if (error) {
-        return { error: '좋아요 중 오류가 발생했습니다.', type: 'database' as const }
+        return { error: '포근함 전달 중 오류가 발생했습니다.', type: 'database' as const }
       }
 
       revalidatePath('/')
-        revalidatePath('/community')
+      revalidatePath('/community')
       revalidatePath(`/post/${postId}`)
       
       return { liked: true }
@@ -366,7 +378,69 @@ export async function toggleLike(postId: string) {
   } catch (error) {
     console.error('Unexpected error:', error)
     return { 
-      error: '좋아요 처리 중 오류가 발생했습니다.',
+      error: '포근함 처리 중 오류가 발생했습니다.',
+      type: 'unknown' as const
+    }
+  }
+}
+
+export async function toggleBookmark(postId: string) {
+  const supabase = await createServerSupabaseClient()
+  const { user } = await getUser()
+  
+  if (!user) {
+    return { error: '로그인이 필요합니다.', type: 'auth' as const }
+  }
+
+  try {
+    // Check if bookmark exists
+    const { data: existingBookmark } = await supabase
+      .from('post_bookmarks')
+      .select('id')
+      .eq('post_id', postId)
+      .eq('user_id', user.id)
+      .single()
+
+    if (existingBookmark) {
+      // Remove bookmark
+      const { error } = await supabase
+        .from('post_bookmarks')
+        .delete()
+        .eq('post_id', postId)
+        .eq('user_id', user.id)
+
+      if (error) {
+        return { error: '북마크 해제 중 오류가 발생했습니다.', type: 'database' as const }
+      }
+
+      revalidatePath('/')
+      revalidatePath('/community')
+      revalidatePath(`/post/${postId}`)
+      
+      return { bookmarked: false }
+    } else {
+      // Add bookmark
+      const { error } = await supabase
+        .from('post_bookmarks')
+        .insert({
+          post_id: postId,
+          user_id: user.id
+        } as any)
+
+      if (error) {
+        return { error: '북마크 추가 중 오류가 발생했습니다.', type: 'database' as const }
+      }
+
+      revalidatePath('/')
+      revalidatePath('/community')
+      revalidatePath(`/post/${postId}`)
+      
+      return { bookmarked: true }
+    }
+  } catch (error) {
+    console.error('Unexpected error:', error)
+    return { 
+      error: '북마크 처리 중 오류가 발생했습니다.',
       type: 'unknown' as const
     }
   }

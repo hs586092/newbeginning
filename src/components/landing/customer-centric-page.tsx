@@ -21,6 +21,9 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [activeTab, setActiveTab] = useState('all')
   const [communityCategory, setCommunityCategory] = useState<CommunityCategory>('all')
+  
+  // 스마트 필터 상태
+  const [activeSmartFilter, setActiveSmartFilter] = useState<string>('latest')
 
   const handleUserTypeChange = (type: UserType) => {
     setSelectedUserType(type)
@@ -38,6 +41,11 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
     }
   }
 
+  // 스마트 필터 변경 핸들러
+  const handleSmartFilterChange = (filter: string) => {
+    setActiveSmartFilter(filter)
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -53,7 +61,7 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
           <div className="text-center mb-12">
             <div className="inline-flex items-center space-x-2 bg-pink-100 px-4 py-2 rounded-full text-pink-700 font-medium mb-4">
               <Users className="w-5 h-5" />
-              <span>👶 실시간 엄마들의 이야기</span>
+              <span>👶 실시간 양육자들의 이야기</span>
             </div>
             
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -63,7 +71,7 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
             </h2>
             
             <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              소중한 21개월의 여정을 2,847명의 엄마들과 함께 나누고 있어요
+              소중한 21개월의 여정을 2,847명의 양육자들과 함께 나누고 있어요
             </p>
           </div>
 
@@ -71,6 +79,8 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
           <FeedTabNavigation
             activeTab={activeTab}
             onTabChange={handleTabChange}
+            onSmartFilterChange={handleSmartFilterChange}
+            activeSmartFilter={activeSmartFilter}
             className="mb-8"
           />
 
@@ -99,7 +109,7 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
                     </div>
                     <div className="text-lg font-bold text-gray-900">2,847</div>
                     <div className="text-xs text-gray-600">+23%</div>
-                    <div className="text-xs text-gray-500">활성 엄마들</div>
+                    <div className="text-xs text-gray-500">활성 양육자들</div>
                   </div>
                 </div>
                 
@@ -144,31 +154,6 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
                 </div>
               </div>
 
-              {/* Smart Filters */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">스마트 필터</h3>
-                <div className="text-sm text-gray-600 mb-4">원하는 글을 빠르게 찾아보세요</div>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {[
-                    { label: '최신글', icon: '⏰', color: 'text-blue-600', description: '방금 올라온 따끈한 이야기' },
-                    { label: '인기글', icon: '🔥', color: 'text-red-600', description: '많은 맘들이 공감한 글' },
-                    { label: '댓글많은글', icon: '💬', color: 'text-green-600', description: '활발한 토론이 있는 글' },
-                    { label: '전문가글', icon: '⭐', color: 'text-yellow-600', description: '전문가가 인증한 정보' }
-                  ].map((filter, index) => (
-                    <button
-                      key={filter.label}
-                      className="flex flex-col items-start p-4 rounded-xl bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 hover:shadow-md transition-all duration-200 text-left min-h-[72px] touch-manipulation group"
-                    >
-                      <div className="flex items-center space-x-3 mb-1">
-                        <span className={`text-xl ${filter.color} group-hover:scale-110 transition-transform`}>{filter.icon}</span>
-                        <span className="font-semibold text-gray-900">{filter.label}</span>
-                      </div>
-                      <span className="text-xs text-gray-500 leading-tight">{filter.description}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
 
               {/* Parenting Tools - Guest Experience */}
               <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-gray-100">
@@ -248,6 +233,7 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
             <div className="flex-1">
               <SocialFeed
                 selectedCategory={communityCategory === 'all' ? undefined : communityCategory}
+                smartFilter={activeSmartFilter}
               />
             </div>
           </div>

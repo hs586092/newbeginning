@@ -27,28 +27,28 @@ const categories: Category[] = [
   },
   {
     id: 'pregnant',
-    name: '예비맘',
+    name: '예비양육자',
     icon: '🤰',
     description: '임신 준비, 태교, 출산 정보',
     color: 'bg-gradient-to-r from-purple-400 to-pink-400'
   },
   {
     id: 'newborn',
-    name: '신생아맘',
+    name: '신생아 양육자',
     icon: '👶',
     description: '0~12개월 육아 정보',
     color: 'bg-gradient-to-r from-pink-400 to-rose-400'
   },
   {
     id: 'toddler',
-    name: '성장기맘',
+    name: '성장기 양육자',
     icon: '🧒',
     description: '1~7세 성장 가이드',
     color: 'bg-gradient-to-r from-blue-400 to-cyan-400'
   },
   {
     id: 'expert',
-    name: '선배맘',
+    name: '선배 양육자',
     icon: '👩‍👧‍👦',
     description: '육아 경험 공유, 조언',
     color: 'bg-gradient-to-r from-green-400 to-emerald-400'
