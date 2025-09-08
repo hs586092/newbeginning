@@ -562,7 +562,7 @@ export default function SocialFeed({ activeFilter, smartFilter, isLoading: filte
             likesCount={post.hugs}
             commentsCount={0}
             viewsCount={post.views}
-            isLoggedIn={false}
+            isLoggedIn={true}
           />
         </article>
       ))}
