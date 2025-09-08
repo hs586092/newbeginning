@@ -70,16 +70,16 @@ export default function CategoryFilter({
 
   return (
     <div className="w-full">
-      {/* 카테고리 섹션 헤더 */}
-      <div className="text-center mb-6">
-        <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-pink-100 to-purple-100 px-4 py-2 rounded-full text-pink-700 font-medium mb-4">
-          <span className="text-lg">🎯</span>
-          <span>관심 카테고리를 선택해보세요</span>
+      {/* 간소화된 카테고리 헤더 */}
+      <div className="text-center mb-4">
+        <div className="inline-flex items-center space-x-2 bg-gray-100 px-3 py-1 rounded-full text-gray-600 text-sm font-medium mb-3">
+          <span>🔍</span>
+          <span>세부 필터</span>
         </div>
       </div>
 
-      {/* 카테고리 버튼 그리드 */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+      {/* 컴팩트한 카테고리 버튼 그리드 */}
+      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-3">
         {categories.map((category) => {
           const isActive = activeCategory === category.id
           const isHovered = hoveredCategory === category.id
@@ -92,17 +92,14 @@ export default function CategoryFilter({
               onMouseLeave={() => setHoveredCategory(null)}
               disabled={isLoading}
               className={`
-                relative group p-4 sm:p-6 rounded-xl transition-all duration-300 transform
-                min-h-[120px] sm:min-h-[140px] touch-manipulation
+                relative group p-3 rounded-lg transition-all duration-200
+                min-h-[64px] touch-manipulation
                 ${isActive
-                  ? 'scale-105 shadow-lg ring-4 ring-pink-200'
-                  : 'hover:scale-102 hover:shadow-md'
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'hover:bg-gray-100'
                 }
                 ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-                ${isActive
-                  ? 'bg-white border-2 border-pink-300'
-                  : 'bg-white/80 backdrop-blur-sm border border-gray-200 hover:border-gray-300'
-                }
+                ${!isActive ? 'bg-white border border-gray-200 hover:border-gray-300' : ''}
               `}
             >
               {/* 활성 상태 배경 그라데이션 */}
@@ -117,20 +114,17 @@ export default function CategoryFilter({
                 </div>
               )}
 
-              {/* 카테고리 아이콘 */}
-              <div className={`
-                text-2xl sm:text-3xl mb-2 transition-transform duration-300
-                ${isActive || isHovered ? 'scale-110' : ''}
-              `}>
-                {category.icon}
-              </div>
-
-              {/* 카테고리 이름 */}
-              <div className={`
-                font-semibold text-sm sm:text-base transition-colors duration-300
-                ${isActive ? 'text-pink-700' : 'text-gray-700 group-hover:text-gray-900'}
-              `}>
-                {category.name}
+              {/* 컴팩트한 레이아웃 */}
+              <div className="flex flex-col items-center justify-center h-full">
+                <div className={`text-xl mb-1 ${isActive ? 'text-white' : 'text-gray-600'}`}>
+                  {category.icon}
+                </div>
+                <div className={`
+                  font-medium text-xs text-center
+                  ${isActive ? 'text-white' : 'text-gray-700'}
+                `}>
+                  {category.name}
+                </div>
               </div>
 
               {/* 카테고리 설명 (호버 시 표시) */}

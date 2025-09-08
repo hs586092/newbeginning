@@ -149,62 +149,59 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">스마트 필터</h3>
                 <div className="text-sm text-gray-600 mb-4">원하는 글을 빠르게 찾아보세요</div>
                 
-                <div className="grid grid-cols-2 gap-2 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
-                    { label: '최신글', icon: '⏰', color: 'text-blue-600' },
-                    { label: '인기글', icon: '🔥', color: 'text-red-600' },
-                    { label: '댓글많은글', icon: '💬', color: 'text-green-600' },
-                    { label: '전문가글', icon: '⭐', color: 'text-yellow-600' }
+                    { label: '최신글', icon: '⏰', color: 'text-blue-600', description: '방금 올라온 따끈한 이야기' },
+                    { label: '인기글', icon: '🔥', color: 'text-red-600', description: '많은 맘들이 공감한 글' },
+                    { label: '댓글많은글', icon: '💬', color: 'text-green-600', description: '활발한 토론이 있는 글' },
+                    { label: '전문가글', icon: '⭐', color: 'text-yellow-600', description: '전문가가 인증한 정보' }
                   ].map((filter, index) => (
                     <button
                       key={filter.label}
-                      className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-gray-50 text-gray-700 hover:bg-gray-100 transition-colors text-sm"
+                      className="flex flex-col items-start p-4 rounded-xl bg-white border border-gray-200 hover:bg-blue-50 hover:border-blue-300 hover:shadow-md transition-all duration-200 text-left min-h-[72px] touch-manipulation group"
                     >
-                      <span className="text-base">{filter.icon}</span>
-                      <span className="font-medium">{filter.label}</span>
+                      <div className="flex items-center space-x-3 mb-1">
+                        <span className={`text-xl ${filter.color} group-hover:scale-110 transition-transform`}>{filter.icon}</span>
+                        <span className="font-semibold text-gray-900">{filter.label}</span>
+                      </div>
+                      <span className="text-xs text-gray-500 leading-tight">{filter.description}</span>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Category Filter */}
+              {/* Parenting Tools - Guest Experience */}
               <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">육아 여정별 커뮤니티</h3>
-                <div className="text-sm text-gray-600 mb-4">각 단계별 맞춤 정보를 보여드려요</div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">🎯 육아 도움 도구</h3>
+                <div className="text-sm text-gray-600 mb-4">회원가입하면 더 많은 기능을 이용할 수 있어요</div>
                 
                 <div className="space-y-3">
                   {[
-                    { name: '예비맘', icon: '🤰', color: 'pink', count: 342, description: '임신~출산' },
-                    { name: '신생아맘', icon: '👶', color: 'blue', count: 567, description: '0-6개월' },
-                    { name: '성장기맘', icon: '🧒', color: 'green', count: 234, description: '7개월-5세' },
-                    { name: '선배맘', icon: '👩‍👧‍👦', color: 'orange', count: 189, description: '경험공유' }
-                  ].map((category, index) => (
-                    <button
-                      key={category.name}
-                      onClick={() => setSelectedCategory(category.name === '전체' ? 'all' : category.name)}
-                      className={`w-full flex items-center justify-between p-4 rounded-lg transition-all duration-200 text-left ${
-                        selectedCategory === category.name
-                          ? 'bg-blue-600 text-white shadow-lg scale-105'
-                          : 'bg-gray-50 text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:shadow-md border border-gray-100'
+                    { name: '월령별 발달', icon: '👶', description: '우리 아이 발달 체크리스트', locked: false },
+                    { name: '이유식 가이드', icon: '🥄', description: '월령별 이유식 레시피', locked: false },
+                    { name: '예방접종 일정', icon: '💉', description: '필수 예방접종 캘린더', locked: true },
+                    { name: '성장 곡선', icon: '📊', description: '키/몸무게 성장 추이', locked: true }
+                  ].map((tool) => (
+                    <div
+                      key={tool.name}
+                      className={`w-full flex items-center space-x-4 p-4 rounded-lg transition-all duration-200 text-left min-h-[56px] touch-manipulation ${
+                        tool.locked 
+                          ? 'bg-gray-100 border border-gray-200 opacity-75' 
+                          : 'bg-gray-50 text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:shadow-md border border-gray-100 cursor-pointer'
                       }`}
                     >
-                      <div className="flex items-center space-x-3">
-                        <span className="text-2xl">{category.icon}</span>
-                        <div>
-                          <span className="font-semibold block">{category.name}</span>
-                          <span className={`text-xs ${
-                            selectedCategory === category.name ? 'text-blue-100' : 'text-gray-500'
-                          }`}>
-                            {category.description}
-                          </span>
+                      <span className="text-2xl flex-shrink-0">{tool.icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className={`font-semibold ${tool.locked ? 'text-gray-500' : 'text-gray-900'}`}>
+                          {tool.name}
+                          {tool.locked && <span className="ml-2 text-xs text-orange-600">🔒 로그인 필요</span>}
                         </div>
+                        <div className="text-xs text-gray-500 truncate">{tool.description}</div>
                       </div>
-                      <div className={`text-xs font-medium ${
-                        selectedCategory === category.name ? 'text-blue-100' : 'text-gray-500'
-                      }`}>
-                        {category.count}개
-                      </div>
-                    </button>
+                      <span className={`flex-shrink-0 ${tool.locked ? 'text-gray-400' : 'text-gray-400'}`}>
+                        {tool.locked ? '🔒' : '→'}
+                      </span>
+                    </div>
                   ))}
                 </div>
               </div>
