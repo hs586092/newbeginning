@@ -127,15 +127,19 @@ export default function SocialFeed({ activeFilter, isLoading: filterLoading }: S
             content: post.content || post.title || '내용을 불러올 수 없습니다',
             category_id: post.category || 'community',
             category_name: post.category === 'community' ? '커뮤니티' : 
-                           post.category === 'job_offer' ? '구인구직' :
-                           post.category === 'educational' ? '교육' : '일상',
+                           post.category === 'expecting' ? '예비맘' :
+                           post.category === 'newborn' ? '신생아맘' :
+                           post.category === 'toddler' ? '성장기맘' :
+                           post.category === 'expert' ? '선배맘' : '커뮤니티',
             category_icon: post.category === 'community' ? '💬' :
-                          post.category === 'job_offer' ? '💼' :
-                          post.category === 'educational' ? '📚' : '📝',
+                          post.category === 'expecting' ? '🤰' :
+                          post.category === 'newborn' ? '👶' :
+                          post.category === 'toddler' ? '🧒' :
+                          post.category === 'expert' ? '👩‍👧‍👦' : '📝',
             category_color: 'blue',
             hugs: 0,
             views: post.view_count || 0,
-            is_question: post.category === 'job_seek',
+            is_question: false,
             created_at: post.created_at,
             author: {
               id: post.user_id,

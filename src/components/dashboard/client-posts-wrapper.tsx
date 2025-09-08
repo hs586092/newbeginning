@@ -38,9 +38,6 @@ export default function ClientPostsWrapper({ searchParams, currentUserId }: Clie
           query = query.eq('category', category)
         }
 
-        if (location) {
-          query = query.ilike('location', `%${location}%`)
-        }
 
         const { data, error } = await query
           .order('created_at', { ascending: false })
@@ -72,21 +69,16 @@ export default function ClientPostsWrapper({ searchParams, currentUserId }: Clie
     return [
       {
         id: 'demo-1',
-        title: '프론트엔드 개발자 구인',
-        content: 'React와 TypeScript 경험이 있는 프론트엔드 개발자를 찾습니다. 원격근무 가능하며, 유연한 근무시간을 제공합니다.',
-        category: 'job_offer',
-        company: '테크스타트업',
-        location: '서울 강남구',
-        salary: '4000-6000만원',
-        contact: 'recruit@techstartup.com',
-        deadline: '2024-12-31',
+        title: '임신 초기 증상과 대처법',
+        content: '임신 6주차인데 입덧이 심해서 고생하고 있어요. 어떻게 하면 좀 나아질까요? 경험 있으신 분들 조언 부탁드려요.',
+        category: 'expecting',
         user_id: 'demo-user-1',
-        author_name: '인사팀장',
+        author_name: '예비맘6주',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         view_count: 15,
         profiles: {
-          username: '인사팀장',
+          username: '예비맘6주',
           avatar_url: undefined
         },
         likes: [],
@@ -94,16 +86,16 @@ export default function ClientPostsWrapper({ searchParams, currentUserId }: Clie
       },
       {
         id: 'demo-2',
-        title: '백엔드 개발 경험 공유',
-        content: 'Node.js와 PostgreSQL로 RESTful API를 구축한 경험을 공유합니다. 특히 대용량 데이터 처리와 최적화에 대한 이야기를 나누고 싶어요.',
-        category: 'community',
+        title: '신생아 수유량 궁금해요',
+        content: '생후 1주된 아기인데 수유량이 충분한지 걱정됩니다. 하루에 몇 번 정도 수유하는 게 정상인가요?',
+        category: 'newborn',
         user_id: 'demo-user-2',
-        author_name: '개발자김씨',
+        author_name: '새내기엄마',
         created_at: new Date(Date.now() - 3600000).toISOString(),
         updated_at: new Date(Date.now() - 3600000).toISOString(),
         view_count: 8,
         profiles: {
-          username: '개발자김씨',
+          username: '새내기엄마',
           avatar_url: undefined
         },
         likes: [{ id: 'like-1' }],
@@ -111,16 +103,16 @@ export default function ClientPostsWrapper({ searchParams, currentUserId }: Clie
       },
       {
         id: 'demo-3',
-        title: '신입 개발자 구직 중',
-        content: '컴퓨터공학과 졸업 예정이며, React와 Spring Boot를 활용한 프로젝트 경험이 있습니다. 성장할 수 있는 환경을 찾고 있어요.',
-        category: 'job_seek',
+        title: '아기 이유식 시작 시기',
+        content: '5개월 된 아기 이유식을 언제부터 시작해야 할까요? 첫 이유식으로 뭐가 좋을까요?',
+        category: 'toddler',
         user_id: 'demo-user-3',
-        author_name: '신입개발자',
+        author_name: '육아맘5개월',
         created_at: new Date(Date.now() - 7200000).toISOString(),
         updated_at: new Date(Date.now() - 7200000).toISOString(),
         view_count: 23,
         profiles: {
-          username: '신입개발자',
+          username: '육아맘5개월',
           avatar_url: undefined
         },
         likes: [{ id: 'like-2' }, { id: 'like-3' }],

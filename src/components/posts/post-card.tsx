@@ -148,39 +148,6 @@ export function PostCard({ post, currentUserId, isOwner }: PostCardProps) {
           {truncateText(post.content, 200)}
         </p>
 
-        {/* Job Details */}
-        {(post.category === 'job_offer' || post.category === 'job_seek') && (
-          <div className="bg-gray-50 rounded-lg p-3 mb-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-              {post.company && (
-                <div>
-                  <span className="font-medium text-gray-600">회사:</span> {post.company}
-                </div>
-              )}
-              {post.location && (
-                <div>
-                  <span className="font-medium text-gray-600">지역:</span> {post.location}
-                </div>
-              )}
-              {post.salary && (
-                <div>
-                  <span className="font-medium text-gray-600">급여:</span> {post.salary}
-                </div>
-              )}
-              {post.contact && (
-                <div>
-                  <span className="font-medium text-gray-600">연락처:</span> {post.contact}
-                </div>
-              )}
-            </div>
-            {post.deadline && (
-              <div className="mt-2 text-sm">
-                <span className="font-medium text-gray-600">마감일:</span> 
-                <span className="text-red-600 ml-1">{post.deadline}</span>
-              </div>
-            )}
-          </div>
-        )}
         
         {/* Educational Content Details */}
         {isEducational && metadata && (

@@ -14,12 +14,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
-      url: `${baseUrl}/jobs`,
-      lastModified: new Date(),
-      changeFrequency: 'hourly' as const,
-      priority: 0.8,
-    },
-    {
       url: `${baseUrl}/community`,
       lastModified: new Date(),
       changeFrequency: 'daily' as const,
@@ -57,8 +51,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       dynamicPages = posts.map((post: any) => ({
         url: `${baseUrl}/post/${post.id}`,
         lastModified: new Date(post.updated_at),
-        changeFrequency: post.category === 'job_offer' ? 'weekly' as const : 'monthly' as const,
-        priority: post.category === 'job_offer' ? 0.7 : 0.6,
+        changeFrequency: 'monthly' as const,
+        priority: 0.6,
       }))
     }
   } catch (error) {

@@ -26,24 +26,16 @@ export function truncateText(text: string, length: number = 100) {
 
 export function getCategoryLabel(category: string) {
   switch (category) {
-    case 'job_offer':
-      return '구인'
-    case 'job_seek':
-      return '구직'
     case 'community':
       return '커뮤니티'
-    case 'pregnancy_info':
-      return '임신 정보'
-    case 'parenting_guide':
-      return '육아 가이드'
-    case 'health_tips':
-      return '건강 정보'
-    case 'nutrition_guide':
-      return '영양 가이드'
-    case 'development_info':
-      return '발달 정보'
-    case 'safety_tips':
-      return '안전 수칙'
+    case 'expecting':
+      return '예비맘'
+    case 'newborn':
+      return '신생아맘'
+    case 'toddler':
+      return '성장기맘'
+    case 'expert':
+      return '선배맘'
     default:
       return category
   }
@@ -51,24 +43,16 @@ export function getCategoryLabel(category: string) {
 
 export function getCategoryColor(category: string) {
   switch (category) {
-    case 'job_offer':
-      return 'bg-blue-100 text-blue-800'
-    case 'job_seek':
-      return 'bg-green-100 text-green-800'
     case 'community':
       return 'bg-purple-100 text-purple-800'
-    case 'pregnancy_info':
+    case 'expecting':
       return 'bg-pink-100 text-pink-800'
-    case 'parenting_guide':
+    case 'newborn':
       return 'bg-blue-100 text-blue-800'
-    case 'health_tips':
+    case 'toddler':
       return 'bg-green-100 text-green-800'
-    case 'nutrition_guide':
+    case 'expert':
       return 'bg-orange-100 text-orange-800'
-    case 'development_info':
-      return 'bg-purple-100 text-purple-800'
-    case 'safety_tips':
-      return 'bg-red-100 text-red-800'
     default:
       return 'bg-gray-100 text-gray-800'
   }
@@ -76,23 +60,21 @@ export function getCategoryColor(category: string) {
 
 // Educational content helper functions
 export function isEducationalContent(category: string): boolean {
-  return ['pregnancy_info', 'parenting_guide', 'health_tips', 'nutrition_guide', 'development_info', 'safety_tips'].includes(category)
+  return ['expecting', 'newborn', 'toddler', 'expert'].includes(category)
 }
 
 export function getCategoryIcon(category: string): string {
   switch (category) {
-    case 'pregnancy_info':
-      return '🤱'
-    case 'parenting_guide':
+    case 'expecting':
+      return '🤰'
+    case 'newborn':
       return '👶'
-    case 'health_tips':
-      return '🏥'
-    case 'nutrition_guide':
-      return '🥗'
-    case 'development_info':
-      return '🎯'
-    case 'safety_tips':
-      return '🛡️'
+    case 'toddler':
+      return '🧒'
+    case 'expert':
+      return '👩‍👧‍👦'
+    case 'community':
+      return '💬'
     default:
       return '📝'
   }

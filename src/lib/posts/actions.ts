@@ -8,13 +8,7 @@ import { z } from 'zod'
 const createPostSchema = z.object({
   title: z.string().min(1, '제목을 입력해주세요').max(200, '제목은 200자 이하로 입력해주세요'),
   content: z.string().min(1, '내용을 입력해주세요'),
-  category: z.enum(['job_offer', 'job_seek', 'community', 'pregnancy_info', 'parenting_guide', 'health_tips', 'nutrition_guide', 'development_info', 'safety_tips']),
-  // Job-specific fields
-  company: z.string().optional(),
-  location: z.string().optional(),
-  salary: z.string().optional(),
-  contact: z.string().optional(),
-  deadline: z.string().optional(),
+  category: z.enum(['community', 'expecting', 'newborn', 'toddler', 'expert']),
 })
 
 const updatePostSchema = createPostSchema.partial().extend({
@@ -25,7 +19,7 @@ const updatePostSchema = createPostSchema.partial().extend({
 const createEducationalPostSchema = z.object({
   title: z.string().min(1, '제목을 입력해주세요').max(200, '제목은 200자 이하로 입력해주세요'),
   content: z.string().min(1, '내용을 입력해주세요'),
-  category: z.enum(['pregnancy_info', 'parenting_guide', 'health_tips', 'nutrition_guide', 'development_info', 'safety_tips']),
+  category: z.enum(['expecting', 'newborn', 'toddler', 'expert']),
   // Educational metadata
   display_priority: z.number().min(0).max(100).default(0),
   target_audience: z.enum(['expecting_parents', 'new_parents', 'toddler_parents', 'all_parents']),
@@ -60,11 +54,6 @@ export async function createPost(formData: FormData) {
     title: formData.get('title') as string,
     content: formData.get('content') as string,
     category: formData.get('category') as string,
-    company: formData.get('company') as string || undefined,
-    location: formData.get('location') as string || undefined,
-    salary: formData.get('salary') as string || undefined,
-    contact: formData.get('contact') as string || undefined,
-    deadline: formData.get('deadline') as string || undefined,
   }
 
   try {
@@ -86,7 +75,6 @@ export async function createPost(formData: FormData) {
     }
 
     revalidatePath('/')
-    revalidatePath('/jobs')
     revalidatePath('/community')
     
     redirect(`/post/${(data as any).id}`)
@@ -119,11 +107,6 @@ export async function updatePost(formData: FormData) {
     title: formData.get('title') as string,
     content: formData.get('content') as string,
     category: formData.get('category') as string,
-    company: formData.get('company') as string || undefined,
-    location: formData.get('location') as string || undefined,
-    salary: formData.get('salary') as string || undefined,
-    contact: formData.get('contact') as string || undefined,
-    deadline: formData.get('deadline') as string || undefined,
   }
 
   try {
@@ -155,7 +138,6 @@ export async function updatePost(formData: FormData) {
     }
 
     revalidatePath('/')
-    revalidatePath('/jobs')
     revalidatePath('/community')
     revalidatePath(`/post/${id}`)
     
@@ -207,7 +189,6 @@ export async function deletePost(postId: string) {
     }
 
     revalidatePath('/')
-    revalidatePath('/jobs')
     revalidatePath('/community')
     revalidatePath('/my-posts')
     
@@ -236,7 +217,7 @@ export async function incrementViewCount(postId: string) {
   }
 }
 
-export async function searchPosts(query: string = '', category?: string, location?: string) {
+export async function searchPosts(query: string = '', category?: string, sort: string = 'latest') {
   const supabase = await createServerSupabaseClient()
   
   try {
@@ -249,7 +230,12 @@ export async function searchPosts(query: string = '', category?: string, locatio
           avatar_url
         ),
         likes (id),
-        comments (id)
+        comments (id),
+        educational_metadata (
+          is_featured,
+          expert_verified,
+          display_priority
+        )
       `)
 
     // 텍스트 검색 (제목 + 내용)
@@ -262,13 +248,27 @@ export async function searchPosts(query: string = '', category?: string, locatio
       queryBuilder = queryBuilder.eq('category', category)
     }
 
-    // 지역 필터
-    if (location) {
-      queryBuilder = queryBuilder.ilike('location', `%${location}%`)
+    // 정렬 로직
+    switch (sort) {
+      case 'popular':
+        // 인기글: view_count + likes 수 조합으로 정렬
+        queryBuilder = queryBuilder.order('view_count', { ascending: false })
+        break
+      case 'comments':
+        // 댓글 많은 글은 클라이언트 사이드에서 정렬 (Supabase의 한계)
+        queryBuilder = queryBuilder.order('created_at', { ascending: false })
+        break
+      case 'expert':
+        // 전문가 글: expert_verified 우선, 그 다음 created_at
+        queryBuilder = queryBuilder.order('created_at', { ascending: false })
+        break
+      case 'latest':
+      default:
+        queryBuilder = queryBuilder.order('created_at', { ascending: false })
+        break
     }
 
     const { data: posts, error } = await queryBuilder
-      .order('created_at', { ascending: false })
       .limit(50) // 성능을 위해 제한
 
     if (error) {
@@ -276,7 +276,34 @@ export async function searchPosts(query: string = '', category?: string, locatio
       return { error: '검색 중 오류가 발생했습니다.', posts: [] }
     }
 
-    return { posts: posts || [] }
+    let sortedPosts = posts || []
+
+    // 클라이언트 사이드 정렬 (Supabase로 처리하기 어려운 것들)
+    if (sort === 'comments') {
+      // 댓글 수로 정렬
+      sortedPosts = sortedPosts.sort((a, b) => (b as any).comments?.length - (a as any).comments?.length)
+    } else if (sort === 'expert') {
+      // 전문가 검증 글 우선, 그 다음 created_at
+      sortedPosts = sortedPosts.sort((a, b) => {
+        const aIsExpert = (a as any).educational_metadata?.expert_verified || false
+        const bIsExpert = (b as any).educational_metadata?.expert_verified || false
+        
+        if (aIsExpert && !bIsExpert) return -1
+        if (!aIsExpert && bIsExpert) return 1
+        
+        // 둘 다 전문가 글이거나 둘 다 일반글이면 최신 순
+        return new Date((b as any).created_at).getTime() - new Date((a as any).created_at).getTime()
+      })
+    } else if (sort === 'popular') {
+      // 인기도 = view_count * 0.7 + likes_count * 0.3
+      sortedPosts = sortedPosts.sort((a, b) => {
+        const aScore = ((a as any).view_count || 0) * 0.7 + ((a as any).likes?.length || 0) * 0.3
+        const bScore = ((b as any).view_count || 0) * 0.7 + ((b as any).likes?.length || 0) * 0.3
+        return bScore - aScore
+      })
+    }
+
+    return { posts: sortedPosts }
   } catch (error) {
     console.error('Unexpected search error:', error)
     return { error: '검색 중 오류가 발생했습니다.', posts: [] }
@@ -313,8 +340,7 @@ export async function toggleLike(postId: string) {
       }
 
       revalidatePath('/')
-      revalidatePath('/jobs')
-      revalidatePath('/community')
+        revalidatePath('/community')
       revalidatePath(`/post/${postId}`)
       
       return { liked: false }
@@ -332,8 +358,7 @@ export async function toggleLike(postId: string) {
       }
 
       revalidatePath('/')
-      revalidatePath('/jobs')
-      revalidatePath('/community')
+        revalidatePath('/community')
       revalidatePath(`/post/${postId}`)
       
       return { liked: true }

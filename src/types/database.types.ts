@@ -31,12 +31,7 @@ export type Database = {
           author_name: string
           title: string
           content: string
-          category: 'job_offer' | 'job_seek' | 'community' | 'pregnancy_info' | 'parenting_guide' | 'health_tips' | 'nutrition_guide' | 'development_info' | 'safety_tips'
-          company?: string
-          location?: string
-          salary?: string
-          contact?: string
-          deadline?: string
+          category: 'community' | 'expecting' | 'newborn' | 'toddler' | 'expert'
           image_url?: string
           view_count: number
           created_at: string
@@ -48,12 +43,7 @@ export type Database = {
           author_name: string
           title: string
           content: string
-          category: 'job_offer' | 'job_seek' | 'community' | 'pregnancy_info' | 'parenting_guide' | 'health_tips' | 'nutrition_guide' | 'development_info' | 'safety_tips'
-          company?: string
-          location?: string
-          salary?: string
-          contact?: string
-          deadline?: string
+          category: 'community' | 'expecting' | 'newborn' | 'toddler' | 'expert'
           image_url?: string
           view_count?: number
           created_at?: string
@@ -65,12 +55,7 @@ export type Database = {
           author_name?: string
           title?: string
           content?: string
-          category?: 'job_offer' | 'job_seek' | 'community'
-          company?: string
-          location?: string
-          salary?: string
-          contact?: string
-          deadline?: string
+          category?: 'community' | 'pregnancy_info' | 'parenting_guide' | 'health_tips' | 'nutrition_guide' | 'development_info' | 'safety_tips'
           image_url?: string
           view_count?: number
           created_at?: string

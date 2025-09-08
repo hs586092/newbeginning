@@ -23,7 +23,7 @@ async function getMixedFeedPosts(): Promise<PostWithDetails[]> {
           avatar_url
         )
       `)
-      .in('category', ['job_offer', 'job_seek', 'community'])
+      .in('category', ['community', 'expecting', 'newborn', 'toddler', 'expert'])
       .order('created_at', { ascending: false })
       .limit(20)
 
@@ -115,12 +115,12 @@ function mixPostsIntelligently(regularPosts: PostWithDetails[], educationalPosts
 }
 
 async function getPosts(searchParams: { [key: string]: string | undefined }): Promise<PostWithDetails[]> {
-  const { q: query, category, location } = searchParams
+  const { q: query, category, sort } = searchParams
 
   // 검색 파라미터가 있으면 검색 API 사용
-  if (query || category || location) {
+  if (query || category || sort) {
     try {
-      const result = await searchPosts(query || '', category, location)
+      const result = await searchPosts(query || '', category, sort)
       return result.posts as PostWithDetails[]
     } catch (error) {
       console.log('Search failed, showing demo content')
@@ -136,21 +136,16 @@ function getDemoPosts(): PostWithDetails[] {
   return [
     {
       id: 'demo-1',
-      title: '프론트엔드 개발자 구인',
-      content: 'React와 TypeScript 경험이 있는 프론트엔드 개발자를 찾습니다. 원격근무 가능하며, 유연한 근무시간을 제공합니다.',
-      category: 'job_offer',
-      company: '테크스타트업',
-      location: '서울 강남구',
-      salary: '4000-6000만원',
-      contact: 'recruit@techstartup.com',
-      deadline: '2024-09-30',
+      title: '임신 초기 입덧 극복법',
+      content: '임신 6주부터 시작된 입덧으로 고생하고 있어요. 생강차와 비타민 B6가 도움이 된다고 하네요. 다른 예비맘들은 어떻게 극복하셨나요?',
+      category: 'expecting',
       user_id: 'demo-user-1',
-      author_name: '인사팀장',
+      author_name: '예비맘7주',
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       view_count: 15,
       profiles: {
-        username: '인사팀장',
+        username: '예비맘7주',
         avatar_url: undefined
       },
       likes: [],
@@ -158,16 +153,16 @@ function getDemoPosts(): PostWithDetails[] {
     },
     {
       id: 'demo-2',
-      title: '백엔드 개발 경험 공유',
-      content: 'Node.js와 PostgreSQL로 RESTful API를 구축한 경험을 공유합니다. 특히 대용량 데이터 처리와 최적화에 대한 이야기를 나누고 싶어요.',
-      category: 'community',
+      title: '신생아 수유 간격 궁금해요',
+      content: '생후 2주된 아기인데 수유 간격이 1-2시간이에요. 이게 정상인지 궁금합니다. 언제쯤 간격이 길어질까요?',
+      category: 'newborn',
       user_id: 'demo-user-2',
-      author_name: '개발자김씨',
+      author_name: '새내기엄마',
       created_at: new Date(Date.now() - 3600000).toISOString(),
       updated_at: new Date(Date.now() - 3600000).toISOString(),
       view_count: 8,
       profiles: {
-        username: '개발자김씨',
+        username: '새내기엄마',
         avatar_url: undefined
       },
       likes: [{ id: 'like-1' }],
@@ -175,16 +170,16 @@ function getDemoPosts(): PostWithDetails[] {
     },
     {
       id: 'demo-3',
-      title: '신입 개발자 구직 중',
-      content: '컴퓨터공학과 졸업 예정이며, React와 Spring Boot를 활용한 프로젝트 경험이 있습니다. 성장할 수 있는 환경을 찾고 있어요.',
-      category: 'job_seek',
+      title: '이유식 시작 시기와 준비물',
+      content: '아기가 5개월이 되어서 이유식 준비 중이에요. 언제부터 시작하는 게 좋을까요? 필요한 준비물도 알려주세요!',
+      category: 'toddler',
       user_id: 'demo-user-3',
-      author_name: '신입개발자',
+      author_name: '육아맘5개월',
       created_at: new Date(Date.now() - 7200000).toISOString(),
       updated_at: new Date(Date.now() - 7200000).toISOString(),
       view_count: 23,
       profiles: {
-        username: '신입개발자',
+        username: '육아맘5개월',
         avatar_url: undefined
       },
       likes: [{ id: 'like-2' }, { id: 'like-3' }],

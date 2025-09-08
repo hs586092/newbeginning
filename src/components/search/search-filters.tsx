@@ -4,14 +4,22 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Filter, X } from 'lucide-react'
+import { Filter, X, TrendingUp, Clock, MessageCircle, Star } from 'lucide-react'
 import { useState } from 'react'
 
 const CATEGORIES = [
-  { value: 'all', label: '전체' },
-  { value: 'job_offer', label: '구인' },
-  { value: 'job_seek', label: '구직' },
-  { value: 'community', label: '커뮤니티' }
+  { value: 'all', label: '전체', icon: '🏠' },
+  { value: 'expecting', label: '예비맘', icon: '🤰', description: '임신~출산' },
+  { value: 'newborn', label: '신생아맘', icon: '👶', description: '0-6개월' },
+  { value: 'toddler', label: '성장기맘', icon: '🧒', description: '7개월-5세' },
+  { value: 'expert', label: '선배맘', icon: '👩‍👧‍👦', description: '경험공유' }
+]
+
+const SORT_FILTERS = [
+  { value: 'latest', label: '최신글', icon: Clock, color: 'text-blue-600' },
+  { value: 'popular', label: '인기글', icon: TrendingUp, color: 'text-red-600' },
+  { value: 'comments', label: '댓글많은글', icon: MessageCircle, color: 'text-green-600' },
+  { value: 'expert', label: '전문가글', icon: Star, color: 'text-yellow-600' }
 ]
 
 const COMMON_LOCATIONS = [
@@ -26,7 +34,8 @@ export function SearchFilters() {
   const [location, setLocation] = useState(searchParams.get('location') || '')
 
   const currentCategory = searchParams.get('category') || 'all'
-  const hasActiveFilters = searchParams.has('category') || searchParams.has('location')
+  const currentSort = searchParams.get('sort') || 'latest'
+  const hasActiveFilters = searchParams.has('category') || searchParams.has('location') || searchParams.has('sort')
 
   const updateFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -44,6 +53,7 @@ export function SearchFilters() {
     const params = new URLSearchParams(searchParams.toString())
     params.delete('category')
     params.delete('location')
+    params.delete('sort')
     setLocation('')
     router.push(`?${params.toString()}`)
   }
@@ -79,24 +89,60 @@ export function SearchFilters() {
         )}
       </div>
 
-      <div className="space-y-4">
-        {/* 카테고리 필터 */}
+      <div className="space-y-6">
+        {/* 정렬 필터 */}
         <div>
-          <Label className="text-sm font-medium text-gray-700 mb-2 block">
-            카테고리
+          <Label className="text-sm font-medium text-gray-700 mb-3 block">
+            정렬
           </Label>
           <div className="flex flex-wrap gap-2">
+            {SORT_FILTERS.map((sort) => {
+              const IconComponent = sort.icon
+              return (
+                <button
+                  key={sort.value}
+                  onClick={() => updateFilter('sort', sort.value)}
+                  className={`flex items-center space-x-1 px-3 py-2 rounded-full text-sm transition-all duration-200 ${
+                    currentSort === sort.value
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300'
+                  }`}
+                >
+                  <IconComponent className={`w-4 h-4 ${
+                    currentSort === sort.value ? 'text-white' : sort.color
+                  }`} />
+                  <span>{sort.label}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* 카테고리 필터 */}
+        <div>
+          <Label className="text-sm font-medium text-gray-700 mb-3 block">
+            카테고리
+          </Label>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
             {CATEGORIES.map((category) => (
               <button
                 key={category.value}
                 onClick={() => updateFilter('category', category.value)}
-                className={`px-3 py-1 text-sm rounded-full transition-colors ${
+                className={`p-3 rounded-lg text-center transition-all duration-200 ${
                   currentCategory === category.value
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-blue-600 text-white shadow-lg scale-105'
+                    : 'bg-white border border-gray-200 text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:shadow-md'
                 }`}
               >
-                {category.label}
+                <div className="text-2xl mb-1">{category.icon}</div>
+                <div className="font-semibold text-sm">{category.label}</div>
+                {category.description && (
+                  <div className={`text-xs mt-1 ${
+                    currentCategory === category.value ? 'text-blue-100' : 'text-gray-500'
+                  }`}>
+                    {category.description}
+                  </div>
+                )}
               </button>
             ))}
           </div>
