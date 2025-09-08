@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { LoadingSpinner } from '@/components/ui/loading'
 import { createPost, updatePost } from '@/lib/posts/actions'
-import { AlertCircle, CheckCircle, Hash, Baby, HelpCircle, Image, Calendar } from 'lucide-react'
+import { AlertCircle, CheckCircle, Hash, Baby, HelpCircle } from 'lucide-react'
 import type { Database } from '@/types/database.types'
 
 type Post = Database['public']['Tables']['posts']['Row']

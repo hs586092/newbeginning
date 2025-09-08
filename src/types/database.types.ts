@@ -36,6 +36,10 @@ export type Database = {
           view_count: number
           created_at: string
           updated_at: string
+          is_question?: boolean
+          baby_month?: number
+          tags?: string[]
+          mood?: string
         }
         Insert: {
           id?: string
@@ -48,6 +52,10 @@ export type Database = {
           view_count?: number
           created_at?: string
           updated_at?: string
+          is_question?: boolean
+          baby_month?: number
+          tags?: string[]
+          mood?: string
         }
         Update: {
           id?: string
@@ -55,11 +63,15 @@ export type Database = {
           author_name?: string
           title?: string
           content?: string
-          category?: 'community' | 'pregnancy_info' | 'parenting_guide' | 'health_tips' | 'nutrition_guide' | 'development_info' | 'safety_tips'
+          category?: 'community' | 'expecting' | 'newborn' | 'toddler' | 'expert'
           image_url?: string
           view_count?: number
           created_at?: string
           updated_at?: string
+          is_question?: boolean
+          baby_month?: number
+          tags?: string[]
+          mood?: string
         }
       }
       comments: {
