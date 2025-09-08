@@ -6,46 +6,32 @@ import type { PostWithDetails } from '@/types/database.types'
 // Category configurations with Korean labels and descriptions
 const EDUCATIONAL_CATEGORIES = [
   {
-    id: 'pregnancy_info',
-    label: '임신 정보',
+    id: 'expecting',
+    label: '예비맘',
     description: '임신 중 알아야 할 중요한 정보들',
-    icon: '🤱',
+    icon: '🤰',
     color: 'bg-pink-50 border-pink-200'
   },
   {
-    id: 'parenting_guide', 
-    label: '육아 가이드',
-    description: '월령별 육아 방법과 노하우',
+    id: 'newborn', 
+    label: '신생아맘',
+    description: '0-6개월 신생아 육아 정보',
     icon: '👶',
     color: 'bg-blue-50 border-blue-200'
   },
   {
-    id: 'health_tips',
-    label: '건강 정보',
-    description: '아이와 엄마의 건강 관리',
-    icon: '🏥',
+    id: 'toddler',
+    label: '성장기맘',
+    description: '7개월-5세 성장기 육아 가이드',
+    icon: '🧒',
     color: 'bg-green-50 border-green-200'
   },
   {
-    id: 'nutrition_guide',
-    label: '영양 가이드',
-    description: '이유식부터 균형잡힌 식단까지',
-    icon: '🥗',
+    id: 'expert',
+    label: '선배맘',
+    description: '경험 많은 선배맘들의 노하우',
+    icon: '👩‍👧‍👦',
     color: 'bg-orange-50 border-orange-200'
-  },
-  {
-    id: 'development_info',
-    label: '발달 정보',
-    description: '아이의 성장과 발달 단계',
-    icon: '🎯',
-    color: 'bg-purple-50 border-purple-200'
-  },
-  {
-    id: 'safety_tips',
-    label: '안전 수칙',
-    description: '사고 예방과 응급처치',
-    icon: '🛡️',
-    color: 'bg-red-50 border-red-200'
   }
 ] as const
 
