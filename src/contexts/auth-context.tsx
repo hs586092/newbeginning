@@ -155,9 +155,15 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
         dispatch({ type: 'SET_LOADING', payload: true })
 
         let retryCount = 0
-        const maxRetries = 3
+        const maxRetries = 5 // 카카오를 위해 재시도 횟수 증가
         let session: any = null
         let user: any = null
+
+        // Detect if this is a Kakao OAuth callback
+        const isKakaoCallback = typeof window !== 'undefined' && 
+          (window.location.href.includes('kakao') || 
+           window.location.search.includes('state') ||
+           window.location.search.includes('code'))
 
         // Retry logic for OAuth callback scenarios where session might be delayed
         while (retryCount < maxRetries) {
@@ -170,14 +176,18 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
           user = userResult.user
 
           if (session && user) {
-            log(`Found session and user on attempt ${retryCount + 1}`)
+            log(`Found session and user on attempt ${retryCount + 1}`, {
+              provider: isKakaoCallback ? 'kakao' : 'unknown',
+              userId: user.id
+            })
             break
           }
 
           // If no session/user found, wait a bit and retry (for OAuth callback cases)
           if (retryCount < maxRetries - 1) {
-            log(`No session found on attempt ${retryCount + 1}, retrying...`)
-            await new Promise(resolve => setTimeout(resolve, 500))
+            const waitTime = isKakaoCallback ? 800 : 500 // 카카오는 더 긴 간격
+            log(`No session found on attempt ${retryCount + 1}, retrying in ${waitTime}ms...`)
+            await new Promise(resolve => setTimeout(resolve, waitTime))
           }
           
           retryCount++

@@ -31,22 +31,53 @@ export function HybridAuthWrapper({
     if (typeof window === 'undefined') return false
     
     const currentUrl = window.location.href
-    const hasAccessToken = currentUrl.includes('access_token=')
-    const hasCode = currentUrl.includes('code=')
-    const hasType = currentUrl.includes('type=')
+    const urlParams = new URLSearchParams(window.location.search)
+    const hash = window.location.hash
     
-    return hasAccessToken || hasCode || hasType
+    // 일반적인 OAuth 파라미터들
+    const hasAccessToken = currentUrl.includes('access_token=') || hash.includes('access_token=')
+    const hasCode = currentUrl.includes('code=') || urlParams.has('code')
+    const hasType = currentUrl.includes('type=') || urlParams.has('type')
+    
+    // 카카오 특화 감지
+    const hasKakaoState = urlParams.has('state') && currentUrl.includes('kakao')
+    const hasOAuthParams = urlParams.has('state') || urlParams.has('session_state')
+    
+    const detected = hasAccessToken || hasCode || hasType || hasKakaoState || hasOAuthParams
+    
+    if (detected) {
+      console.log('🔍 OAuth callback detected:', {
+        hasAccessToken,
+        hasCode,
+        hasType,
+        hasKakaoState,
+        hasOAuthParams,
+        url: currentUrl,
+        hash: hash,
+        params: Object.fromEntries(urlParams.entries())
+      })
+    }
+    
+    return detected
   }
 
   useEffect(() => {
     // OAuth 콜백 직후인 경우 더 긴 시간 대기
     if (hasAuthCallback() && !clientUser && !serverUser) {
       console.log('🔄 OAuth callback detected, extending wait time')
+      
+      // 카카오는 더 긴 처리 시간이 필요할 수 있음
+      const isKakaoCallback = window.location.href.includes('kakao') || 
+                             window.location.search.includes('state')
+      const waitTime = isKakaoCallback ? 5000 : 3000 // 카카오는 5초, 구글은 3초
+      
+      console.log('⏰ Extended wait time:', { isKakaoCallback, waitTime })
       setExtendedWait(true)
       
       const timer = setTimeout(() => {
+        console.log('⏰ Extended wait time expired, checking auth state')
         setExtendedWait(false)
-      }, 3000) // 3초 추가 대기
+      }, waitTime)
       
       return () => clearTimeout(timer)
     }
@@ -87,17 +118,29 @@ export function HybridAuthWrapper({
 
   // Auth Context 초기화 대기 중 또는 OAuth 콜백 처리 중
   if (!initialized || extendedWait) {
+    // 카카오 로그인인지 감지
+    const isKakaoLogin = typeof window !== 'undefined' && 
+      (window.location.href.includes('kakao') || 
+       window.location.search.includes('state'))
+    
     const message = extendedWait 
       ? '로그인 처리 중...' 
       : '인증 상태 확인 중...'
+    
+    const subMessage = extendedWait 
+      ? (isKakaoLogin ? '카카오 로그인을 완료하는 중입니다...' : '구글 로그인을 완료하는 중입니다...')
+      : '잠시만 기다려 주세요'
     
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
           <div className="w-8 h-8 border-4 border-pink-200 border-t-pink-600 rounded-full animate-spin"></div>
           <p className="text-gray-600">{message}</p>
-          {extendedWait && (
-            <p className="text-sm text-gray-500">구글 로그인을 완료하는 중입니다...</p>
+          <p className="text-sm text-gray-500">{subMessage}</p>
+          {extendedWait && isKakaoLogin && (
+            <p className="text-xs text-gray-400 max-w-md text-center">
+              카카오 로그인은 추가 처리 시간이 필요할 수 있습니다
+            </p>
           )}
         </div>
       </div>
