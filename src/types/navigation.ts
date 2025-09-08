@@ -10,14 +10,6 @@ export interface NavigationItem {
 
 export const NAVIGATION_ITEMS: NavigationItem[] = [
   {
-    id: 'educational',
-    name: '정보센터',
-    emoji: '📚',
-    href: '/educational',
-    description: '전문가가 검증한 임신·육아 정보',
-    color: 'featured'
-  },
-  {
     id: 'expecting',
     name: '예비맘',
     emoji: '🤰',
@@ -48,14 +40,6 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     href: '/expert',
     description: '경험 많은 선배맘들의 노하우',
     category: 'expert'
-  },
-  {
-    id: 'community',
-    name: '커뮤니티',
-    emoji: '💬',
-    href: '/community',
-    description: '엄마들의 소통 공간',
-    category: 'community'
   }
 ]
 
@@ -64,8 +48,7 @@ export const COMMUNITY_CATEGORIES = [
   'expecting',
   'newborn', 
   'toddler',
-  'expert',
-  'community'
+  'expert'
 ] as const
 
 export type CommunityCategory = typeof COMMUNITY_CATEGORIES[number]
