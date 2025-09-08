@@ -9,9 +9,10 @@ interface PostListProps {
   currentUserId?: string
   emptyMessage?: string
   isLoading?: boolean
+  onDelete?: (postId: string) => void
 }
 
-export function PostList({ posts, currentUserId, emptyMessage = "아직 게시글이 없습니다.", isLoading = false }: PostListProps) {
+export function PostList({ posts, currentUserId, emptyMessage = "아직 게시글이 없습니다.", isLoading = false, onDelete }: PostListProps) {
   if (isLoading) {
     return <PostListSkeleton />
   }
@@ -32,6 +33,7 @@ export function PostList({ posts, currentUserId, emptyMessage = "아직 게시�
           post={post}
           currentUserId={currentUserId}
           isOwner={currentUserId === post.user_id}
+          onDelete={onDelete}
         />
       ))}
     </div>

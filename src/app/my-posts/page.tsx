@@ -8,15 +8,7 @@ async function getMyPosts(userId: string): Promise<PostWithDetails[]> {
   
   const { data: posts, error } = await supabase
     .from('posts')
-    .select(`
-      *,
-      profiles!posts_user_id_fkey (
-        username,
-        avatar_url
-      ),
-      likes (id),
-      comments (id)
-    `)
+    .select('*')
     .eq('user_id', userId)
     .order('created_at', { ascending: false })
 

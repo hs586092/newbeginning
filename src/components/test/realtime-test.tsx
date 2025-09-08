@@ -15,15 +15,7 @@ export function RealtimeTest() {
     try {
       const { data, error } = await supabase
         .from('posts')
-        .select(`
-          *,
-          profiles!posts_user_id_fkey (
-            username,
-            avatar_url
-          ),
-          likes (id),
-          comments (id)
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(10)
 

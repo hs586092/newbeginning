@@ -11,15 +11,7 @@ async function getPost(id: string): Promise<PostWithDetails | null> {
   
   const { data: post, error } = await supabase
     .from('posts')
-    .select(`
-      *,
-      profiles!posts_user_id_fkey (
-        username,
-        avatar_url
-      ),
-      likes (id),
-      comments (id)
-    `)
+    .select('*')
     .eq('id', id)
     .single()
 

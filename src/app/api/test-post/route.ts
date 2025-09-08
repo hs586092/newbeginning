@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     }
     
     console.log('Success! Post created:', data)
-    return NextResponse.json({ success: true, id: data.id, data })
+    return NextResponse.json({ success: true, id: (data as any).id, data })
     
   } catch (error) {
     console.error('API error:', error)

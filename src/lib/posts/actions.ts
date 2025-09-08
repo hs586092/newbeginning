@@ -3,6 +3,7 @@
 import { createServerSupabaseClient, getUser } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { RedirectType } from 'next/navigation'
 import { z } from 'zod'
 
 const createPostSchema = z.object({
@@ -116,13 +117,18 @@ export async function createPost(formData: FormData) {
     revalidatePath('/')
     revalidatePath('/community')
     
-    redirect(`/post/${(data as any).id}`)
+    redirect('/', RedirectType.replace)
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {
         error: error.issues[0].message,
         type: 'validation' as const
       }
+    }
+    
+    // Next.js redirect는 예외를 던지므로 다시 던져야 함
+    if (error && typeof error === 'object' && 'digest' in error && (error as any).digest?.includes('NEXT_REDIRECT')) {
+      throw error
     }
     
     console.error('Unexpected error:', error)
@@ -266,20 +272,7 @@ export async function searchPosts(query: string = '', category?: string, sort: s
   try {
     let queryBuilder = supabase
       .from('posts')
-      .select(`
-        *,
-        profiles!posts_user_id_fkey (
-          username,
-          avatar_url
-        ),
-        likes (id),
-        comments (id),
-        educational_metadata (
-          is_featured,
-          expert_verified,
-          display_priority
-        )
-      `)
+      .select('*')
 
     // 텍스트 검색 (제목 + 내용)
     if (query) {
@@ -681,6 +674,80 @@ export async function updateEducationalPost(formData: FormData) {
   }
 }
 
+// 댓글 작성
+export async function createComment(postId: string, content: string) {
+  const supabase = await createServerSupabaseClient()
+  const { user } = await getUser()
+  
+  if (!user) {
+    return { error: '로그인이 필요합니다.', type: 'auth' as const }
+  }
+
+  if (!content.trim()) {
+    return { error: '댓글 내용을 입력해주세요.', type: 'validation' as const }
+  }
+
+  try {
+    // Get user profile for author_name
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('username')
+      .eq('id', user.id)
+      .single()
+
+    const { data, error } = await (supabase as any)
+      .from('comments')
+      .insert({
+        post_id: postId,
+        user_id: user.id,
+        content: content.trim(),
+        author_name: (profile as any)?.username || user.email || '익명'
+      })
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Comment creation error:', error)
+      return { error: '댓글 작성 중 오류가 발생했습니다.', type: 'database' as const }
+    }
+
+    revalidatePath('/')
+    revalidatePath('/community')
+    revalidatePath(`/post/${postId}`)
+    
+    return { success: true, comment: data }
+  } catch (error) {
+    console.error('Unexpected error:', error)
+    return { 
+      error: '댓글 작성 중 오류가 발생했습니다.',
+      type: 'unknown' as const
+    }
+  }
+}
+
+// 댓글 목록 조회
+export async function getComments(postId: string) {
+  const supabase = await createServerSupabaseClient()
+  
+  try {
+    const { data, error } = await (supabase as any)
+      .from('comments')
+      .select('*')
+      .eq('post_id', postId)
+      .order('created_at', { ascending: true })
+
+    if (error) {
+      console.error('Comments fetch error:', error)
+      return { error: '댓글을 불러올 수 없습니다.', comments: [] }
+    }
+
+    return { success: true, comments: data || [] }
+  } catch (error) {
+    console.error('Unexpected error:', error)
+    return { error: '댓글을 불러올 수 없습니다.', comments: [] }
+  }
+}
+
 export async function getEducationalPosts(filters?: {
   category?: string
   target_audience?: string
@@ -692,16 +759,7 @@ export async function getEducationalPosts(filters?: {
   try {
     let query = supabase
       .from('posts')
-      .select(`
-        *,
-        profiles!posts_user_id_fkey (
-          username,
-          avatar_url
-        ),
-        likes (id),
-        comments (id),
-        educational_metadata (*)
-      `)
+      .select('*')
       .in('category', ['pregnancy_info', 'parenting_guide', 'health_tips', 'nutrition_guide', 'development_info', 'safety_tips'])
 
     if (filters?.category) {

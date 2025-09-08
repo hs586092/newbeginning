@@ -112,13 +112,7 @@ export default function SocialFeed({ activeFilter, smartFilter, isLoading: filte
         
         const { data: postsData, error } = await supabase
           .from('posts')
-          .select(`
-            *,
-            profiles!posts_user_id_fkey (
-              username,
-              avatar_url
-            )
-          `)
+          .select('*')
           .order('created_at', { ascending: false })
           .limit(10)
           

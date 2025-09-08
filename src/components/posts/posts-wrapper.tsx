@@ -16,13 +16,7 @@ async function getMixedFeedPosts(): Promise<PostWithDetails[]> {
     // Get regular posts (non-educational categories)
     const { data: regularPosts, error: regularError } = await supabase
       .from('posts')
-      .select(`
-        *,
-        profiles!posts_user_id_fkey (
-          username,
-          avatar_url
-        )
-      `)
+      .select('*')
       .in('category', ['community', 'expecting', 'newborn', 'toddler', 'expert'])
       .order('created_at', { ascending: false })
       .limit(20)
@@ -40,15 +34,7 @@ async function getMixedFeedPosts(): Promise<PostWithDetails[]> {
       // If no regular posts, try to get any posts at all
       const { data: anyPosts, error: anyError } = await supabase
         .from('posts')
-        .select(`
-          *,
-          profiles!posts_user_id_fkey (
-            username,
-            avatar_url
-          ),
-          likes (id),
-          comments (id)
-        `)
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(20)
 

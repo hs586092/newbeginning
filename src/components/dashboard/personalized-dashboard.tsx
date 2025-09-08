@@ -7,11 +7,13 @@ import { SearchFilters } from '@/components/search/search-filters'
 import { Button } from '@/components/ui/button'
 import type { CommunityCategory } from '@/types/navigation'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
+import type { PostWithDetails } from '@/types/database.types'
 import { PenSquare, Heart } from 'lucide-react'
 import Link from 'next/link'
 import { useState, useEffect, useCallback } from 'react'
-import SocialFeed from '@/components/social/social-feed'
+import { PostList } from '@/components/posts/post-list'
 import CategoryFilter, { getCategoryName } from '@/components/filters/category-filter'
+import { createClient } from '@/lib/supabase/client'
 
 interface PersonalizedDashboardProps {
   searchParams: { [key: string]: string | undefined }
@@ -31,7 +33,12 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
   // 스마트 필터 상태
   const [activeSmartFilter, setActiveSmartFilter] = useState<string>('latest')
   
+  // 게시글 상태
+  const [posts, setPosts] = useState<PostWithDetails[]>([])
+  const [postsLoading, setPostsLoading] = useState(true)
+  
   const hasSearchParams = Object.keys(searchParams).length > 0
+  const supabase = createClient()
 
   // 카테고리 필터링 핸들러
   const handleCategoryChange = useCallback(async (categoryId: string) => {
@@ -73,11 +80,131 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
     setTimeout(() => setShowToast(null), 2000)
   }
   
-  // 토스트 초기화
+  // 데모 게시글 생성
+  const getDemoPosts = useCallback((): PostWithDetails[] => {
+    return [
+      {
+        id: 'demo-1',
+        title: '임신 초기 입덧 극복법',
+        content: '임신 6주부터 시작된 입덧으로 고생하고 있어요. 생강차와 비타민 B6가 도움이 된다고 하네요. 다른 예비맘들은 어떻게 극복하셨나요?',
+        category: 'expecting',
+        user_id: 'demo-user-1',
+        author_name: '예비맘7주',
+        created_at: new Date(Date.now() - 1800000).toISOString(), // 30분 전
+        updated_at: new Date(Date.now() - 1800000).toISOString(),
+        view_count: 15,
+        profiles: {
+          username: '예비맘7주',
+          avatar_url: undefined
+        },
+        likes: [],
+        comments: []
+      },
+      {
+        id: 'demo-2',
+        title: '신생아 수유 간격 궁금해요',
+        content: '생후 2주된 아기인데 수유 간격이 1-2시간이에요. 이게 정상인지 궁금합니다. 언제쯤 간격이 길어질까요?',
+        category: 'newborn',
+        user_id: 'demo-user-2',
+        author_name: '새내기엄마',
+        created_at: new Date(Date.now() - 3600000).toISOString(), // 1시간 전
+        updated_at: new Date(Date.now() - 3600000).toISOString(),
+        view_count: 8,
+        profiles: {
+          username: '새내기엄마',
+          avatar_url: undefined
+        },
+        likes: [{ id: 'like-1' }],
+        comments: [{ id: 'comment-1' }]
+      },
+      {
+        id: 'demo-3',
+        title: '이유식 시작 시기와 준비물',
+        content: '아기가 5개월이 되어서 이유식 준비 중이에요. 언제부터 시작하는 게 좋을까요? 필요한 준비물도 알려주세요!',
+        category: 'toddler',
+        user_id: 'demo-user-3',
+        author_name: '육아맘5개월',
+        created_at: new Date(Date.now() - 7200000).toISOString(), // 2시간 전
+        updated_at: new Date(Date.now() - 7200000).toISOString(),
+        view_count: 23,
+        profiles: {
+          username: '육아맘5개월',
+          avatar_url: undefined
+        },
+        likes: [{ id: 'like-2' }, { id: 'like-3' }],
+        comments: []
+      },
+      {
+        id: 'demo-4',
+        title: '아이와 함께하는 놀이 추천',
+        content: '18개월 아기와 집에서 할 수 있는 재미있는 놀이가 있을까요? 비 오는 날이 많아서 실내 놀이 아이디어가 필요해요!',
+        category: 'toddler',
+        user_id: 'demo-user-4',
+        author_name: '활발한맘',
+        created_at: new Date(Date.now() - 14400000).toISOString(), // 4시간 전
+        updated_at: new Date(Date.now() - 14400000).toISOString(),
+        view_count: 45,
+        profiles: {
+          username: '활발한맘',
+          avatar_url: undefined
+        },
+        likes: [{ id: 'like-4' }, { id: 'like-5' }, { id: 'like-6' }],
+        comments: [{ id: 'comment-2' }, { id: 'comment-3' }]
+      }
+    ] as PostWithDetails[]
+  }, [])
+
+  // 게시글 로드 (실제 게시글 + 데모 게시글 통합)
+  const loadPosts = useCallback(async () => {
+    try {
+      setPostsLoading(true)
+      
+      // 실제 게시글 로드
+      const { data: realPosts, error } = await supabase
+        .from('posts')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(15)
+
+      // 데모 게시글 가져오기
+      const demoPosts = getDemoPosts()
+      
+      // 실제 게시글과 데모 게시글 합치기
+      let allPosts: PostWithDetails[] = []
+      
+      if (error) {
+        console.error('Error loading real posts:', error)
+        // 실제 게시글 로드 실패 시 데모 게시글만 사용
+        allPosts = demoPosts
+      } else {
+        // 실제 게시글과 데모 게시글을 합쳐서 시간순 정렬
+        allPosts = [...(realPosts || []), ...demoPosts].sort((a, b) => 
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        )
+      }
+      
+      setPosts(allPosts)
+    } catch (error) {
+      console.error('Unexpected error loading posts:', error)
+      // 오류 시 데모 게시글만 표시
+      setPosts(getDemoPosts())
+    } finally {
+      setPostsLoading(false)
+    }
+  }, [supabase, getDemoPosts])
+
+  // 게시글 삭제 핸들러 (Optimistic Update)
+  const handlePostDelete = useCallback((postId: string) => {
+    setPosts(prevPosts => prevPosts.filter(post => post.id !== postId))
+  }, [])
+
+  // 토스트 초기화 및 게시글 로드
   useEffect(() => {
     // 초기 로드 시 전체 카테고리로 결과 설정
     setFilteredResultCount(15) // Mock 초기 데이터 수
-  }, [])
+    // 게시글 로드
+    loadPosts()
+  }, [loadPosts])
 
   // Safety guard - if no user, show error or redirect
   if (!user) {
@@ -323,11 +450,12 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
 
               {/* Main Feed Area - Responsive */}
               <div className="flex-1 min-w-0">
-                <SocialFeed
-                  selectedCategory={currentCategory}
-                  activeFilter={activeCategory}
-                  smartFilter={activeSmartFilter}
-                  isLoading={isFiltering}
+                <PostList
+                  posts={posts}
+                  currentUserId={user?.id}
+                  isLoading={postsLoading}
+                  emptyMessage="아직 게시글이 없습니다. 첫 번째 게시글을 작성해보세요!"
+                  onDelete={handlePostDelete}
                 />
               </div>
             </div>
