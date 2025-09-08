@@ -40,10 +40,15 @@ const updateEducationalPostSchema = createEducationalPostSchema.partial().extend
 })
 
 export async function createPost(formData: FormData) {
+  console.log('createPost called')
+  
   const supabase = await createServerSupabaseClient()
   const { user } = await getUser()
   
+  console.log('User from getUser:', user ? { id: user.id, email: user.email } : 'null')
+  
   if (!user) {
+    console.log('No user found, returning auth error')
     return { error: '로그인이 필요합니다.', type: 'auth' as const }
   }
 
@@ -64,22 +69,48 @@ export async function createPost(formData: FormData) {
     mood: formData.get('mood') as string || undefined,
   }
 
+  console.log('Raw form data:', rawData)
+
   try {
     const validatedData = createPostSchema.parse(rawData)
+    console.log('Validated data:', validatedData)
+
+    // Create basic post data first
+    const postData = {
+      title: validatedData.title,
+      content: validatedData.content,
+      category: validatedData.category,
+      user_id: user.id,
+      author_name: (profile as any)?.username || user.email || '익명'
+    }
+    
+    // Add optional fields only if they exist
+    if (validatedData.is_question !== undefined) {
+      (postData as any).is_question = validatedData.is_question
+    }
+    if (validatedData.baby_month !== undefined) {
+      (postData as any).baby_month = validatedData.baby_month
+    }
+    if (validatedData.tags && validatedData.tags.length > 0) {
+      (postData as any).tags = validatedData.tags
+    }
+    if (validatedData.mood) {
+      (postData as any).mood = validatedData.mood
+    }
+
+    console.log('Final post data to insert:', postData)
 
     const { data, error } = await supabase
       .from('posts')
-      .insert({
-        ...validatedData,
-        user_id: user.id,
-        author_name: (profile as any)?.username || user.email || '익명'
-      } as any)
+      .insert(postData)
       .select()
       .single()
 
+    console.log('Supabase insert result:', { data, error })
+
     if (error) {
       console.error('Post creation error:', error)
-      return { error: '게시글 작성 중 오류가 발생했습니다.', type: 'database' as const }
+      return { error: `게시글 작성 중 오류가 발생했습니다: ${error.message}`, type: 'database' as const }
     }
 
     revalidatePath('/')

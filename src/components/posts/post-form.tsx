@@ -34,6 +34,8 @@ export function PostForm({ post, mode }: PostFormProps) {
     setError('')
     setSuccess('')
     
+    console.log('Form submission started...') // Debug log
+    
     // Process tags
     const tagArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
     
@@ -43,22 +45,36 @@ export function PostForm({ post, mode }: PostFormProps) {
     if (tagArray.length > 0) formData.append('tags', JSON.stringify(tagArray))
     if (mood) formData.append('mood', mood)
     
+    console.log('Form data prepared:', {
+      title: formData.get('title'),
+      content: formData.get('content'),
+      category: formData.get('category'),
+      is_question: formData.get('is_question'),
+      baby_month: formData.get('baby_month'),
+      tags: formData.get('tags'),
+      mood: formData.get('mood')
+    })
+    
     startTransition(async () => {
       try {
         const action = mode === 'create' ? createPost : updatePost
+        console.log('Calling action...', mode)
         const result = await action(formData)
+        console.log('Action result:', result)
         
         if (result?.error) {
+          console.error('Action error:', result.error, result.type)
           setError(result.error)
         } else {
+          console.log('Success!')
           setSuccess(mode === 'create' ? '게시글이 성공적으로 작성되었습니다!' : '게시글이 성공적으로 수정되었습니다!')
           setTimeout(() => {
             router.push('/')
           }, 1500)
         }
       } catch (err) {
-        setError('예상치 못한 오류가 발생했습니다. 다시 시도해주세요.')
         console.error('Form submission error:', err)
+        setError('예상치 못한 오류가 발생했습니다. 다시 시도해주세요.')
       }
     })
   }
