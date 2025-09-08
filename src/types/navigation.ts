@@ -18,44 +18,36 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     color: 'featured'
   },
   {
-    id: 'pregnancy',
-    name: '임신',
+    id: 'expecting',
+    name: '예비맘',
     emoji: '🤰',
-    href: '/pregnancy',
-    description: '임신 관련 경험과 정보',
-    category: 'pregnancy'
-  },
-  {
-    id: 'birth',
-    name: '출산',
-    emoji: '🏥',
-    href: '/birth',
-    description: '출산 준비와 분만 정보',
-    category: 'pregnancy'
+    href: '/expecting',
+    description: '임신~출산 준비 정보',
+    category: 'expecting'
   },
   {
     id: 'newborn',
-    name: '신생아',
-    emoji: '🍼',
+    name: '신생아맘',
+    emoji: '👶',
     href: '/newborn',
-    description: '0-3개월 신생아 돌봄',
+    description: '0-6개월 신생아 돌봄',
     category: 'newborn'
   },
   {
-    id: 'baby-food',
-    name: '이유식',
-    emoji: '🥄',
-    href: '/baby-food',
-    description: '이유식 레시피와 노하우',
-    category: 'babyfood'
+    id: 'toddler',
+    name: '성장기맘',
+    emoji: '🧒',
+    href: '/toddler',
+    description: '7개월-5세 성장기 가이드',
+    category: 'toddler'
   },
   {
-    id: 'development',
-    name: '발달정보',
-    emoji: '📈',
-    href: '/development',
-    description: '아기 성장과 발달 정보',
-    category: 'infant'
+    id: 'expert',
+    name: '선배맘',
+    emoji: '👩‍👧‍👦',
+    href: '/expert',
+    description: '경험 많은 선배맘들의 노하우',
+    category: 'expert'
   },
   {
     id: 'community',
@@ -63,29 +55,17 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     emoji: '💬',
     href: '/community',
     description: '엄마들의 소통 공간',
-    category: 'daily'
-  },
-  {
-    id: 'emergency',
-    name: '응급',
-    emoji: '🚨',
-    href: '/emergency',
-    description: '응급상황 대처와 안전',
-    color: 'danger',
-    category: 'emergency'
+    category: 'community'
   }
 ]
 
 export const COMMUNITY_CATEGORIES = [
   'all',
-  'pregnancy',
+  'expecting',
   'newborn', 
-  'infant',
-  'babyfood',
-  'sleep',
-  'health',
-  'daily',
-  'emergency'
+  'toddler',
+  'expert',
+  'community'
 ] as const
 
 export type CommunityCategory = typeof COMMUNITY_CATEGORIES[number]
