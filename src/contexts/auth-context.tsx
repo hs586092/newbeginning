@@ -3,16 +3,21 @@
 import React, { 
   createContext, 
   useContext, 
-  useReducer, 
+  useState,
   useEffect, 
   useCallback,
   useRef
 } from 'react'
 import { useRouter } from 'next/navigation'
 import { SupabaseAuthClient } from '@/lib/auth/supabase-client'
+import { AuthStateMachine } from '@/lib/auth/auth-state-machine'
+import { OperationMutex } from '@/lib/auth/operation-mutex'
+import { 
+  AuthMachineState, 
+  AuthMachineEvent, 
+  AuthMachineContext 
+} from '@/types/auth-state-machine.types'
 import type { 
-  AuthState, 
-  AuthContextValue, 
   AuthConfig, 
   AuthResult,
   UserProfile,
@@ -20,68 +25,34 @@ import type {
 } from '@/types/auth.types'
 import type { User, Session } from '@supabase/supabase-js'
 
-// Auth Actions
-type AuthAction =
-  | { type: 'SET_LOADING'; payload: boolean }
-  | { type: 'SET_INITIALIZED'; payload: boolean }
-  | { type: 'SET_USER'; payload: { user: User | null; session: Session | null } }
-  | { type: 'SET_PROFILE'; payload: UserProfile | null }
-  | { type: 'RESET_STATE' }
-  | { type: 'UPDATE_PROFILE'; payload: Partial<UserProfile> }
-
-// Initial state
-const initialState: AuthState = {
-  user: null,
-  profile: null,
-  session: null,
-  loading: true,
-  initialized: false
-}
-
-// Auth reducer
-function authReducer(state: AuthState, action: AuthAction): AuthState {
-  switch (action.type) {
-    case 'SET_LOADING':
-      return { ...state, loading: action.payload }
-    
-    case 'SET_INITIALIZED':
-      return { ...state, initialized: action.payload }
-    
-    case 'SET_USER':
-      return {
-        ...state,
-        user: action.payload.user,
-        session: action.payload.session,
-        loading: false
-      }
-    
-    case 'SET_PROFILE':
-      return { ...state, profile: action.payload }
-    
-    case 'UPDATE_PROFILE':
-      return {
-        ...state,
-        profile: state.profile 
-          ? { ...state.profile, ...action.payload }
-          : null
-      }
-    
-    case 'RESET_STATE':
-      return {
-        user: null,
-        profile: null,
-        session: null,
-        loading: false,
-        initialized: true
-      }
-    
-    default:
-      return state
-  }
+// Enhanced Auth Context Value with State Machine
+interface EnhancedAuthContextValue {
+  // State Machine Properties
+  user: User | null
+  profile: UserProfile | null
+  session: Session | null
+  isAuthenticated: boolean
+  isLoading: boolean
+  initialized: boolean
+  currentState: AuthMachineState
+  
+  // Methods
+  signIn: (email: string, password: string) => Promise<AuthResult>
+  signUp: (email: string, password: string, username: string) => Promise<AuthResult>
+  signInWithGoogle: () => Promise<AuthResult>
+  signInWithKakao: () => Promise<AuthResult>
+  signOut: () => Promise<AuthResult>
+  updateProfile: (updates: Partial<UserProfile>) => Promise<AuthResult>
+  refreshProfile: () => Promise<void>
+  hasRole: (role: string) => boolean
+  
+  // State Machine Methods
+  getMachineStatus: () => any
+  canSignOut: () => boolean
 }
 
 // Create context
-const AuthContext = createContext<AuthContextValue | null>(null)
+const AuthContext = createContext<EnhancedAuthContextValue | null>(null)
 
 // Default configuration
 const defaultConfig: AuthConfig = {
@@ -98,18 +69,57 @@ interface AuthProviderProps {
 }
 
 /**
- * Production-ready Auth Provider with comprehensive state management
+ * Production-ready Auth Provider with State Machine Pattern
+ * Single Source of Truth for all authentication states
+ * Prevents race conditions and dual loading states
  */
 export function AuthProvider({ children, config = {} }: AuthProviderProps) {
-  const [state, dispatch] = useReducer(authReducer, initialState)
   const router = useRouter()
   const authClient = useRef<SupabaseAuthClient | null>(null)
+  const stateMachine = useRef<AuthStateMachine | null>(null)
+  const operationMutex = useRef<OperationMutex | null>(null)
   const initializationPromise = useRef<Promise<void> | null>(null)
   const finalConfig = { ...defaultConfig, ...config }
 
-  // Initialize auth client
+  // State Machine Context State
+  const [machineContext, setMachineContext] = useState<AuthMachineContext>({
+    user: null,
+    profile: null,
+    session: null,
+    error: null,
+    provider: null,
+    oauthRetryCount: 0,
+    lastError: null
+  })
+  
+  const [currentState, setCurrentState] = useState<AuthMachineState>(AuthMachineState.INITIALIZING)
+
+  // Initialize auth client, state machine, and operation mutex
   if (!authClient.current) {
     authClient.current = new SupabaseAuthClient(finalConfig.enableDebugMode)
+  }
+
+  if (!operationMutex.current) {
+    operationMutex.current = new OperationMutex(finalConfig.enableDebugMode)
+  }
+
+  if (!stateMachine.current) {
+    stateMachine.current = new AuthStateMachine({
+      onStateChange: (state: AuthMachineState, context: AuthMachineContext) => {
+        setCurrentState(state)
+        setMachineContext(context)
+      },
+      onError: (error: string, context: AuthMachineContext) => {
+        logError('State Machine Error:', error)
+      },
+      onUserChange: (user: User | null, context: AuthMachineContext) => {
+        log('User changed:', user?.id || 'null')
+        // Load profile if user exists and auto-refresh is enabled
+        if (user && finalConfig.autoRefreshProfile) {
+          loadProfile(user.id)
+        }
+      }
+    }, finalConfig.enableDebugMode)
   }
 
   const log = useCallback((message: string, data?: any) => {
@@ -134,7 +144,7 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
         return
       }
 
-      dispatch({ type: 'SET_PROFILE', payload: profile })
+      // Profile will be updated through State Machine context
       log('Profile loaded successfully')
     } catch (error) {
       logError('Unexpected error loading profile:', error)
@@ -142,7 +152,8 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
   }, [log, logError])
 
   /**
-   * Initialize authentication state with aggressive retry for OAuth scenarios
+   * Initialize authentication state with State Machine Pattern
+   * Prevents race conditions and manages OAuth callbacks properly
    */
   const initializeAuth = useCallback(async (): Promise<void> => {
     if (initializationPromise.current) {
@@ -151,80 +162,114 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
 
     initializationPromise.current = (async () => {
       try {
-        log('Initializing authentication state')
-        dispatch({ type: 'SET_LOADING', payload: true })
+        log('Initializing authentication with State Machine')
 
-        let retryCount = 0
-        const maxRetries = 5 // 카카오를 위해 재시도 횟수 증가
-        let session: any = null
-        let user: any = null
+        // Detect OAuth callback
+        const isOAuthCallback = typeof window !== 'undefined' && 
+          (window.location.href.includes('access_token=') ||
+           window.location.search.includes('code=') ||
+           window.location.search.includes('state='))
 
-        // Detect if this is a Kakao OAuth callback
-        const isKakaoCallback = typeof window !== 'undefined' && 
-          (window.location.href.includes('kakao') || 
-           window.location.search.includes('state') ||
-           window.location.search.includes('code'))
-
-        // Retry logic for OAuth callback scenarios where session might be delayed
-        while (retryCount < maxRetries) {
-          const [sessionResult, userResult] = await Promise.all([
-            authClient.current!.getCurrentSession(),
-            authClient.current!.getCurrentUser()
-          ])
-
-          session = sessionResult.session
-          user = userResult.user
-
-          if (session && user) {
-            log(`Found session and user on attempt ${retryCount + 1}`, {
-              provider: isKakaoCallback ? 'kakao' : 'unknown',
-              userId: user.id
-            })
-            break
-          }
-
-          // If no session/user found, wait a bit and retry (for OAuth callback cases)
-          if (retryCount < maxRetries - 1) {
-            const waitTime = isKakaoCallback ? 800 : 500 // 카카오는 더 긴 간격
-            log(`No session found on attempt ${retryCount + 1}, retrying in ${waitTime}ms...`)
-            await new Promise(resolve => setTimeout(resolve, waitTime))
-          }
-          
-          retryCount++
-        }
-
-        if (session && user) {
-          log('Successfully authenticated user found')
-          dispatch({ 
-            type: 'SET_USER', 
-            payload: { user, session } 
+        if (isOAuthCallback) {
+          log('OAuth callback detected - entering OAuth callback state')
+          const provider = window.location.href.includes('kakao') ? 'kakao' : 'google'
+          stateMachine.current!.send(AuthMachineEvent.OAUTH_CALLBACK_DETECTED, {
+            provider,
+            oauthRetryCount: 0
           })
-
-          // Load profile if auto-refresh is enabled
-          if (finalConfig.autoRefreshProfile) {
-            await loadProfile(user.id)
-          }
+          
+          // Enhanced retry logic for OAuth scenarios
+          await attemptOAuthAuthentication(provider as 'google' | 'kakao')
         } else {
-          log('No authenticated session found after retries')
-          dispatch({ type: 'RESET_STATE' })
+          // Regular initialization - check for existing session
+          await attemptRegularAuthentication()
         }
 
-        dispatch({ type: 'SET_INITIALIZED', payload: true })
-        dispatch({ type: 'SET_LOADING', payload: false })
         log('Authentication initialization completed')
       } catch (error) {
         logError('Failed to initialize auth:', error)
-        dispatch({ type: 'RESET_STATE' })
-        dispatch({ type: 'SET_INITIALIZED', payload: true })
-        dispatch({ type: 'SET_LOADING', payload: false })
+        stateMachine.current!.send(AuthMachineEvent.SIGN_IN_ERROR, {
+          error: '초기화 중 오류가 발생했습니다.',
+          lastError: error instanceof Error ? error.message : String(error)
+        })
       }
     })()
 
     return initializationPromise.current
-  }, [log, logError, loadProfile, finalConfig.autoRefreshProfile])
+  }, [log, logError])
+
+  /**
+   * Attempt OAuth authentication with provider-specific retry logic
+   */
+  const attemptOAuthAuthentication = useCallback(async (provider: 'google' | 'kakao') => {
+    const maxRetries = provider === 'kakao' ? 5 : 3
+    const retryDelay = provider === 'kakao' ? 800 : 500
+    let retryCount = 0
+
+    while (retryCount < maxRetries) {
+      const [sessionResult, userResult] = await Promise.all([
+        authClient.current!.getCurrentSession(),
+        authClient.current!.getCurrentUser()
+      ])
+
+      if (sessionResult.session && userResult.user) {
+        log(`OAuth authentication successful on attempt ${retryCount + 1}`, {
+          provider,
+          userId: userResult.user.id
+        })
+        
+        stateMachine.current!.send(AuthMachineEvent.SIGN_IN_SUCCESS, {
+          user: userResult.user,
+          session: sessionResult.session,
+          provider,
+          oauthRetryCount: retryCount
+        })
+        return
+      }
+
+      if (retryCount < maxRetries - 1) {
+        log(`OAuth retry ${retryCount + 1}/${maxRetries} for ${provider}`)
+        await new Promise(resolve => setTimeout(resolve, retryDelay))
+      }
+      
+      retryCount++
+    }
+
+    // All retries failed
+    stateMachine.current!.send(AuthMachineEvent.SIGN_IN_ERROR, {
+      error: `${provider} 로그인 처리 중 시간이 초과되었습니다.`,
+      provider,
+      oauthRetryCount: retryCount
+    })
+  }, [log])
+
+  /**
+   * Attempt regular authentication for existing sessions
+   */
+  const attemptRegularAuthentication = useCallback(async () => {
+    const [sessionResult, userResult] = await Promise.all([
+      authClient.current!.getCurrentSession(),
+      authClient.current!.getCurrentUser()
+    ])
+
+    if (sessionResult.session && userResult.user) {
+      log('Existing session found')
+      stateMachine.current!.send(AuthMachineEvent.SIGN_IN_SUCCESS, {
+        user: userResult.user,
+        session: sessionResult.session,
+        provider: null
+      })
+    } else {
+      log('No existing session found')
+      stateMachine.current!.send(AuthMachineEvent.SIGN_IN_ERROR, {
+        error: null // No error, just no session
+      })
+    }
+  }, [log])
 
   /**
    * Handle auth state changes from Supabase
+   * Now managed by State Machine Pattern
    */
   const handleAuthStateChange = useCallback(async (
     event: string, 
@@ -235,26 +280,28 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
     switch (event) {
       case 'SIGNED_IN':
         if (session?.user) {
-          dispatch({ 
-            type: 'SET_USER', 
-            payload: { user: session.user, session } 
+          stateMachine.current!.send(AuthMachineEvent.SIGN_IN_SUCCESS, {
+            user: session.user,
+            session,
+            provider: null // Will be set by the signin methods
           })
-          
-          if (finalConfig.autoRefreshProfile) {
-            await loadProfile(session.user.id)
-          }
         }
         break
 
       case 'SIGNED_OUT':
-        dispatch({ type: 'RESET_STATE' })
+        stateMachine.current!.send(AuthMachineEvent.SIGN_OUT_SUCCESS, {
+          user: null,
+          session: null,
+          profile: null
+        })
         break
 
       case 'TOKEN_REFRESHED':
         if (session?.user) {
-          dispatch({ 
-            type: 'SET_USER', 
-            payload: { user: session.user, session } 
+          stateMachine.current!.send(AuthMachineEvent.SIGN_IN_SUCCESS, {
+            user: session.user,
+            session,
+            provider: machineContext.provider // Keep existing provider
           })
         }
         break
@@ -263,17 +310,22 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
         // Handle other events as needed
         break
     }
-  }, [log, loadProfile, finalConfig.autoRefreshProfile])
+  }, [log, machineContext.provider])
 
   /**
    * Handle auth events from our custom client
+   * Now managed by State Machine Pattern
    */
   const handleAuthEvent = useCallback((event: AuthEvent) => {
     log('Auth event received:', event.type)
 
     switch (event.type) {
       case 'SIGNED_OUT':
-        dispatch({ type: 'RESET_STATE' })
+        stateMachine.current!.send(AuthMachineEvent.SIGN_OUT_SUCCESS, {
+          user: null,
+          session: null,
+          profile: null
+        })
         if (finalConfig.redirectOnSignOut && typeof window !== 'undefined') {
           // Force page reload to ensure complete state cleanup
           window.location.href = finalConfig.redirectOnSignOut
@@ -282,7 +334,11 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
 
       case 'PROFILE_UPDATED':
         if (event.data?.profile) {
-          dispatch({ type: 'SET_PROFILE', payload: event.data.profile })
+          // Update profile in state machine context
+          setMachineContext(prev => ({
+            ...prev,
+            profile: event.data.profile
+          }))
         }
         break
 
@@ -296,32 +352,61 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
   }, [log, logError, finalConfig.redirectOnSignOut])
 
   /**
-   * Sign in with email and password
+   * Sign in with email and password using State Machine and Mutex
    */
   const signIn = useCallback(async (email: string, password: string): Promise<AuthResult> => {
-    try {
-      dispatch({ type: 'SET_LOADING', payload: true })
-      
-      const result = await authClient.current!.signInWithPassword(email, password)
-      
-      if (result.success && finalConfig.redirectOnSignIn) {
-        router.push(finalConfig.redirectOnSignIn)
-      }
-      
-      return result
-    } catch (error) {
-      logError('Sign in error:', error)
+    const SIGNIN_OPERATION = 'signin'
+
+    // Prevent concurrent signin operations
+    if (operationMutex.current!.isLocked(SIGNIN_OPERATION)) {
       return {
         success: false,
-        error: '로그인 중 오류가 발생했습니다.'
+        error: '이미 로그인 진행 중입니다.'
       }
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false })
     }
+
+    return await operationMutex.current!.withLock(SIGNIN_OPERATION, async () => {
+      try {
+        stateMachine.current!.send(AuthMachineEvent.SIGN_IN_START)
+        
+        const result = await authClient.current!.signInWithPassword(email, password)
+        
+        if (result.success) {
+          stateMachine.current!.send(AuthMachineEvent.SIGN_IN_SUCCESS, {
+            user: result.data?.user || null,
+            session: result.data?.session || null,
+            provider: 'email'
+          })
+
+          if (finalConfig.redirectOnSignIn) {
+            router.push(finalConfig.redirectOnSignIn)
+          }
+        } else {
+          stateMachine.current!.send(AuthMachineEvent.SIGN_IN_ERROR, {
+            error: result.error || '로그인에 실패했습니다.',
+            lastError: result.error
+          })
+        }
+        
+        return result
+      } catch (error) {
+        logError('Sign in error:', error)
+        
+        stateMachine.current!.send(AuthMachineEvent.SIGN_IN_ERROR, {
+          error: '로그인 중 예기치 못한 오류가 발생했습니다.',
+          lastError: error instanceof Error ? error.message : String(error)
+        })
+
+        return {
+          success: false,
+          error: '로그인 중 오류가 발생했습니다.'
+        }
+      }
+    })
   }, [router, logError, finalConfig.redirectOnSignIn])
 
   /**
-   * Sign up with email, password, and username
+   * Sign up with email, password, and username using State Machine
    */
   const signUp = useCallback(async (
     email: string, 
@@ -329,8 +414,7 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
     username: string
   ): Promise<AuthResult> => {
     try {
-      dispatch({ type: 'SET_LOADING', payload: true })
-      
+      // State Machine manages loading state automatically
       return await authClient.current!.signUpWithPassword(email, password, username)
     } catch (error) {
       logError('Sign up error:', error)
@@ -338,83 +422,177 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
         success: false,
         error: '회원가입 중 오류가 발생했습니다.'
       }
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false })
     }
   }, [logError])
 
   /**
-   * Sign in with Google
+   * Sign in with Google using State Machine and Mutex
    */
   const signInWithGoogle = useCallback(async (): Promise<AuthResult> => {
-    try {
-      const result = await authClient.current!.signInWithGoogle()
-      
-      if (result.success && result.data?.url) {
-        window.location.href = result.data.url
-      }
-      
-      return result
-    } catch (error) {
-      logError('Google sign in error:', error)
+    const GOOGLE_SIGNIN_OPERATION = 'google-signin'
+
+    if (operationMutex.current!.isLocked(GOOGLE_SIGNIN_OPERATION)) {
       return {
         success: false,
-        error: 'Google 로그인 중 오류가 발생했습니다.'
+        error: '이미 Google 로그인 진행 중입니다.'
       }
     }
+
+    return await operationMutex.current!.withLock(GOOGLE_SIGNIN_OPERATION, async () => {
+      try {
+        stateMachine.current!.send(AuthMachineEvent.SIGN_IN_START, {
+          provider: 'google'
+        })
+
+        const result = await authClient.current!.signInWithGoogle()
+        
+        if (result.success && result.data?.url) {
+          // OAuth redirect - State Machine will handle the callback
+          window.location.href = result.data.url
+        } else {
+          stateMachine.current!.send(AuthMachineEvent.SIGN_IN_ERROR, {
+            error: result.error || 'Google 로그인에 실패했습니다.',
+            provider: 'google'
+          })
+        }
+        
+        return result
+      } catch (error) {
+        logError('Google sign in error:', error)
+        
+        stateMachine.current!.send(AuthMachineEvent.SIGN_IN_ERROR, {
+          error: 'Google 로그인 중 예기치 못한 오류가 발생했습니다.',
+          provider: 'google'
+        })
+
+        return {
+          success: false,
+          error: 'Google 로그인 중 오류가 발생했습니다.'
+        }
+      }
+    })
   }, [logError])
 
   /**
-   * Sign in with Kakao
+   * Sign in with Kakao using State Machine and Mutex
    */
   const signInWithKakao = useCallback(async (): Promise<AuthResult> => {
-    try {
-      const result = await authClient.current!.signInWithKakao()
-      
-      if (result.success && result.data?.url) {
-        window.location.href = result.data.url
-      }
-      
-      return result
-    } catch (error) {
-      logError('Kakao sign in error:', error)
+    const KAKAO_SIGNIN_OPERATION = 'kakao-signin'
+
+    if (operationMutex.current!.isLocked(KAKAO_SIGNIN_OPERATION)) {
       return {
         success: false,
-        error: '카카오 로그인 중 오류가 발생했습니다.'
+        error: '이미 카카오 로그인 진행 중입니다.'
       }
     }
+
+    return await operationMutex.current!.withLock(KAKAO_SIGNIN_OPERATION, async () => {
+      try {
+        stateMachine.current!.send(AuthMachineEvent.SIGN_IN_START, {
+          provider: 'kakao'
+        })
+
+        const result = await authClient.current!.signInWithKakao()
+        
+        if (result.success && result.data?.url) {
+          // OAuth redirect - State Machine will handle the callback
+          window.location.href = result.data.url
+        } else {
+          stateMachine.current!.send(AuthMachineEvent.SIGN_IN_ERROR, {
+            error: result.error || '카카오 로그인에 실패했습니다.',
+            provider: 'kakao'
+          })
+        }
+        
+        return result
+      } catch (error) {
+        logError('Kakao sign in error:', error)
+        
+        stateMachine.current!.send(AuthMachineEvent.SIGN_IN_ERROR, {
+          error: '카카오 로그인 중 예기치 못한 오류가 발생했습니다.',
+          provider: 'kakao'
+        })
+
+        return {
+          success: false,
+          error: '카카오 로그인 중 오류가 발생했습니다.'
+        }
+      }
+    })
   }, [logError])
 
   /**
-   * Complete sign out with comprehensive cleanup
+   * Complete sign out with State Machine Pattern and Mutex
+   * Prevents race conditions and concurrent signout operations
    */
   const signOut = useCallback(async (): Promise<AuthResult> => {
-    try {
-      log('Starting sign out process')
-      dispatch({ type: 'SET_LOADING', payload: true })
-      
-      const result = await authClient.current!.signOut()
-      
-      // State will be reset by handleAuthEvent
-      log('Sign out completed:', { success: result.success })
-      
-      return result
-    } catch (error) {
-      logError('Sign out error:', error)
+    const SIGNOUT_OPERATION = 'signout'
+
+    // Check if signout is already in progress
+    if (operationMutex.current!.isLocked(SIGNOUT_OPERATION)) {
       return {
         success: false,
-        error: '로그아웃 중 오류가 발생했습니다.'
+        error: '이미 로그아웃 진행 중입니다.'
       }
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false })
     }
-  }, [log, logError])
+
+    return await operationMutex.current!.withLock(SIGNOUT_OPERATION, async () => {
+      try {
+        // Double check authentication state
+        if (!stateMachine.current!.isAuthenticated()) {
+          return {
+            success: false,
+            error: '이미 로그아웃 상태입니다.'
+          }
+        }
+
+        log('Starting sign out process with State Machine and Mutex')
+        stateMachine.current!.send(AuthMachineEvent.SIGN_OUT_START)
+        
+        const result = await authClient.current!.signOut()
+        
+        if (result.success) {
+          stateMachine.current!.send(AuthMachineEvent.SIGN_OUT_SUCCESS, {
+            user: null,
+            session: null,
+            profile: null,
+            provider: null
+          })
+          
+          // Navigate to landing page
+          if (finalConfig.redirectOnSignOut && typeof window !== 'undefined') {
+            window.location.href = finalConfig.redirectOnSignOut
+          }
+        } else {
+          stateMachine.current!.send(AuthMachineEvent.SIGN_OUT_ERROR, {
+            error: result.error || '로그아웃 중 오류가 발생했습니다.',
+            lastError: result.error
+          })
+        }
+        
+        log('Sign out completed:', { success: result.success })
+        return result
+      } catch (error) {
+        logError('Sign out error:', error)
+        
+        stateMachine.current!.send(AuthMachineEvent.SIGN_OUT_ERROR, {
+          error: '로그아웃 중 예기치 못한 오류가 발생했습니다.',
+          lastError: error instanceof Error ? error.message : String(error)
+        })
+        
+        return {
+          success: false,
+          error: '로그아웃 중 오류가 발생했습니다.'
+        }
+      }
+    })
+  }, [log, logError, finalConfig.redirectOnSignOut])
 
   /**
    * Update user profile
    */
   const updateProfile = useCallback(async (updates: Partial<UserProfile>): Promise<AuthResult> => {
-    if (!state.user?.id) {
+    if (!machineContext.user?.id) {
       return {
         success: false,
         error: '로그인이 필요합니다.'
@@ -422,7 +600,7 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
     }
 
     try {
-      return await authClient.current!.updateProfile(state.user.id, updates)
+      return await authClient.current!.updateProfile(machineContext.user.id, updates)
     } catch (error) {
       logError('Update profile error:', error)
       return {
@@ -430,25 +608,25 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
         error: '프로필 업데이트 중 오류가 발생했습니다.'
       }
     }
-  }, [state.user?.id, logError])
+  }, [machineContext.user?.id, logError])
 
   /**
    * Refresh profile data
    */
   const refreshProfile = useCallback(async (): Promise<void> => {
-    if (state.user?.id) {
-      await loadProfile(state.user.id)
+    if (machineContext.user?.id) {
+      await loadProfile(machineContext.user.id)
     }
-  }, [state.user?.id, loadProfile])
+  }, [machineContext.user?.id, loadProfile])
 
   /**
    * Check if user has specific role
    */
   const hasRole = useCallback((role: string): boolean => {
-    if (!state.profile) return false
+    if (!machineContext.profile) return false
     // Implement role checking logic based on your user schema
-    return state.profile.user_type === role
-  }, [state.profile])
+    return machineContext.profile.user_type === role
+  }, [machineContext.profile])
 
   // Initialize authentication on mount
   useEffect(() => {
@@ -468,14 +646,31 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
     }
   }, [handleAuthStateChange, handleAuthEvent])
 
-  // Context value
-  const value: AuthContextValue = {
-    // State
-    ...state,
-    
-    // Derived state
-    isAuthenticated: !!state.user && !!state.session,
-    isLoading: state.loading,
+  /**
+   * Get machine status for debugging
+   */
+  const getMachineStatus = useCallback(() => {
+    return stateMachine.current?.getStatus() || null
+  }, [])
+
+  /**
+   * Check if user can sign out (prevent concurrent operations)
+   */
+  const canSignOut = useCallback((): boolean => {
+    return (stateMachine.current?.isAuthenticated() || false) && 
+           currentState !== AuthMachineState.SIGNING_OUT
+  }, [currentState])
+
+  // Context value with State Machine integration
+  const value: EnhancedAuthContextValue = {
+    // State Machine Properties
+    user: machineContext.user,
+    profile: machineContext.profile,
+    session: machineContext.session,
+    isAuthenticated: stateMachine.current?.isAuthenticated() || false,
+    isLoading: stateMachine.current?.isLoading() || false,
+    initialized: currentState !== AuthMachineState.INITIALIZING,
+    currentState,
     
     // Methods
     signIn,
@@ -485,7 +680,11 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
     signOut,
     updateProfile,
     refreshProfile,
-    hasRole
+    hasRole,
+    
+    // State Machine Methods
+    getMachineStatus,
+    canSignOut
   }
 
   return (
@@ -496,9 +695,9 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
 }
 
 /**
- * Hook to use auth context
+ * Hook to use enhanced auth context with State Machine
  */
-export function useAuth(): AuthContextValue {
+export function useAuth(): EnhancedAuthContextValue {
   const context = useContext(AuthContext)
   
   if (!context) {
@@ -541,7 +740,7 @@ export function withAuth<P extends object>(
         router.push('/unauthorized')
         return
       }
-    }, [isAuthenticated, isLoading, initialized, router])
+    }, [isAuthenticated, isLoading, initialized, hasRole, router])
 
     if (!initialized || isLoading) {
       return (

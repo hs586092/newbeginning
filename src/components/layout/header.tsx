@@ -18,11 +18,19 @@ export function Header() {
     profile, 
     isAuthenticated, 
     isLoading,
-    signOut 
+    signOut,
+    canSignOut,
+    currentState
   } = useAuth()
 
   const handleSignOut = async () => {
     try {
+      // Check if sign out is allowed (prevent concurrent operations)
+      if (!canSignOut()) {
+        toast.error('이미 로그아웃 진행 중입니다.')
+        return
+      }
+
       const result = await signOut()
       
       if (!result.success) {
