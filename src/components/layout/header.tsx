@@ -9,53 +9,31 @@ import {
   PenSquare, 
   FileText
 } from 'lucide-react'
-import { signOut } from '@/lib/auth/actions'
-import { createClient } from '@/lib/supabase/client'
-import { useEffect, useState } from 'react'
-import type { User as SupabaseUser } from '@supabase/supabase-js'
+import { useAuth } from '@/contexts/auth-context'
+import { toast } from 'sonner'
 
 export function Header() {
-  const [user, setUser] = useState<SupabaseUser | null>(null)
-  const [profile, setProfile] = useState<{ username: string; avatar_url?: string } | null>(null)
-  const supabase = createClient()
-
-  useEffect(() => {
-    async function getUser() {
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
-      
-      if (user) {
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('username, avatar_url')
-          .eq('id', user.id)
-          .single()
-        
-        setProfile(profileData)
-      }
-    }
-
-    getUser()
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user || null)
-      if (session?.user) {
-        supabase
-          .from('profiles')
-          .select('username, avatar_url')
-          .eq('id', session.user.id)
-          .single()
-          .then(({ data }) => setProfile(data))
-      } else {
-        setProfile(null)
-      }
-    })
-
-    return () => subscription.unsubscribe()
-  }, [supabase])
+  const { 
+    user, 
+    profile, 
+    isAuthenticated, 
+    isLoading,
+    signOut 
+  } = useAuth()
 
   const handleSignOut = async () => {
-    await signOut()
+    try {
+      const result = await signOut()
+      
+      if (!result.success) {
+        toast.error(result.error || '로그아웃 중 오류가 발생했습니다.')
+      } else {
+        toast.success('성공적으로 로그아웃되었습니다.')
+      }
+    } catch (error) {
+      console.error('Sign out error:', error)
+      toast.error('로그아웃 중 오류가 발생했습니다.')
+    }
   }
 
   return (
@@ -76,7 +54,9 @@ export function Header() {
           <div className="flex items-center space-x-4">
             <ThemeToggle />
             
-            {user ? (
+            {isLoading ? (
+              <div className="w-8 h-8 animate-spin rounded-full border-2 border-gray-300 border-t-blue-500"></div>
+            ) : isAuthenticated ? (
               <>
                 <Link href="/write">
                   <Button size="sm" className="flex items-center h-9 px-3">
@@ -89,7 +69,7 @@ export function Header() {
                   <button className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                     <User className="w-5 h-5" />
                     <span className="text-sm font-medium">
-                      {profile?.username || user.email}
+                      {profile?.username || user?.email}
                     </span>
                   </button>
                   

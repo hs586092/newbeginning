@@ -4,6 +4,7 @@ import './globals.css'
 import { Header } from '@/components/layout/header'
 import { WebsiteStructuredData } from '@/components/seo/structured-data'
 import { ThemeProvider } from '@/components/providers/theme-provider'
+import { AuthProvider } from '@/contexts/auth-context'
 import { Toaster } from 'sonner'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -86,15 +87,24 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <ThemeProvider>
-          <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-blue-50 dark:from-pink-900/10 dark:via-gray-900 dark:to-blue-900/10 transition-colors">
-            <Header />
-            <main>{children}</main>
-          </div>
-          <Toaster 
-            position="top-right"
-            richColors
-            theme="system"
-          />
+          <AuthProvider 
+            config={{
+              redirectOnSignIn: '/',
+              redirectOnSignOut: '/',
+              enableDebugMode: process.env.NODE_ENV === 'development',
+              autoRefreshProfile: true
+            }}
+          >
+            <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-blue-50 dark:from-pink-900/10 dark:via-gray-900 dark:to-blue-900/10 transition-colors">
+              <Header />
+              <main>{children}</main>
+            </div>
+            <Toaster 
+              position="top-right"
+              richColors
+              theme="system"
+            />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

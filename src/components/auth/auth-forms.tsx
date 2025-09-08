@@ -1,22 +1,29 @@
 'use client'
 
-import { useState, useTransition } from 'react'
-import { signIn, signUp, signInWithGoogle, signInWithKakao } from '@/lib/auth/actions'
+import { useState } from 'react'
+import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 
 function GoogleSignInButton() {
-  const [isPending, startTransition] = useTransition()
+  const { signInWithGoogle, isLoading } = useAuth()
+  const [isPending, setIsPending] = useState(false)
 
   async function handleGoogleSignIn() {
-    startTransition(async () => {
+    setIsPending(true)
+    try {
       const result = await signInWithGoogle()
-      if (result?.error) {
-        toast.error(result.error)
+      if (!result.success) {
+        toast.error(result.error || 'Google 로그인 중 오류가 발생했습니다.')
       }
-    })
+    } catch (error) {
+      console.error('Google sign in error:', error)
+      toast.error('Google 로그인 중 오류가 발생했습니다.')
+    } finally {
+      setIsPending(false)
+    }
   }
 
   return (
@@ -25,7 +32,7 @@ function GoogleSignInButton() {
       variant="outline"
       className="w-full"
       onClick={handleGoogleSignIn}
-      loading={isPending}
+      loading={isPending || isLoading}
     >
       <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
         <path
@@ -51,15 +58,22 @@ function GoogleSignInButton() {
 }
 
 function KakaoSignInButton() {
-  const [isPending, startTransition] = useTransition()
+  const { signInWithKakao, isLoading } = useAuth()
+  const [isPending, setIsPending] = useState(false)
 
   async function handleKakaoSignIn() {
-    startTransition(async () => {
+    setIsPending(true)
+    try {
       const result = await signInWithKakao()
-      if (result?.error) {
-        toast.error(result.error)
+      if (!result.success) {
+        toast.error(result.error || '카카오 로그인 중 오류가 발생했습니다.')
       }
-    })
+    } catch (error) {
+      console.error('Kakao sign in error:', error)
+      toast.error('카카오 로그인 중 오류가 발생했습니다.')
+    } finally {
+      setIsPending(false)
+    }
   }
 
   return (
@@ -67,7 +81,7 @@ function KakaoSignInButton() {
       type="button"
       className="w-full bg-yellow-300 hover:bg-yellow-400 text-gray-900 border-yellow-300"
       onClick={handleKakaoSignIn}
-      loading={isPending}
+      loading={isPending || isLoading}
     >
       <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 0 1-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3z"/>
@@ -78,17 +92,33 @@ function KakaoSignInButton() {
 }
 
 export function SignInForm() {
-  const [isPending, startTransition] = useTransition()
+  const { signIn, isLoading } = useAuth()
+  const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string>('')
 
-  async function handleSubmit(formData: FormData) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
     setError('')
-    startTransition(async () => {
-      const result = await signIn(formData)
-      if (result?.error) {
-        setError(result.error)
+    setIsPending(true)
+
+    try {
+      const formData = new FormData(e.currentTarget)
+      const email = formData.get('email') as string
+      const password = formData.get('password') as string
+
+      const result = await signIn(email, password)
+      
+      if (!result.success) {
+        setError(result.error || '로그인 중 오류가 발생했습니다.')
+      } else {
+        toast.success('성공적으로 로그인되었습니다.')
       }
-    })
+    } catch (error) {
+      console.error('Sign in error:', error)
+      setError('로그인 중 예기치 못한 오류가 발생했습니다.')
+    } finally {
+      setIsPending(false)
+    }
   }
 
   return (
@@ -98,7 +128,7 @@ export function SignInForm() {
         <p className="text-gray-600 mt-2">계정에 로그인하세요</p>
       </div>
 
-      <form action={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="email">이메일</Label>
           <Input
@@ -127,7 +157,7 @@ export function SignInForm() {
           </div>
         )}
 
-        <Button type="submit" className="w-full" loading={isPending}>
+        <Button type="submit" className="w-full" loading={isPending || isLoading}>
           로그인
         </Button>
       </form>
@@ -150,19 +180,34 @@ export function SignInForm() {
 }
 
 export function SignUpForm() {
-  const [isPending, startTransition] = useTransition()
+  const { signUp, isLoading } = useAuth()
+  const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string>('')
 
-  async function handleSubmit(formData: FormData) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
     setError('')
-    startTransition(async () => {
-      const result = await signUp(formData)
-      if (result?.error) {
-        setError(result.error)
-      } else if (result?.success) {
+    setIsPending(true)
+
+    try {
+      const formData = new FormData(e.currentTarget)
+      const email = formData.get('email') as string
+      const password = formData.get('password') as string
+      const username = formData.get('username') as string
+
+      const result = await signUp(email, password, username)
+      
+      if (!result.success) {
+        setError(result.error || '회원가입 중 오류가 발생했습니다.')
+      } else {
         toast.success('회원가입이 완료되었습니다. 이메일을 확인해주세요.')
       }
-    })
+    } catch (error) {
+      console.error('Sign up error:', error)
+      setError('회원가입 중 예기치 못한 오류가 발생했습니다.')
+    } finally {
+      setIsPending(false)
+    }
   }
 
   return (
@@ -172,7 +217,7 @@ export function SignUpForm() {
         <p className="text-gray-600 mt-2">새 계정을 만들어보세요</p>
       </div>
 
-      <form action={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="username">닉네임</Label>
           <Input
@@ -212,7 +257,7 @@ export function SignUpForm() {
           </div>
         )}
 
-        <Button type="submit" className="w-full" loading={isPending}>
+        <Button type="submit" className="w-full" loading={isPending || isLoading}>
           회원가입
         </Button>
       </form>
