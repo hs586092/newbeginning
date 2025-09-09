@@ -13,7 +13,6 @@ import { Send, Paperclip, Smile, MoreVertical, X, Search } from 'lucide-react'
 import { chatService } from '@/lib/chat/chat-service'
 import { chatRealtimeClient } from '@/lib/chat/realtime-client'
 import type { ChatMessage, ChatRoom } from '@/lib/chat/realtime-client'
-import { useTranslation } from '@/lib/i18n'
 
 // 🎯 채팅 윈도우 상태 타입
 interface ChatWindowState {
@@ -47,7 +46,6 @@ export default function ChatWindow({
   className = '',
   height = '600px'
 }: ChatWindowProps) {
-  const { t } = useTranslation()
   
   // 🏪 상태 관리
   const [chatState, setChatState] = useState<ChatWindowState>({
@@ -104,7 +102,7 @@ export default function ChatWindow({
     } catch (error) {
       setChatState(prev => ({ 
         ...prev, 
-        error: 'Failed to send message' 
+        error: '메시지 전송 실패' 
       }))
       setInputState(prev => ({ ...prev, isSubmitting: false }))
     }
@@ -185,7 +183,7 @@ export default function ChatWindow({
       } catch (error) {
         setChatState(prev => ({
           ...prev,
-          error: 'Failed to connect to chat',
+          error: '채팅 연결 실패',
           isLoading: false
         }))
       }
@@ -276,7 +274,6 @@ interface ChatHeaderProps {
 }
 
 const ChatHeader = ({ room, onClose, onSearch }: ChatHeaderProps) => {
-  const { t } = useTranslation()
   
   return (
     <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
@@ -288,11 +285,11 @@ const ChatHeader = ({ room, onClose, onSearch }: ChatHeaderProps) => {
         </div>
         <div>
           <h3 className="font-semibold text-gray-900">
-            {room?.name || t('chat.loading')}
+            {room?.name || '로딩 중...'}
           </h3>
           <p className="text-sm text-gray-500">
-            {room?.type === 'direct' ? t('chat.directMessage') : 
-             `${room?.member_count || 0} ${t('chat.members')}`}
+            {room?.type === 'direct' ? '개인 메시지' : 
+             `${room?.member_count || 0}명`}
           </p>
         </div>
       </div>
@@ -301,14 +298,14 @@ const ChatHeader = ({ room, onClose, onSearch }: ChatHeaderProps) => {
         <button
           onClick={onSearch}
           className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
-          aria-label={t('chat.search')}
+          aria-label="검색"
         >
           <Search className="w-4 h-4" />
         </button>
         
         <button
           className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-lg transition-colors"
-          aria-label={t('chat.moreOptions')}
+          aria-label="더 보기"
         >
           <MoreVertical className="w-4 h-4" />
         </button>
@@ -427,7 +424,6 @@ const MessageInput = React.forwardRef<HTMLTextAreaElement, MessageInputProps>(({
   onSend,
   onCancelReply
 }, ref) => {
-  const { t } = useTranslation()
   
   return (
     <div className="border-t border-gray-200 p-4">
@@ -460,7 +456,7 @@ const MessageInput = React.forwardRef<HTMLTextAreaElement, MessageInputProps>(({
             value={value}
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder={t('chat.typeMessage')}
+            placeholder="메시지를 입력하세요..."
             className="w-full max-h-32 p-3 border border-gray-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
             rows={1}
             disabled={isSubmitting}

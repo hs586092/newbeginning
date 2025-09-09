@@ -24,7 +24,6 @@ import {
 } from 'lucide-react'
 import { chatService } from '@/lib/chat/chat-service'
 import type { ChatRoom } from '@/lib/chat/realtime-client'
-import { useTranslation } from '@/lib/i18n'
 import { Button } from '@/components/ui/button'
 
 // 🏠 채팅방 목록 Props
@@ -44,7 +43,6 @@ export default function ChatRoomList({
   onCreateRoom,
   className = ''
 }: ChatRoomListProps) {
-  const { t } = useTranslation()
   
   // 🏪 상태 관리
   const [rooms, setRooms] = useState<ChatRoom[]>([])
@@ -92,7 +90,7 @@ export default function ChatRoomList({
       setRooms(roomList)
       setError(null)
     } catch (err) {
-      setError('Failed to load chat rooms')
+      setError('채팅방 목록 로드 실패')
       console.error('Failed to load chat rooms:', err)
     } finally {
       setIsLoading(false)
@@ -122,7 +120,7 @@ export default function ChatRoomList({
           <div className="text-center">
             <p className="text-red-500 mb-4">{error}</p>
             <Button onClick={loadRooms} variant="outline">
-              {t('common.retry')}
+              다시 시도
             </Button>
           </div>
         </div>
@@ -136,7 +134,7 @@ export default function ChatRoomList({
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">
-            {t('chat.rooms')}
+            채팅방
           </h2>
           <Button
             onClick={onCreateRoom}
@@ -144,7 +142,7 @@ export default function ChatRoomList({
             className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600"
           >
             <Plus className="w-4 h-4 mr-2" />
-            {t('chat.newRoom')}
+            새 채팅방
           </Button>
         </div>
         
@@ -155,7 +153,7 @@ export default function ChatRoomList({
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder={t('chat.searchRooms')}
+            placeholder="채팅방 검색..."
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
           />
         </div>
@@ -163,10 +161,10 @@ export default function ChatRoomList({
         {/* 🏷️ 필터 탭 */}
         <div className="flex space-x-1">
           {[
-            { key: 'all', label: t('common.all'), icon: MessageCircle },
-            { key: 'direct', label: t('chat.direct'), icon: Users },
-            { key: 'group', label: t('chat.groups'), icon: Hash },
-            { key: 'unread', label: t('chat.unread'), icon: Bell }
+            { key: 'all', label: '전체', icon: MessageCircle },
+            { key: 'direct', label: '개인 채팅', icon: Users },
+            { key: 'group', label: '그룹', icon: Hash },
+            { key: 'unread', label: '읽지 않음', icon: Bell }
           ].map(({ key, label, icon: Icon }) => (
             <button
               key={key}
@@ -217,7 +215,6 @@ interface ChatRoomItemProps {
 }
 
 const ChatRoomItem = ({ room, isSelected, onClick }: ChatRoomItemProps) => {
-  const { t } = useTranslation()
   const [showMenu, setShowMenu] = useState(false)
   
   // 🎨 채팅방 타입별 아이콘
@@ -242,9 +239,9 @@ const ChatRoomItem = ({ room, isSelected, onClick }: ChatRoomItemProps) => {
     const messageTime = new Date(room.last_message.created_at)
     const diffInMinutes = Math.floor((now.getTime() - messageTime.getTime()) / (1000 * 60))
     
-    if (diffInMinutes < 1) return t('chat.justNow')
-    if (diffInMinutes < 60) return `${diffInMinutes}${t('chat.minutesAgo')}`
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}${t('chat.hoursAgo')}`
+    if (diffInMinutes < 1) return '방금 전'
+    if (diffInMinutes < 60) return `${diffInMinutes}분 전`
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}시간 전`
     
     return messageTime.toLocaleDateString('ko-KR', { 
       month: 'short', 
@@ -295,7 +292,7 @@ const ChatRoomItem = ({ room, isSelected, onClick }: ChatRoomItemProps) => {
               <h3 className={`font-medium truncate ${
                 isSelected ? 'text-gray-900' : 'text-gray-800'
               }`}>
-                {room.name || t('chat.directMessage')}
+                {room.name || '개인 메시지'}
               </h3>
               
               {/* 🔒 비공개 표시 */}
@@ -383,7 +380,6 @@ const ChatRoomContextMenu = ({
   onLeave, 
   onDelete 
 }: ChatRoomContextMenuProps) => {
-  const { t } = useTranslation()
   
   useEffect(() => {
     const handleClickOutside = () => onClose()
@@ -399,14 +395,14 @@ const ChatRoomContextMenu = ({
           className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
         >
           <BellOff className="w-4 h-4 mr-3" />
-          {t('chat.muteNotifications')}
+          알림 끄기
         </button>
         
         <button
           className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
         >
           <Settings className="w-4 h-4 mr-3" />
-          {t('chat.roomSettings')}
+          채팅방 설정
         </button>
         
         <hr className="my-1 border-gray-200" />
@@ -415,7 +411,7 @@ const ChatRoomContextMenu = ({
           onClick={onLeave}
           className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
         >
-          {room.type === 'direct' ? t('chat.removeChat') : t('chat.leaveRoom')}
+          {room.type === 'direct' ? '채팅 삭제' : '채팅방 나가기'}
         </button>
       </div>
     </div>
@@ -434,13 +430,12 @@ const EmptyRoomList = ({
   activeFilter, 
   onCreateRoom 
 }: EmptyRoomListProps) => {
-  const { t } = useTranslation()
   
   const getEmptyMessage = () => {
     if (searchTerm) {
       return {
-        title: t('chat.noSearchResults'),
-        description: t('chat.tryDifferentKeywords'),
+        title: '검색 결과가 없습니다',
+        description: '다른 키워드로 시도해 보세요',
         action: null
       }
     }
@@ -448,27 +443,27 @@ const EmptyRoomList = ({
     switch (activeFilter) {
       case 'direct':
         return {
-          title: t('chat.noDirectMessages'),
-          description: t('chat.startConversation'),
-          action: { label: t('chat.newMessage'), onClick: onCreateRoom }
+          title: '개인 메시지가 없습니다',
+          description: '새로운 대화를 시작해 보세요',
+          action: { label: '새 메시지', onClick: onCreateRoom }
         }
       case 'group':
         return {
-          title: t('chat.noGroups'),
-          description: t('chat.createFirstGroup'),
-          action: { label: t('chat.createGroup'), onClick: onCreateRoom }
+          title: '그룹 채팅이 없습니다',
+          description: '첫 번째 그룹을 만들어 보세요',
+          action: { label: '그룹 만들기', onClick: onCreateRoom }
         }
       case 'unread':
         return {
-          title: t('chat.noUnreadMessages'),
-          description: t('chat.allCaughtUp'),
+          title: '읽지 않은 메시지가 없습니다',
+          description: '모든 메시지를 읽었습니다!',
           action: null
         }
       default:
         return {
-          title: t('chat.noChatRooms'),
-          description: t('chat.startFirstConversation'),
-          action: { label: t('chat.newRoom'), onClick: onCreateRoom }
+          title: '채팅방이 없습니다',
+          description: '첫 번째 대화를 시작해 보세요',
+          action: { label: '새 채팅방', onClick: onCreateRoom }
         }
     }
   }

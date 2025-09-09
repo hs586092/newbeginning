@@ -6,10 +6,8 @@ import { Button } from '@/components/ui/button'
 import SocialFeed from '@/components/social/social-feed'
 import CategoryFilter from '@/components/social/category-filter'
 import PostForm from '@/components/social/post-form'
-import { useTranslation } from '@/lib/i18n'
 
 export default function CommunityPage() {
-  const { t } = useTranslation()
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [selectedBabyMonth, setSelectedBabyMonth] = useState<number | undefined>()
   const [showPostForm, setShowPostForm] = useState(false)
@@ -21,17 +19,17 @@ export default function CommunityPage() {
         <div className="text-center mb-8">
           <div className="inline-flex items-center space-x-2 bg-pink-100 px-4 py-2 rounded-full text-pink-700 font-medium mb-4">
             <Users className="w-5 h-5" />
-            <span>👶 {t('community.subtitle')}</span>
+            <span>👶 대한민국 부모들의 커뮤니티</span>
           </div>
           
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             <span className="bg-gradient-to-r from-pink-500 to-blue-500 text-transparent bg-clip-text">
-              {t('community.title')}
+              육아 커뮤니티
             </span>
           </h1>
           
           <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            {t('community.description')}
+            임신부터 육아까지, 경험을 나누고 조언을 구하며 서로를 지지해 주세요.
           </p>
         </div>
 
@@ -42,7 +40,7 @@ export default function CommunityPage() {
               <Users className="w-6 h-6 text-pink-600" />
             </div>
             <div className="text-2xl font-bold text-gray-900 mb-1">2,847</div>
-            <div className="text-sm text-gray-600">{t('community.activeParents')}</div>
+            <div className="text-sm text-gray-600">활동 중인 부모</div>
           </div>
           
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center">
@@ -50,7 +48,7 @@ export default function CommunityPage() {
               <MessageCircle className="w-6 h-6 text-blue-600" />
             </div>
             <div className="text-2xl font-bold text-gray-900 mb-1">12,456</div>
-            <div className="text-sm text-gray-600">{t('community.sharedStories')}</div>
+            <div className="text-sm text-gray-600">공유된 이야기</div>
           </div>
           
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center">
@@ -58,7 +56,7 @@ export default function CommunityPage() {
               <Heart className="w-6 h-6 text-purple-600" />
             </div>
             <div className="text-2xl font-bold text-gray-900 mb-1">89,234</div>
-            <div className="text-sm text-gray-600">{t('community.supportiveHearts')}</div>
+            <div className="text-sm text-gray-600">따뜻한 마음</div>
           </div>
           
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center">
@@ -66,7 +64,7 @@ export default function CommunityPage() {
               <TrendingUp className="w-6 h-6 text-green-600" />
             </div>
             <div className="text-2xl font-bold text-gray-900 mb-1">94%</div>
-            <div className="text-sm text-gray-600">{t('community.satisfaction')}</div>
+            <div className="text-sm text-gray-600">만족도</div>
           </div>
         </div>
 
@@ -80,14 +78,14 @@ export default function CommunityPage() {
             
             {/* Quick Actions */}
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('community.quickActions')}</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">빠른 작업</h3>
               <div className="space-y-3">
                 <Button 
                   onClick={() => setShowPostForm(true)}
                   className="w-full justify-start bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600"
                 >
                   <PlusCircle className="w-4 h-4 mr-2" />
-                  {t('community.writeNewPost')}
+                  새 글 쓰기
                 </Button>
                 <Button 
                   onClick={() => setShowPostForm(true)}
@@ -95,23 +93,23 @@ export default function CommunityPage() {
                   className="w-full justify-start"
                 >
                   <MessageCircle className="w-4 h-4 mr-2" />
-                  {t('community.askQuestion')}
+                  질문하기
                 </Button>
               </div>
             </div>
 
             {/* Baby Month Filter */}
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('community.babyAge')}</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">아기 나이</h3>
               <div className="grid grid-cols-3 gap-2">
                 {[
-                  { value: undefined, label: t('categories.all') },
-                  { value: 0, label: t('community.newborn') },
-                  { value: 1, label: `1${t('postForm.monthShort')}` },
-                  { value: 3, label: `3${t('postForm.monthShort')}` },
-                  { value: 6, label: `6${t('postForm.monthShort')}` },
-                  { value: 9, label: `9${t('postForm.monthShort')}` },
-                  { value: 12, label: `12${t('postForm.monthShort')}` }
+                  { value: undefined, label: '전체' },
+                  { value: 0, label: '신생아' },
+                  { value: 1, label: '1개월' },
+                  { value: 3, label: '3개월' },
+                  { value: 6, label: '6개월' },
+                  { value: 9, label: '9개월' },
+                  { value: 12, label: '12개월' }
                 ].map(month => (
                   <button
                     key={month.value || 'all'}

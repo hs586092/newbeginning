@@ -4,7 +4,6 @@ import './globals.css'
 import { Header } from '@/components/layout/header'
 import { WebsiteStructuredData } from '@/components/seo/structured-data'
 import { ThemeProvider } from '@/components/providers/theme-provider'
-import { I18nProvider } from '@/components/providers/i18n-provider'
 import { AuthProvider } from '@/contexts/auth-context'
 import { Toaster } from 'sonner'
 import { PerformanceMonitor } from '@/components/performance-monitor'
@@ -89,7 +88,6 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <ThemeProvider>
-          <I18nProvider>
             <AuthProvider 
               config={{
                 redirectOnSignIn: '/',
@@ -109,7 +107,6 @@ export default function RootLayout({
               />
               <PerformanceMonitor />
             </AuthProvider>
-          </I18nProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -2,7 +2,6 @@
 
 import { useRef, useEffect, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useTranslation } from '@/lib/i18n'
 
 interface Category {
   id: string
@@ -85,16 +84,38 @@ export default function HorizontalCategoryFilter({
   onCategoryChange, 
   compact = false 
 }: HorizontalCategoryFilterProps) {
-  const { t } = useTranslation()
-  
-  // Generate categories with translations
-  const CATEGORIES: Category[] = CATEGORY_CONFIG.map(config => ({
-    id: config.id,
-    name: t(`categories.${config.id}`),
-    description: t(`categories.descriptions.${config.id}`),
-    icon: config.icon,
-    color: config.color
-  }))
+  // Generate categories with Korean names
+  const CATEGORIES: Category[] = CATEGORY_CONFIG.map(config => {
+    const names: Record<string, string> = {
+      all: '전체',
+      pregnancy: '임신',
+      newborn: '신생아',
+      infant: '영아',
+      babyfood: '이유식',
+      sleep: '수면',
+      health: '건강',
+      daily: '일상',
+      emergency: '응급'
+    }
+    const descriptions: Record<string, string> = {
+      all: '모든 글 보기',
+      pregnancy: '임신 관련 이야기',
+      newborn: '신생아 육아',
+      infant: '영아 육아',
+      babyfood: '이유식 및 영양',
+      sleep: '수면 패턴',
+      health: '건강 및 의료',
+      daily: '일상 이야기',
+      emergency: '응급 상황'
+    }
+    return {
+      id: config.id,
+      name: names[config.id] || config.id,
+      description: descriptions[config.id] || '',
+      icon: config.icon,
+      color: config.color
+    }
+  })
   
   const scrollRef = useRef<HTMLDivElement>(null)
   const [showLeftArrow, setShowLeftArrow] = useState(false)
@@ -133,9 +154,9 @@ export default function HorizontalCategoryFilter({
     <div className={`relative ${compact ? 'bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-gray-100' : 'bg-white rounded-xl p-6 shadow-sm border border-gray-100'}`}>
       {!compact && (
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">{t('postForm.category')}</h3>
+          <h3 className="text-lg font-semibold text-gray-900">카테고리</h3>
           <div className="text-sm text-gray-500">
-            {selectedCategory === 'all' ? t('categories.all') : CATEGORIES.find(c => c.id === selectedCategory)?.name}
+            {selectedCategory === 'all' ? '전체' : CATEGORIES.find(c => c.id === selectedCategory)?.name}
           </div>
         </div>
       )}

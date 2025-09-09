@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { Camera, MapPin, Hash, Smile, Send, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { useTranslation } from '@/lib/i18n'
 
 interface PostFormProps {
   onClose?: () => void
@@ -41,21 +40,41 @@ const MOOD_CONFIG = [
 ]
 
 export default function PostForm({ onClose, onSubmit }: PostFormProps) {
-  const { t } = useTranslation()
+  const CATEGORIES = CATEGORY_CONFIG.map(config => {
+    const names: Record<string, string> = {
+      daily: '일상',
+      pregnancy: '임신',
+      newborn: '신생아',
+      infant: '영아',
+      babyfood: '이유식',
+      sleep: '수면',
+      health: '건강',
+      emergency: '응급'
+    }
+    return {
+      id: config.id,
+      name: names[config.id] || config.id,
+      icon: config.icon,
+      color: config.color
+    }
+  })
   
-  const CATEGORIES = CATEGORY_CONFIG.map(config => ({
-    id: config.id,
-    name: t(`categories.${config.id}`),
-    icon: config.icon,
-    color: config.color
-  }))
-  
-  const MOODS = MOOD_CONFIG.map(config => ({
-    value: config.value,
-    name: t(`moods.${config.value}`),
-    emoji: config.emoji,
-    color: config.color
-  }))
+  const MOODS = MOOD_CONFIG.map(config => {
+    const names: Record<string, string> = {
+      happy: '기번',
+      worried: '걱정',
+      tired: '피곤',
+      grateful: '감사',
+      curious: '궁금',
+      proud: '자랑스러운'
+    }
+    return {
+      value: config.value,
+      name: names[config.value] || config.value,
+      emoji: config.emoji,
+      color: config.color
+    }
+  })
   
   const [content, setContent] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('daily')
@@ -128,7 +147,7 @@ export default function PostForm({ onClose, onSubmit }: PostFormProps) {
       <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">{t('postForm.newPost')}</h2>
+          <h2 className="text-xl font-semibold text-gray-900">새 게시글</h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -143,7 +162,7 @@ export default function PostForm({ onClose, onSubmit }: PostFormProps) {
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder={t('postForm.placeholder')}
+              placeholder="어떤 이야기를 나누고 싶으신가요?"
               className="w-full p-4 border border-gray-200 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
               rows={4}
               maxLength={2000}
@@ -158,7 +177,7 @@ export default function PostForm({ onClose, onSubmit }: PostFormProps) {
                     onChange={(e) => setIsQuestion(e.target.checked)}
                     className="rounded text-pink-600 focus:ring-pink-500"
                   />
-                  <span className="text-sm text-gray-600">{t('postForm.questionPost')}</span>
+                  <span className="text-sm text-gray-600">질문 게시글</span>
                 </label>
               </div>
               <span className="text-sm text-gray-500">
@@ -170,7 +189,7 @@ export default function PostForm({ onClose, onSubmit }: PostFormProps) {
           {/* Category Selection */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              {t('postForm.category')}
+              카테고리
             </label>
             <div className="grid grid-cols-4 gap-3">
               {CATEGORIES.map(category => (
@@ -194,7 +213,7 @@ export default function PostForm({ onClose, onSubmit }: PostFormProps) {
           {/* Baby Month */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              {t('postForm.babyAge')}
+              아기 나이
             </label>
             <div className="grid grid-cols-6 gap-2">
               <button
@@ -206,7 +225,7 @@ export default function PostForm({ onClose, onSubmit }: PostFormProps) {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                {t('postForm.notApplicable')}
+                해당없음
               </button>
               {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
                 <button
@@ -219,7 +238,7 @@ export default function PostForm({ onClose, onSubmit }: PostFormProps) {
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  {month}{t('postForm.monthShort')}
+                  {month}개월
                 </button>
               ))}
             </div>
@@ -228,7 +247,7 @@ export default function PostForm({ onClose, onSubmit }: PostFormProps) {
           {/* Tags */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              {t('postForm.tags')}
+              태그
             </label>
             <div className="flex items-center space-x-2 mb-3">
               <div className="flex-1 flex items-center space-x-2">
@@ -237,7 +256,7 @@ export default function PostForm({ onClose, onSubmit }: PostFormProps) {
                   type="text"
                   value={newTag}
                   onChange={(e) => setNewTag(e.target.value)}
-                  placeholder={t('postForm.tagPlaceholder')}
+                  placeholder="태그 입력"
                   className="flex-1 p-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   maxLength={20}
                   onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
@@ -248,7 +267,7 @@ export default function PostForm({ onClose, onSubmit }: PostFormProps) {
                   disabled={!newTag.trim() || tags.length >= 5}
                   size="sm"
                 >
-                  {t('postForm.add')}
+                  추가
                 </Button>
               </div>
             </div>
@@ -276,7 +295,7 @@ export default function PostForm({ onClose, onSubmit }: PostFormProps) {
           {/* Mood */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              {t('postForm.mood')}
+              기분
             </label>
             <div className="flex flex-wrap gap-2">
               <button
@@ -288,7 +307,7 @@ export default function PostForm({ onClose, onSubmit }: PostFormProps) {
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                {t('postForm.none')}
+                선택없음
               </button>
               {MOODS.map(mood => (
                 <button
@@ -311,7 +330,7 @@ export default function PostForm({ onClose, onSubmit }: PostFormProps) {
           {/* Image Upload */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              {t('postForm.photos')}
+              사진
             </label>
             <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center">
               <input
@@ -331,7 +350,7 @@ export default function PostForm({ onClose, onSubmit }: PostFormProps) {
               >
                 <Camera className="w-8 h-8 text-gray-400" />
                 <span className="text-sm text-gray-500">
-                  {t('postForm.photoPlaceholder')}
+                  사진 추가 (최대 4장)
                 </span>
               </label>
             </div>
@@ -364,7 +383,7 @@ export default function PostForm({ onClose, onSubmit }: PostFormProps) {
               variant="outline"
               onClick={onClose}
             >
-              {t('common.cancel')}
+              취소
             </Button>
             <Button
               type="submit"
@@ -372,7 +391,7 @@ export default function PostForm({ onClose, onSubmit }: PostFormProps) {
               className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600"
             >
               <Send className="w-4 h-4 mr-2" />
-              {isSubmitting ? t('postForm.posting') : t('postForm.post')}
+              {isSubmitting ? '게시 중...' : '게시하기'}
             </Button>
           </div>
         </form>
