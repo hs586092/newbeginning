@@ -114,14 +114,9 @@ export function PostCard({ post, currentUserId, isOwner, onDelete }: PostCardPro
   const loadComments = async () => {
     setIsLoadingComments(true)
     try {
-      const result = await getComments(post.id)
-      if (result.success) {
-        setComments(result.comments)
-      } else if (result.error) {
-        console.error('Comments loading error:', result.error)
-        // 에러가 있어도 빈 배열로 설정하여 UI를 표시
-        setComments([])
-      }
+      // 임시로 댓글 로딩 비활성화 - 작성 기능만 테스트
+      console.log('Comments loading temporarily disabled for testing')
+      setComments([])
     } catch (error) {
       console.error('Comments loading error:', error)
       setComments([])
