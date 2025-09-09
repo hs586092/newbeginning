@@ -21,63 +21,63 @@ const CATEGORIES: Category[] = [
     name: '전체',
     icon: '🏠',
     color: 'gray',
-    description: '모든 카테고리의 게시글'
+    description: 'Posts from all categories'
   },
   {
     id: 'pregnancy',
-    name: '임신',
+    name: 'Pregnancy',
     icon: '🤰',
     color: 'purple',
-    description: '임신 관련 경험과 정보'
+    description: 'Pregnancy experiences and information'
   },
   {
     id: 'newborn',
-    name: '신생아',
+    name: 'Newborn',
     icon: '👶',
     color: 'pink',
-    description: '0-3개월 신생아 돌봄'
+    description: '0-3 months newborn care'
   },
   {
     id: 'infant',
-    name: '영아',
+    name: 'Infant',
     icon: '🍼',
     color: 'blue',
-    description: '4-12개월 영아 돌봄'
+    description: '4-12 months infant care'
   },
   {
     id: 'babyfood',
-    name: '이유식',
+    name: 'Baby Food',
     icon: '🥄',
     color: 'green',
-    description: '이유식 레시피와 노하우'
+    description: 'Baby food recipes and tips'
   },
   {
     id: 'sleep',
-    name: '수면',
+    name: 'Sleep',
     icon: '😴',
     color: 'indigo',
-    description: '수면 패턴과 수면 교육'
+    description: 'Sleep patterns and training'
   },
   {
     id: 'health',
-    name: '건강',
+    name: 'Health',
     icon: '🏥',
     color: 'red',
-    description: '아기 건강과 병원 정보'
+    description: 'Baby health and medical info'
   },
   {
     id: 'daily',
-    name: '일상',
+    name: 'Daily Life',
     icon: '💬',
     color: 'yellow',
-    description: '육아 일상과 소소한 이야기'
+    description: 'Parenting daily life and stories'
   },
   {
     id: 'emergency',
-    name: '응급',
+    name: 'Emergency',
     icon: '🚨',
     color: 'red',
-    description: '응급상황 대처와 안전'
+    description: 'Emergency response and safety'
   }
 ]
 
@@ -104,9 +104,9 @@ export default function CategoryFilter({ selectedCategory, onCategoryChange }: C
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">카테고리</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Categories</h2>
         <div className="text-sm text-gray-500">
-          {selectedCategory === 'all' ? '전체' : CATEGORIES.find(c => c.id === selectedCategory)?.name}
+          {selectedCategory === 'all' ? 'All' : CATEGORIES.find(c => c.id === selectedCategory)?.name}
         </div>
       </div>
 
@@ -134,7 +134,7 @@ export default function CategoryFilter({ selectedCategory, onCategoryChange }: C
             onClick={() => setShowAll(!showAll)}
             className="text-sm text-gray-500 hover:text-gray-700 font-medium"
           >
-            {showAll ? '접기' : '더보기'}
+            {showAll ? 'Show Less' : 'Show More'}
           </button>
         </div>
       )}

@@ -2,10 +2,8 @@ import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
-import "dayjs/locale/ko"
 
 dayjs.extend(relativeTime)
-dayjs.locale('ko')
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -16,7 +14,7 @@ export function formatDate(date: string | Date) {
 }
 
 export function formatFullDate(date: string | Date) {
-  return dayjs(date).format('YYYY년 MM월 DD일 HH:mm')
+  return dayjs(date).format('MMM DD, YYYY HH:mm')
 }
 
 export function truncateText(text: string, length: number = 100) {
@@ -27,15 +25,15 @@ export function truncateText(text: string, length: number = 100) {
 export function getCategoryLabel(category: string) {
   switch (category) {
     case 'community':
-      return '커뮤니티'
+      return 'Community'
     case 'expecting':
-      return '예비맘'
+      return 'Pregnancy'
     case 'newborn':
-      return '신생아맘'
+      return 'Newborn'
     case 'toddler':
-      return '성장기맘'
+      return 'Toddler'
     case 'expert':
-      return '선배맘'
+      return 'Expert Advice'
     default:
       return category
   }
@@ -81,19 +79,19 @@ export function getCategoryIcon(category: string): string {
 }
 
 export function formatReadTime(minutes: number): string {
-  return `${minutes}분 읽기`
+  return `${minutes} min read`
 }
 
 export function getTargetAudienceLabel(audience: string): string {
   switch (audience) {
     case 'expecting_parents':
-      return '예비 부모'
+      return 'Expecting Parents'
     case 'new_parents':
-      return '신생아 부모'
+      return 'New Parents'
     case 'toddler_parents':
-      return '유아 부모'
+      return 'Toddler Parents'
     case 'all_parents':
-      return '모든 부모'
+      return 'All Parents'
     default:
       return audience
   }

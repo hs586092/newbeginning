@@ -4,6 +4,7 @@ import './globals.css'
 import { Header } from '@/components/layout/header'
 import { WebsiteStructuredData } from '@/components/seo/structured-data'
 import { ThemeProvider } from '@/components/providers/theme-provider'
+import { I18nProvider } from '@/components/providers/i18n-provider'
 import { AuthProvider } from '@/contexts/auth-context'
 import { Toaster } from 'sonner'
 import { PerformanceMonitor } from '@/components/performance-monitor'
@@ -13,19 +14,19 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://newbeginning-community.vercel.app'),
   title: {
-    default: '첫돌까지 - 임신부터 첫돌까지 함께하는 엄마들의 여정',
-    template: '%s | 첫돌까지'
+    default: 'ParentWise - Global Parenting Community',
+    template: '%s | ParentWise'
   },
-  description: '임신 순간부터 아기 첫돌까지, 21개월의 소중한 여정을 함께합니다. 예비맘과 초보맘들의 든든한 동반자.',
+  description: 'Connect with parents worldwide. From pregnancy to parenting, share experiences, get advice, and support each other through every stage of raising children.',
   keywords: [
-    '첫돌까지', '임신', '출산', '육아', '신생아', '이유식', '태교', 
-    '산후조리', '모유수유', '아기발달', '예방접종', '육아커뮤니티', 
-    '임신커뮤니티', '예비맘', '초보맘', '임신정보', '육아정보', 
-    '월령별발달', '임신관리', '신생아케어', '육아상담', '엄마커뮤니티'
+    'parenting', 'pregnancy', 'newborn', 'baby', 'toddler', 'child development', 
+    'parenting tips', 'mom community', 'dad community', 'parenting advice', 
+    'child care', 'baby feeding', 'sleep training', 'parenting support', 
+    'family life', 'parenting community', 'child health', 'parenting journey'
   ],
-  authors: [{ name: '첫돌까지 팀' }],
-  creator: '첫돌까지',
-  publisher: '첫돌까지',
+  authors: [{ name: 'ParentWise Team' }],
+  creator: 'ParentWise',
+  publisher: 'ParentWise',
   formatDetection: {
     email: false,
     address: false,
@@ -33,26 +34,26 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    locale: 'ko_KR',
+    locale: 'en_US',
     url: '/',
-    siteName: '첫돌까지',
-    title: '첫돌까지 - 임신부터 첫돌까지 함께하는 엄마들의 여정',
-    description: '임신 순간부터 아기 첫돌까지, 21개월의 소중한 여정을 함께합니다. 예비맘과 초보맘들의 든든한 동반자.',
+    siteName: 'ParentWise',
+    title: 'ParentWise - Global Parenting Community',
+    description: 'Connect with parents worldwide. From pregnancy to parenting, share experiences, get advice, and support each other through every stage of raising children.',
     images: [
       {
         url: '/og-baby.png',
         width: 1200,
         height: 630,
-        alt: '첫돌까지 - 임신부터 첫돌까지 함께하는 엄마들의 여정',
+        alt: 'ParentWise - Global Parenting Community',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    site: '@첫돌까지',
-    creator: '@첫돌까지',
-    title: '첫돌까지 - 임신부터 첫돌까지 함께하는 엄마들의 여정',
-    description: '임신 순간부터 아기 첫돌까지, 21개월의 소중한 여정을 함께합니다',
+    site: '@ParentWise',
+    creator: '@ParentWise',
+    title: 'ParentWise - Global Parenting Community',
+    description: 'Connect with parents worldwide. Share experiences, get advice, and support each other.',
     images: ['/og-baby.png'],
   },
   robots: {
@@ -82,31 +83,33 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ko">
+    <html lang="en">
       <head>
         <WebsiteStructuredData />
       </head>
       <body className={inter.className}>
         <ThemeProvider>
-          <AuthProvider 
-            config={{
-              redirectOnSignIn: '/',
-              redirectOnSignOut: '/',
-              enableDebugMode: process.env.NODE_ENV === 'development',
-              autoRefreshProfile: true
-            }}
-          >
-            <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-blue-50 dark:from-pink-900/10 dark:via-gray-900 dark:to-blue-900/10 transition-colors">
-              <Header />
-              <main>{children}</main>
-            </div>
-            <Toaster 
-              position="top-right"
-              richColors
-              theme="system"
-            />
-            <PerformanceMonitor />
-          </AuthProvider>
+          <I18nProvider>
+            <AuthProvider 
+              config={{
+                redirectOnSignIn: '/',
+                redirectOnSignOut: '/',
+                enableDebugMode: process.env.NODE_ENV === 'development',
+                autoRefreshProfile: true
+              }}
+            >
+              <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-blue-50 dark:from-pink-900/10 dark:via-gray-900 dark:to-blue-900/10 transition-colors">
+                <Header />
+                <main>{children}</main>
+              </div>
+              <Toaster 
+                position="top-right"
+                richColors
+                theme="system"
+              />
+              <PerformanceMonitor />
+            </AuthProvider>
+          </I18nProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -56,16 +56,16 @@ function DefaultErrorFallback({ error, retry }: ErrorFallbackProps) {
         <div className="mb-6">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            문제가 발생했습니다
+            Something went wrong
           </h1>
           <p className="text-gray-600">
-            예상치 못한 오류가 발생했습니다. 잠시 후 다시 시도해주세요.
+            An unexpected error occurred. Please try again later.
           </p>
         </div>
 
         {isDevelopment && error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-left">
-            <p className="text-sm font-medium text-red-800 mb-2">개발 모드 에러 정보:</p>
+            <p className="text-sm font-medium text-red-800 mb-2">Development mode error info:</p>
             <pre className="text-xs text-red-700 overflow-auto max-h-32">
               {error.message}
               {error.stack && `\n\n${error.stack}`}
@@ -76,7 +76,7 @@ function DefaultErrorFallback({ error, retry }: ErrorFallbackProps) {
         <div className="space-y-3">
           <Button onClick={retry} className="w-full">
             <RefreshCw className="w-4 h-4 mr-2" />
-            다시 시도
+            Try Again
           </Button>
           
           <Button 
@@ -85,7 +85,7 @@ function DefaultErrorFallback({ error, retry }: ErrorFallbackProps) {
             className="w-full"
           >
             <Home className="w-4 h-4 mr-2" />
-            홈으로 이동
+            Go Home
           </Button>
         </div>
       </div>

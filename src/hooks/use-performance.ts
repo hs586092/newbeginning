@@ -144,10 +144,10 @@ export function getPerformanceGrade(metrics: PerformanceMetrics): {
   if (metrics.largestContentfulPaint !== null) {
     if (metrics.largestContentfulPaint > 4000) {
       score -= 40
-      issues.push('Largest Contentful Paint > 4s (느린 로딩)')
+      issues.push('Largest Contentful Paint > 4s (slow loading)')
     } else if (metrics.largestContentfulPaint > 2500) {
       score -= 20
-      issues.push('Largest Contentful Paint > 2.5s (보통 로딩)')
+      issues.push('Largest Contentful Paint > 2.5s (moderate loading)')
     }
   }
 
@@ -155,10 +155,10 @@ export function getPerformanceGrade(metrics: PerformanceMetrics): {
   if (metrics.firstInputDelay !== null) {
     if (metrics.firstInputDelay > 300) {
       score -= 25
-      issues.push('First Input Delay > 300ms (느린 반응)')
+      issues.push('First Input Delay > 300ms (slow response)')
     } else if (metrics.firstInputDelay > 100) {
       score -= 10
-      issues.push('First Input Delay > 100ms (보통 반응)')
+      issues.push('First Input Delay > 100ms (moderate response)')
     }
   }
 
@@ -166,10 +166,10 @@ export function getPerformanceGrade(metrics: PerformanceMetrics): {
   if (metrics.cumulativeLayoutShift !== null) {
     if (metrics.cumulativeLayoutShift > 0.25) {
       score -= 25
-      issues.push('Cumulative Layout Shift > 0.25 (레이아웃 불안정)')
+      issues.push('Cumulative Layout Shift > 0.25 (layout instability)')
     } else if (metrics.cumulativeLayoutShift > 0.1) {
       score -= 10
-      issues.push('Cumulative Layout Shift > 0.1 (약간의 레이아웃 변화)')
+      issues.push('Cumulative Layout Shift > 0.1 (minor layout shift)')
     }
   }
 
@@ -177,7 +177,7 @@ export function getPerformanceGrade(metrics: PerformanceMetrics): {
   if (metrics.firstContentfulPaint !== null) {
     if (metrics.firstContentfulPaint > 3000) {
       score -= 10
-      issues.push('First Contentful Paint > 3s (느린 첫 렌더링)')
+      issues.push('First Contentful Paint > 3s (slow initial render)')
     }
   }
 

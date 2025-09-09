@@ -18,10 +18,10 @@ export default function NotFound() {
           </div>
           
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            페이지를 찾을 수 없습니다
+            Page Not Found
           </h2>
           <p className="text-gray-600 mb-8">
-            요청하신 페이지가 존재하지 않거나 이동되었을 수 있습니다.
+            The page you&apos;re looking for doesn&apos;t exist or may have been moved.
           </p>
         </div>
 
@@ -30,7 +30,7 @@ export default function NotFound() {
             <Link href="https://newbeginning-seven.vercel.app/">
               <Button className="w-full sm:w-auto">
                 <Home className="w-4 h-4 mr-2" />
-                홈으로 이동
+                Go Home
               </Button>
             </Link>
             
@@ -39,21 +39,21 @@ export default function NotFound() {
               className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              이전 페이지
+              Go Back
             </button>
           </div>
 
           <div className="pt-6 border-t">
-            <p className="text-sm text-gray-500 mb-4">다른 페이지를 찾아보세요</p>
+            <p className="text-sm text-gray-500 mb-4">Explore other pages</p>
             <div className="flex flex-wrap gap-2 justify-center">
               <Link href="/jobs">
-                <Button variant="ghost" size="sm">구인구직</Button>
+                <Button variant="ghost" size="sm">Jobs</Button>
               </Link>
               <Link href="/community">
-                <Button variant="ghost" size="sm">커뮤니티</Button>
+                <Button variant="ghost" size="sm">Community</Button>
               </Link>
               <Link href="/write">
-                <Button variant="ghost" size="sm">글쓰기</Button>
+                <Button variant="ghost" size="sm">Write</Button>
               </Link>
             </div>
           </div>

@@ -6,16 +6,16 @@ import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
 const signUpSchema = z.object({
-  email: z.string().email('유효한 이메일을 입력해주세요'),
-  password: z.string().min(6, '비밀번호는 최소 6자 이상이어야 합니다'),
-  username: z.string().min(2, '닉네임은 최소 2자 이상이어야 합니다')
-    .max(20, '닉네임은 최대 20자까지 가능합니다')
-    .regex(/^[가-힣a-zA-Z0-9_]+$/, '닉네임은 한글, 영문, 숫자, 언더스코어만 사용 가능합니다')
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  username: z.string().min(2, 'Username must be at least 2 characters')
+    .max(20, 'Username must be 20 characters or less')
+    .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores')
 })
 
 const signInSchema = z.object({
-  email: z.string().email('유효한 이메일을 입력해주세요'),
-  password: z.string().min(1, '비밀번호를 입력해주세요')
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(1, 'Please enter your password')
 })
 
 export async function signUp(formData: FormData) {

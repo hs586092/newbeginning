@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
+import { LanguageSelector } from '@/components/ui/language-selector'
 import { 
   User, 
   LogOut, 
@@ -10,9 +11,11 @@ import {
   FileText
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
+import { useTranslation } from '@/lib/i18n'
 import { toast } from 'sonner'
 
 export function Header() {
+  const { t } = useTranslation()
   const { 
     user, 
     profile, 
@@ -50,26 +53,27 @@ export function Header() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex items-center gap-2" aria-label="첫돌까지 홈으로 이동">
-              <span className="text-3xl" role="img" aria-label="수유하는 엄마 이모지">🤱</span>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-blue-500 text-transparent bg-clip-text">
+            <Link href="/" className="flex items-center gap-2" aria-label="ParentWise home">
+              <span className="text-3xl" role="img" aria-label="Parent and child emoji">🤱</span>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">
                 첫돌까지
               </h1>
             </Link>
           </div>
 
           {/* User Actions */}
-          <nav className="flex items-center space-x-4" role="navigation" aria-label="사용자 메뉴">
+          <nav className="flex items-center space-x-4" role="navigation" aria-label="User menu">
+            <LanguageSelector />
             <ThemeToggle />
             
             {isLoading ? (
-              <div className="w-8 h-8 animate-spin rounded-full border-2 border-gray-300 border-t-blue-500" role="status" aria-label="로딩 중"></div>
+              <div className="w-8 h-8 animate-spin rounded-full border-2 border-gray-300 border-t-blue-500" role="status" aria-label="Loading"></div>
             ) : isAuthenticated ? (
               <>
                 <Link href="/write" aria-label="새 게시글 작성하기">
                   <Button size="sm" className="flex items-center h-9 px-3">
                     <PenSquare className="w-4 h-4 mr-1.5 sm:mr-2" aria-hidden="true" />
-                    <span className="text-sm">글쓰기</span>
+                    <span className="text-sm">{t('nav.write')}</span>
                   </Button>
                 </Link>
                 
@@ -90,7 +94,7 @@ export function Header() {
                         role="menuitem"
                       >
                         <FileText className="w-4 h-4 mr-2" aria-hidden="true" />
-                        내 게시글
+                        {t('nav.myPosts')}
                       </Link>
                       <Link 
                         href="/profile"
@@ -98,7 +102,7 @@ export function Header() {
                         role="menuitem"
                       >
                         <User className="w-4 h-4 mr-2" aria-hidden="true" />
-                        프로필
+                        {t('nav.profile')}
                       </Link>
                       <button
                         onClick={handleSignOut}
@@ -107,7 +111,7 @@ export function Header() {
                         aria-label="로그아웃하기"
                       >
                         <LogOut className="w-4 h-4 mr-2" aria-hidden="true" />
-                        로그아웃
+                        {t('nav.logout')}
                       </button>
                     </div>
                   </div>
@@ -115,7 +119,7 @@ export function Header() {
               </>
             ) : (
               <Link href="/login" aria-label="로그인 페이지로 이동">
-                <Button size="sm">로그인</Button>
+                <Button size="sm">{t('nav.login')}</Button>
               </Link>
             )}
           </nav>

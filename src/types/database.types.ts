@@ -8,19 +8,22 @@ export type Database = {
           full_name?: string
           avatar_url?: string
           created_at: string
-          // Korean cultural preferences
-          language_preference?: 'formal' | 'informal' | 'mixed'
-          family_role?: 'expecting_mom' | 'expecting_dad' | 'new_mom' | 'new_dad' | 'experienced_parent' | 'grandparent' | 'caregiver'
+          // Global parenting profile
+          parenting_stage?: 'expecting' | 'newborn' | 'infant' | 'toddler' | 'preschool' | 'school_age' | 'teen' | 'adult_child'
+          parenting_role?: 'mother' | 'father' | 'guardian' | 'caregiver' | 'grandparent' | 'expecting_parent'
+          location?: string
+          timezone?: string
+          language_preference?: string
           baby_info?: {
             due_date?: string
-            birth_date?: string
-            baby_count?: number
-            baby_names?: string[]
+            birth_dates?: string[]
+            child_count?: number
+            child_ages?: number[]
           }
-          cultural_preferences?: {
-            use_honorifics?: boolean
-            preferred_address_style?: 'casual' | 'respectful' | 'formal'
-            show_family_info?: boolean
+          privacy_settings?: {
+            show_location?: boolean
+            show_children_info?: boolean
+            allow_messages?: boolean
           }
         }
         Insert: {
@@ -29,18 +32,21 @@ export type Database = {
           full_name?: string
           avatar_url?: string
           created_at?: string
-          language_preference?: 'formal' | 'informal' | 'mixed'
-          family_role?: 'expecting_mom' | 'expecting_dad' | 'new_mom' | 'new_dad' | 'experienced_parent' | 'grandparent' | 'caregiver'
+          parenting_stage?: 'expecting' | 'newborn' | 'infant' | 'toddler' | 'preschool' | 'school_age' | 'teen' | 'adult_child'
+          parenting_role?: 'mother' | 'father' | 'guardian' | 'caregiver' | 'grandparent' | 'expecting_parent'
+          location?: string
+          timezone?: string
+          language_preference?: string
           baby_info?: {
             due_date?: string
-            birth_date?: string
-            baby_count?: number
-            baby_names?: string[]
+            birth_dates?: string[]
+            child_count?: number
+            child_ages?: number[]
           }
-          cultural_preferences?: {
-            use_honorifics?: boolean
-            preferred_address_style?: 'casual' | 'respectful' | 'formal'
-            show_family_info?: boolean
+          privacy_settings?: {
+            show_location?: boolean
+            show_children_info?: boolean
+            allow_messages?: boolean
           }
         }
         Update: {
@@ -49,18 +55,21 @@ export type Database = {
           full_name?: string
           avatar_url?: string
           created_at?: string
-          language_preference?: 'formal' | 'informal' | 'mixed'
-          family_role?: 'expecting_mom' | 'expecting_dad' | 'new_mom' | 'new_dad' | 'experienced_parent' | 'grandparent' | 'caregiver'
+          parenting_stage?: 'expecting' | 'newborn' | 'infant' | 'toddler' | 'preschool' | 'school_age' | 'teen' | 'adult_child'
+          parenting_role?: 'mother' | 'father' | 'guardian' | 'caregiver' | 'grandparent' | 'expecting_parent'
+          location?: string
+          timezone?: string
+          language_preference?: string
           baby_info?: {
             due_date?: string
-            birth_date?: string
-            baby_count?: number
-            baby_names?: string[]
+            birth_dates?: string[]
+            child_count?: number
+            child_ages?: number[]
           }
-          cultural_preferences?: {
-            use_honorifics?: boolean
-            preferred_address_style?: 'casual' | 'respectful' | 'formal'
-            show_family_info?: boolean
+          privacy_settings?: {
+            show_location?: boolean
+            show_children_info?: boolean
+            allow_messages?: boolean
           }
         }
       }
