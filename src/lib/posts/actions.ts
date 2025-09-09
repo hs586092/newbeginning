@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { RedirectType } from 'next/navigation'
 import { z } from 'zod'
+import type { Database } from '@/types/database.types'
 
 const createPostSchema = z.object({
   title: z.string().min(1, '제목을 입력해주세요').max(200, '제목은 200자 이하로 입력해주세요'),
@@ -688,21 +689,24 @@ export async function createComment(postId: string, content: string) {
   }
 
   try {
-    // Get user profile for author_name
+    // Get user profile for author_name with proper typing
     const { data: profile } = await supabase
       .from('profiles')
       .select('username')
       .eq('id', user.id)
       .single()
 
-    const { data, error } = await (supabase as any)
-      .from('comments')
-      .insert({
-        post_id: postId,
-        user_id: user.id,
-        content: content.trim(),
-        author_name: (profile as any)?.username || user.email || '익명'
-      })
+    // Type-safe comment insertion with explicit schema validation
+    const commentData: Database['public']['Tables']['comments']['Insert'] = {
+      post_id: postId,
+      user_id: user.id,
+      content: content.trim(),
+      author_name: (profile as { username: string } | null)?.username || user.email || '익명'
+    }
+
+    const { data, error } = await (supabase
+      .from('comments') as any)
+      .insert(commentData)
       .select()
       .single()
 
@@ -730,7 +734,7 @@ export async function getComments(postId: string) {
   const supabase = await createServerSupabaseClient()
   
   try {
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('comments')
       .select('*')
       .eq('post_id', postId)
