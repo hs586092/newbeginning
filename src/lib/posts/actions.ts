@@ -734,8 +734,8 @@ export async function getComments(postId: string) {
   const supabase = await createServerSupabaseClient()
   
   try {
-    const { data, error } = await supabase
-      .from('comments')
+    const { data, error } = await (supabase
+      .from('comments') as any)
       .select('*')
       .eq('post_id', postId)
       .order('created_at', { ascending: true })
