@@ -677,12 +677,8 @@ export async function updateEducationalPost(formData: FormData) {
 
 // 댓글 작성
 export async function createComment(postId: string, content: string) {
-  console.log('✍️ createComment called:', { postId, contentLength: content.length })
-  
   const supabase = await createServerSupabaseClient()
   const { user } = await getUser()
-  
-  console.log('👤 User authentication:', user ? `User ID: ${user.id}` : 'Not authenticated')
   
   if (!user) {
     return { error: '로그인이 필요합니다.', type: 'auth' as const }
@@ -693,15 +689,12 @@ export async function createComment(postId: string, content: string) {
   }
 
   try {
-    console.log('📝 Fetching user profile...')
     // Get user profile for author_name with proper typing
     const { data: profile } = await supabase
       .from('profiles')
       .select('username')
       .eq('id', user.id)
       .single()
-
-    console.log('👤 Profile data:', profile ? `Username: ${(profile as any)?.username}` : 'No profile found')
 
     // Type-safe comment insertion with explicit schema validation
     const commentData: Database['public']['Tables']['comments']['Insert'] = {
@@ -711,47 +704,24 @@ export async function createComment(postId: string, content: string) {
       author_name: (profile as { username: string } | null)?.username || user.email || '익명'
     }
 
-    console.log('💾 Inserting comment data:', {
-      post_id: commentData.post_id,
-      user_id: commentData.user_id,
-      author_name: commentData.author_name,
-      content_preview: commentData.content.substring(0, 50) + '...'
-    })
-
     const { data, error } = await (supabase
       .from('comments') as any)
       .insert(commentData)
       .select()
       .single()
 
-    console.log('📊 Insert result:', {
-      data: data ? 'Comment created successfully' : 'null',
-      error: error ? { message: error.message, code: error.code } : 'none'
-    })
-
     if (error) {
-      console.error('❌ Comment creation error details:', {
-        message: error.message,
-        code: error.code,
-        details: error.details,
-        hint: error.hint
-      })
+      console.error('Comment creation error:', error)
       return { error: '댓글 작성 중 오류가 발생했습니다.', type: 'database' as const }
     }
 
-    console.log('🔄 Revalidating paths...')
     revalidatePath('/')
     revalidatePath('/community')
     revalidatePath(`/post/${postId}`)
     
-    console.log('✅ Comment created successfully!')
     return { success: true, comment: data }
   } catch (error) {
-    console.error('💥 Unexpected error in createComment:', {
-      name: (error as Error).name,
-      message: (error as Error).message,
-      stack: (error as Error).stack
-    })
+    console.error('Unexpected error:', error)
     return { 
       error: '댓글 작성 중 오류가 발생했습니다.',
       type: 'unknown' as const
@@ -761,43 +731,23 @@ export async function createComment(postId: string, content: string) {
 
 // 댓글 목록 조회
 export async function getComments(postId: string) {
-  console.log('🔍 getComments called with postId:', postId)
-  
   const supabase = await createServerSupabaseClient()
-  console.log('📡 Supabase client created successfully')
   
   try {
-    console.log('🔗 Attempting to query comments table...')
-    
     const { data, error } = await (supabase
       .from('comments') as any)
       .select('*')
       .eq('post_id', postId)
       .order('created_at', { ascending: true })
 
-    console.log('📊 Database query result:', { 
-      data: data ? `${data.length} comments found` : 'null', 
-      error: error ? { message: error.message, code: error.code, details: error.details } : 'none'
-    })
-
     if (error) {
-      console.error('❌ Comments fetch error details:', {
-        message: error.message,
-        code: error.code,
-        details: error.details,
-        hint: error.hint
-      })
+      console.error('Comments fetch error:', error)
       return { error: '댓글을 불러올 수 없습니다.', comments: [] }
     }
 
-    console.log('✅ Comments fetched successfully:', data?.length || 0, 'comments')
     return { success: true, comments: data || [] }
   } catch (error) {
-    console.error('💥 Unexpected error in getComments:', {
-      name: (error as Error).name,
-      message: (error as Error).message,
-      stack: (error as Error).stack
-    })
+    console.error('Unexpected error:', error)
     return { error: '댓글을 불러올 수 없습니다.', comments: [] }
   }
 }

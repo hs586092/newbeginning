@@ -68,7 +68,7 @@ export default function ClientPostsWrapper({ searchParams, currentUserId }: Clie
   function getDemoPosts(): PostWithDetails[] {
     return [
       {
-        id: 'demo-1',
+        id: '6d3a1589-197f-4802-b9c4-0a7e9be92c9d',
         title: '임신 초기 증상과 대처법',
         content: '임신 6주차인데 입덧이 심해서 고생하고 있어요. 어떻게 하면 좀 나아질까요? 경험 있으신 분들 조언 부탁드려요.',
         category: 'expecting',
@@ -85,7 +85,7 @@ export default function ClientPostsWrapper({ searchParams, currentUserId }: Clie
         comments: []
       },
       {
-        id: 'demo-2',
+        id: '8b473e1b-78d3-474c-91ec-6f3653f83c8e',
         title: '신생아 수유량 궁금해요',
         content: '생후 1주된 아기인데 수유량이 충분한지 걱정됩니다. 하루에 몇 번 정도 수유하는 게 정상인가요?',
         category: 'newborn',
@@ -102,7 +102,7 @@ export default function ClientPostsWrapper({ searchParams, currentUserId }: Clie
         comments: [{ id: 'comment-1' }]
       },
       {
-        id: 'demo-3',
+        id: '696fd831-74e7-422a-81d9-04ce22c43ecb',
         title: '아기 이유식 시작 시기',
         content: '5개월 된 아기 이유식을 언제부터 시작해야 할까요? 첫 이유식으로 뭐가 좋을까요?',
         category: 'toddler',

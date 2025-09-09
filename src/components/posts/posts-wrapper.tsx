@@ -121,7 +121,7 @@ async function getPosts(searchParams: { [key: string]: string | undefined }): Pr
 function getDemoPosts(): PostWithDetails[] {
   return [
     {
-      id: 'demo-1',
+      id: '6d3a1589-197f-4802-b9c4-0a7e9be92c9d',
       title: '임신 초기 입덧 극복법',
       content: '임신 6주부터 시작된 입덧으로 고생하고 있어요. 생강차와 비타민 B6가 도움이 된다고 하네요. 다른 예비맘들은 어떻게 극복하셨나요?',
       category: 'expecting',
@@ -138,7 +138,7 @@ function getDemoPosts(): PostWithDetails[] {
       comments: []
     },
     {
-      id: 'demo-2',
+      id: '8b473e1b-78d3-474c-91ec-6f3653f83c8e',
       title: '신생아 수유 간격 궁금해요',
       content: '생후 2주된 아기인데 수유 간격이 1-2시간이에요. 이게 정상인지 궁금합니다. 언제쯤 간격이 길어질까요?',
       category: 'newborn',
@@ -155,7 +155,7 @@ function getDemoPosts(): PostWithDetails[] {
       comments: [{ id: 'comment-1' }]
     },
     {
-      id: 'demo-3',
+      id: '696fd831-74e7-422a-81d9-04ce22c43ecb',
       title: '이유식 시작 시기와 준비물',
       content: '아기가 5개월이 되어서 이유식 준비 중이에요. 언제부터 시작하는 게 좋을까요? 필요한 준비물도 알려주세요!',
       category: 'toddler',
