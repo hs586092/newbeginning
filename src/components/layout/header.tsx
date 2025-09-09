@@ -67,7 +67,7 @@ export function Header() {
               <div className="w-8 h-8 animate-spin rounded-full border-2 border-gray-300 border-t-blue-500" role="status" aria-label="Loading"></div>
             ) : isAuthenticated ? (
               <>
-                <Link href="/chat-test" aria-label="채팅 테스트 페이지로 이동">
+                <Link href="/chat" aria-label="채팅 페이지로 이동">
                   <Button variant="outline" size="sm" className="flex items-center h-9 px-3">
                     <MessageCircle className="w-4 h-4 mr-1.5 sm:mr-2" aria-hidden="true" />
                     <span className="text-sm">채팅</span>
