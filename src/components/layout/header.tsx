@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
-import { LanguageSelector } from '@/components/ui/language-selector'
 import { 
   User, 
   LogOut, 
@@ -12,11 +11,9 @@ import {
   MessageCircle
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
-import { useTranslation } from '@/lib/i18n'
 import { toast } from 'sonner'
 
 export function Header() {
-  const { t } = useTranslation()
   const { 
     user, 
     profile, 
@@ -64,7 +61,6 @@ export function Header() {
 
           {/* User Actions */}
           <nav className="flex items-center space-x-4" role="navigation" aria-label="User menu">
-            <LanguageSelector />
             <ThemeToggle />
             
             {isLoading ? (
@@ -81,7 +77,7 @@ export function Header() {
                 <Link href="/write" aria-label="새 게시글 작성하기">
                   <Button size="sm" className="flex items-center h-9 px-3">
                     <PenSquare className="w-4 h-4 mr-1.5 sm:mr-2" aria-hidden="true" />
-                    <span className="text-sm">{t('nav.write')}</span>
+                    <span className="text-sm">글쓰기</span>
                   </Button>
                 </Link>
                 
@@ -102,7 +98,7 @@ export function Header() {
                         role="menuitem"
                       >
                         <FileText className="w-4 h-4 mr-2" aria-hidden="true" />
-                        {t('nav.myPosts')}
+                        내 게시글
                       </Link>
                       <Link 
                         href="/profile"
@@ -110,7 +106,7 @@ export function Header() {
                         role="menuitem"
                       >
                         <User className="w-4 h-4 mr-2" aria-hidden="true" />
-                        {t('nav.profile')}
+                        프로필
                       </Link>
                       <button
                         onClick={handleSignOut}
@@ -119,7 +115,7 @@ export function Header() {
                         aria-label="로그아웃하기"
                       >
                         <LogOut className="w-4 h-4 mr-2" aria-hidden="true" />
-                        {t('nav.logout')}
+                        로그아웃
                       </button>
                     </div>
                   </div>
@@ -127,7 +123,7 @@ export function Header() {
               </>
             ) : (
               <Link href="/login" aria-label="로그인 페이지로 이동">
-                <Button size="sm">{t('nav.login')}</Button>
+                <Button size="sm">로그인</Button>
               </Link>
             )}
           </nav>
