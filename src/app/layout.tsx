@@ -6,6 +6,7 @@ import { WebsiteStructuredData } from '@/components/seo/structured-data'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { AuthProvider } from '@/contexts/auth-context'
 import { Toaster } from 'sonner'
+import { PerformanceMonitor } from '@/components/performance-monitor'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -104,6 +105,7 @@ export default function RootLayout({
               richColors
               theme="system"
             />
+            <PerformanceMonitor />
           </AuthProvider>
         </ThemeProvider>
       </body>

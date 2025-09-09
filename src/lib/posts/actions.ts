@@ -752,6 +752,104 @@ export async function getComments(postId: string) {
   }
 }
 
+// 댓글 좋아요 토글 (좋아요/좋아요 취소)
+export async function toggleCommentLike(commentId: string) {
+  const supabase = await createServerSupabaseClient()
+  const { user } = await getUser()
+  
+  if (!user) {
+    return { error: '로그인이 필요합니다.', type: 'auth' as const }
+  }
+
+  try {
+    // 기존 좋아요 확인
+    const { data: existingLike } = await (supabase
+      .from('comment_likes') as any)
+      .select('id')
+      .eq('comment_id', commentId)
+      .eq('user_id', user.id)
+      .single()
+
+    if (existingLike) {
+      // 좋아요 취소
+      const { error } = await (supabase
+        .from('comment_likes') as any)
+        .delete()
+        .eq('comment_id', commentId)
+        .eq('user_id', user.id)
+
+      if (error) {
+        console.error('Comment unlike error:', error)
+        return { error: '좋아요 취소 중 오류가 발생했습니다.', type: 'database' as const }
+      }
+
+      return { success: true, liked: false, message: '좋아요를 취소했습니다.' }
+    } else {
+      // 좋아요 추가
+      const commentLikeData: Database['public']['Tables']['comment_likes']['Insert'] = {
+        comment_id: commentId,
+        user_id: user.id
+      }
+
+      const { error } = await (supabase
+        .from('comment_likes') as any)
+        .insert(commentLikeData)
+
+      if (error) {
+        console.error('Comment like error:', error)
+        return { error: '좋아요 중 오류가 발생했습니다.', type: 'database' as const }
+      }
+
+      return { success: true, liked: true, message: '좋아요를 눌렀습니다.' }
+    }
+  } catch (error) {
+    console.error('Unexpected error in toggleCommentLike:', error)
+    return { 
+      error: '좋아요 처리 중 오류가 발생했습니다.',
+      type: 'unknown' as const
+    }
+  }
+}
+
+// 댓글의 좋아요 수와 사용자의 좋아요 상태 조회
+export async function getCommentLikes(commentId: string) {
+  const supabase = await createServerSupabaseClient()
+  const { user } = await getUser()
+  
+  try {
+    // 총 좋아요 수 조회
+    const { data: likesData, error: countError } = await (supabase
+      .from('comment_likes') as any)
+      .select('id')
+      .eq('comment_id', commentId)
+
+    if (countError) {
+      console.error('Comment likes count error:', countError)
+      return { error: '좋아요 수를 불러올 수 없습니다.', count: 0, userLiked: false }
+    }
+
+    const likeCount = likesData?.length || 0
+    let userLiked = false
+
+    // 로그인한 사용자의 좋아요 상태 확인
+    if (user) {
+      const { data: userLikeData } = await (supabase
+        .from('comment_likes') as any)
+        .select('id')
+        .eq('comment_id', commentId)
+        .eq('user_id', user.id)
+        .single()
+
+      userLiked = !!userLikeData
+    }
+
+    return { success: true, count: likeCount, userLiked }
+  } catch (error) {
+    console.error('Unexpected error in getCommentLikes:', error)
+    return { error: '좋아요 정보를 불러올 수 없습니다.', count: 0, userLiked: false }
+  }
+}
+
 export async function getEducationalPosts(filters?: {
   category?: string
   target_audience?: string

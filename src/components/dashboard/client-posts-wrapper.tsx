@@ -35,7 +35,7 @@ export default function ClientPostsWrapper({ searchParams, currentUserId }: Clie
         }
 
         if (category && category !== 'all') {
-          query = query.eq('category', category)
+          query = query.eq('category', category as any)
         }
 
 
@@ -49,7 +49,7 @@ export default function ClientPostsWrapper({ searchParams, currentUserId }: Clie
           // Fallback to demo data if database is not available
           setPosts(getDemoPosts())
         } else {
-          setPosts(data || [])
+          setPosts((data as any) || [])
         }
       } catch (err) {
         console.error('Unexpected error:', err)

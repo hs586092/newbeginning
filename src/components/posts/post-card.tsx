@@ -4,7 +4,8 @@ import { useState, useOptimistic, useEffect } from 'react'
 import Link from 'next/link'
 import { Heart, MessageCircle, Eye, MoreHorizontal, Edit, Trash2 } from 'lucide-react'
 import { formatDate, getCategoryLabel, getCategoryColor, truncateText, isEducationalContent, getCategoryIcon, formatReadTime, getTargetAudienceLabel } from '@/lib/utils'
-import { toggleLike, deletePost, createComment, getComments } from '@/lib/posts/actions'
+import { toggleLike, deletePost, createComment, getComments, toggleCommentLike, getCommentLikes } from '@/lib/posts/actions'
+import { formatUserName, generateCulturallyAppropriateResponse, isAppropriateLanguage, type LanguagePreference, type FamilyRole, type AddressStyle } from '@/lib/korean-culture'
 import { Button } from '@/components/ui/button'
 import type { PostWithDetails } from '@/types/database.types'
 import { toast } from 'sonner'
@@ -26,6 +27,8 @@ export function PostCard({ post, currentUserId, isOwner, onDelete }: PostCardPro
   const [isSubmittingComment, setIsSubmittingComment] = useState(false)
   const [comments, setComments] = useState<any[]>([])
   const [isLoadingComments, setIsLoadingComments] = useState(false)
+  const [commentLikes, setCommentLikes] = useState<{[key: string]: {liked: boolean, count: number}}>({})
+  const [languageSuggestion, setLanguageSuggestion] = useState<string | null>(null)
   
   const isEducational = isEducationalContent(post.category)
   const metadata = post.educational_metadata
@@ -83,6 +86,18 @@ export function PostCard({ post, currentUserId, isOwner, onDelete }: PostCardPro
     }
   }
 
+  const handleCommentTextChange = (value: string) => {
+    setNewComment(value)
+    
+    // Check language appropriateness (assuming post author prefers formal language)
+    if (value.trim().length > 10) {
+      const validation = isAppropriateLanguage(value, 'formal' as LanguagePreference)
+      setLanguageSuggestion(validation.appropriate ? null : validation.suggestion || null)
+    } else {
+      setLanguageSuggestion(null)
+    }
+  }
+
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!currentUserId) {
@@ -117,6 +132,15 @@ export function PostCard({ post, currentUserId, isOwner, onDelete }: PostCardPro
       const result = await getComments(post.id)
       if (result.success) {
         setComments(result.comments)
+        
+        // Initialize comment likes with default values for better performance
+        if (result.comments.length > 0) {
+          const likesData: {[key: string]: {liked: boolean, count: number}} = {}
+          result.comments.forEach((comment: any) => {
+            likesData[comment.id] = { liked: false, count: 0 }
+          })
+          setCommentLikes(likesData)
+        }
       } else if (result.error) {
         console.error('Comments loading error:', result.error)
         setComments([])
@@ -126,6 +150,80 @@ export function PostCard({ post, currentUserId, isOwner, onDelete }: PostCardPro
       setComments([])
     } finally {
       setIsLoadingComments(false)
+    }
+  }
+
+  const handleCommentLike = async (commentId: string) => {
+    if (!currentUserId) {
+      router.push('/login')
+      return
+    }
+
+    // Load current like data if not loaded yet
+    if (!commentLikes[commentId]) {
+      try {
+        const likesResult = await getCommentLikes(commentId)
+        if (likesResult.success) {
+          setCommentLikes(prev => ({
+            ...prev,
+            [commentId]: {
+              liked: likesResult.userLiked || false,
+              count: likesResult.count || 0
+            }
+          }))
+        }
+      } catch (error) {
+        console.error('Error loading comment likes:', error)
+        setCommentLikes(prev => ({
+          ...prev,
+          [commentId]: { liked: false, count: 0 }
+        }))
+      }
+      // Wait a moment for the state to update
+      await new Promise(resolve => setTimeout(resolve, 100))
+    }
+
+    // Optimistic update
+    const currentLikeData = commentLikes[commentId] || { liked: false, count: 0 }
+    const newLiked = !currentLikeData.liked
+    const newCount = newLiked ? currentLikeData.count + 1 : Math.max(0, currentLikeData.count - 1)
+
+    setCommentLikes(prev => ({
+      ...prev,
+      [commentId]: {
+        liked: newLiked,
+        count: newCount
+      }
+    }))
+
+    try {
+      const result = await toggleCommentLike(commentId)
+      if (result.error) {
+        // Revert optimistic update on error
+        setCommentLikes(prev => ({
+          ...prev,
+          [commentId]: currentLikeData
+        }))
+        toast.error(result.error)
+      } else {
+        // Update with actual result from server
+        if (result.success && result.data) {
+          setCommentLikes(prev => ({
+            ...prev,
+            [commentId]: {
+              liked: result.data.userLiked || false,
+              count: result.data.count || 0
+            }
+          }))
+        }
+      }
+    } catch (error) {
+      // Revert optimistic update on error
+      setCommentLikes(prev => ({
+        ...prev,
+        [commentId]: currentLikeData
+      }))
+      toast.error('좋아요 처리 중 오류가 발생했습니다.')
     }
   }
 
@@ -150,11 +248,11 @@ export function PostCard({ post, currentUserId, isOwner, onDelete }: PostCardPro
       isEducational 
         ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200' 
         : 'bg-white border-gray-200'
-    }`}>
+    }`} role="article" aria-labelledby={`post-title-${post.id}`}>
       {/* Header */}
       <div className="flex justify-between items-start mb-4">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+          <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center" role="img" aria-label={`${post.author_name} 프로필 사진`}>
             <span className="text-sm font-medium text-gray-700">
               {post.author_name[0]?.toUpperCase()}
             </span>
@@ -190,25 +288,31 @@ export function PostCard({ post, currentUserId, isOwner, onDelete }: PostCardPro
                 size="icon"
                 className="h-8 w-8"
                 onClick={() => setShowActions(!showActions)}
+                aria-label="게시글 옵션 메뉴"
+                aria-expanded={showActions}
+                aria-haspopup="true"
               >
-                <MoreHorizontal className="h-4 w-4" />
+                <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
               </Button>
               
               {showActions && (
-                <div className="absolute right-0 mt-1 w-32 bg-white rounded-md shadow-lg border z-10">
+                <div className="absolute right-0 mt-1 w-32 bg-white rounded-md shadow-lg border z-10" role="menu" aria-label="게시글 옵션">
                   <Link 
                     href={`/post/${post.id}/edit`}
                     className="flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    role="menuitem"
                   >
-                    <Edit className="w-4 h-4 mr-2" />
+                    <Edit className="w-4 h-4 mr-2" aria-hidden="true" />
                     수정
                   </Link>
                   <button
                     onClick={handleDelete}
                     disabled={isDeleting}
                     className="flex items-center w-full px-3 py-2 text-sm text-red-600 hover:bg-gray-100"
+                    role="menuitem"
+                    aria-label="게시글 삭제하기"
                   >
-                    <Trash2 className="w-4 h-4 mr-2" />
+                    <Trash2 className="w-4 h-4 mr-2" aria-hidden="true" />
                     삭제
                   </button>
                 </div>
@@ -219,8 +323,8 @@ export function PostCard({ post, currentUserId, isOwner, onDelete }: PostCardPro
       </div>
 
       {/* Content */}
-      <Link href={`/post/${post.id}`} className="block group">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+      <Link href={`/post/${post.id}`} className="block group" aria-label={`${post.title} 게시글 자세히 보기`}>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors" id={`post-title-${post.id}`}>
           {post.title}
         </h3>
         <p className="text-gray-700 mb-4 leading-relaxed">
@@ -277,21 +381,24 @@ export function PostCard({ post, currentUserId, isOwner, onDelete }: PostCardPro
                 ? 'text-red-600' 
                 : 'text-gray-500 hover:text-red-600'
             }`}
+            aria-label={`게시글 ${optimisticLike.liked ? '좋아요 취소' : '좋아요'} - 현재 ${optimisticLike.count}개`}
           >
-            <Heart className={`w-5 h-5 ${optimisticLike.liked ? 'fill-current' : ''}`} />
+            <Heart className={`w-5 h-5 ${optimisticLike.liked ? 'fill-current' : ''}`} aria-hidden="true" />
             <span>{optimisticLike.count}</span>
           </button>
           
           <button
             onClick={handleCommentToggle}
             className="flex items-center space-x-1 text-sm text-gray-500 hover:text-blue-600 transition-colors"
+            aria-label={`댓글 ${showComments ? '숨기기' : '보기'} - 댓글 ${comments.length || post.comments?.length || 0}개`}
+            aria-expanded={showComments}
           >
-            <MessageCircle className="w-5 h-5" />
+            <MessageCircle className="w-5 h-5" aria-hidden="true" />
             <span>{comments.length || post.comments?.length || 0}</span>
           </button>
           
-          <div className="flex items-center space-x-1 text-sm text-gray-500">
-            <Eye className="w-5 h-5" />
+          <div className="flex items-center space-x-1 text-sm text-gray-500" role="text" aria-label={`조회수 ${post.view_count}회`}>
+            <Eye className="w-5 h-5" aria-hidden="true" />
             <span>{post.view_count}</span>
           </div>
         </div>
@@ -321,13 +428,22 @@ export function PostCard({ post, currentUserId, isOwner, onDelete }: PostCardPro
                   </span>
                 </div>
                 <div className="flex-1">
-                  <textarea
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="댓글을 작성해주세요..."
-                    rows={2}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
+                  <div className="space-y-2">
+                    <textarea
+                      value={newComment}
+                      onChange={(e) => handleCommentTextChange(e.target.value)}
+                      placeholder="댓글을 작성해주세요... (정중한 언어로 작성해주시면 감사하겠습니다)"
+                      rows={2}
+                      className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      aria-label="댓글 작성용 텍스트 영역"
+                    />
+                    {languageSuggestion && (
+                      <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-600 rounded-lg">
+                        <span className="text-blue-600 dark:text-blue-400 text-sm">💡</span>
+                        <span className="text-xs text-blue-700 dark:text-blue-300">{languageSuggestion}</span>
+                      </div>
+                    )}
+                  </div>
                   <div className="flex justify-end mt-2">
                     <button
                       type="submit"
@@ -379,6 +495,36 @@ export function PostCard({ post, currentUserId, isOwner, onDelete }: PostCardPro
                         <p className="text-sm text-gray-700">
                           {comment.content}
                         </p>
+                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
+                          <button
+                            onClick={() => handleCommentLike(comment.id)}
+                            className={`flex items-center gap-2 px-2 py-1 rounded-full transition-all duration-200 ${
+                              commentLikes[comment.id]?.liked
+                                ? 'bg-pink-50 text-pink-600 hover:bg-pink-100'
+                                : 'text-gray-400 hover:text-pink-500 hover:bg-pink-50'
+                            }`}
+                            aria-label={`댓글 ${commentLikes[comment.id]?.liked ? '좋아요 취소' : '좋아요'} - 현재 ${commentLikes[comment.id]?.count || 0}개`}
+                          >
+                            <Heart 
+                              className={`w-4 h-4 transition-all duration-200 ${
+                                commentLikes[comment.id]?.liked 
+                                  ? 'fill-pink-500 text-pink-500 scale-110' 
+                                  : 'hover:scale-105'
+                              }`}
+                              aria-hidden="true"
+                            />
+                            <span className={`text-sm font-medium ${
+                              commentLikes[comment.id]?.liked 
+                                ? 'text-pink-600' 
+                                : 'text-gray-500'
+                            }`}>
+                              {commentLikes[comment.id]?.count > 0 
+                                ? commentLikes[comment.id].count 
+                                : '좋아요'
+                              }
+                            </span>
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>

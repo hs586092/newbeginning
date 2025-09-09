@@ -271,38 +271,61 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
    * Handle auth state changes from Supabase
    * Now managed by State Machine Pattern
    */
+  // Track current session to prevent duplicate processing
+  const currentSessionRef = useRef<Session | null>(null)
+
   const handleAuthStateChange = useCallback(async (
     event: string, 
     session: Session | null
   ) => {
     log('Auth state changed:', { event, userId: session?.user?.id })
 
+    // Prevent duplicate events by comparing session states
+    const isSameSession = currentSessionRef.current?.access_token === session?.access_token
+    const currentUserId = currentSessionRef.current?.user?.id
+    const newUserId = session?.user?.id
+
     switch (event) {
       case 'SIGNED_IN':
-        if (session?.user) {
+        // Enhanced duplicate prevention
+        const isAlreadyAuthenticated = stateMachine.current?.isAuthenticated()
+        
+        if (session?.user && (!isSameSession || currentUserId !== newUserId) && !isAlreadyAuthenticated) {
+          // Only process if it's genuinely a new session AND we're not already authenticated
+          currentSessionRef.current = session
           stateMachine.current!.send(AuthMachineEvent.SIGN_IN_SUCCESS, {
             user: session.user,
             session,
             provider: null // Will be set by the signin methods
           })
+        } else {
+          log('Ignoring duplicate/unnecessary SIGNED_IN event:', { 
+            isSameSession, 
+            isAlreadyAuthenticated, 
+            currentState: stateMachine.current?.getCurrentState() 
+          })
         }
         break
 
       case 'SIGNED_OUT':
-        stateMachine.current!.send(AuthMachineEvent.SIGN_OUT_SUCCESS, {
-          user: null,
-          session: null,
-          profile: null
-        })
+        if (currentSessionRef.current) {
+          // Only process sign out if we had a session
+          currentSessionRef.current = null
+          stateMachine.current!.send(AuthMachineEvent.SIGN_OUT_SUCCESS, {
+            user: null,
+            session: null,
+            profile: null
+          })
+        }
         break
 
       case 'TOKEN_REFRESHED':
-        if (session?.user) {
-          stateMachine.current!.send(AuthMachineEvent.SIGN_IN_SUCCESS, {
-            user: session.user,
-            session,
-            provider: machineContext.provider // Keep existing provider
-          })
+        // For token refresh, only update session reference, don't trigger state machine
+        if (session?.user && (!isSameSession || currentUserId !== newUserId)) {
+          log('Token refreshed - updating session reference only')
+          currentSessionRef.current = session
+        } else {
+          log('Ignoring duplicate TOKEN_REFRESHED event')
         }
         break
 

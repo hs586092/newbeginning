@@ -8,6 +8,20 @@ export type Database = {
           full_name?: string
           avatar_url?: string
           created_at: string
+          // Korean cultural preferences
+          language_preference?: 'formal' | 'informal' | 'mixed'
+          family_role?: 'expecting_mom' | 'expecting_dad' | 'new_mom' | 'new_dad' | 'experienced_parent' | 'grandparent' | 'caregiver'
+          baby_info?: {
+            due_date?: string
+            birth_date?: string
+            baby_count?: number
+            baby_names?: string[]
+          }
+          cultural_preferences?: {
+            use_honorifics?: boolean
+            preferred_address_style?: 'casual' | 'respectful' | 'formal'
+            show_family_info?: boolean
+          }
         }
         Insert: {
           id: string
@@ -15,6 +29,19 @@ export type Database = {
           full_name?: string
           avatar_url?: string
           created_at?: string
+          language_preference?: 'formal' | 'informal' | 'mixed'
+          family_role?: 'expecting_mom' | 'expecting_dad' | 'new_mom' | 'new_dad' | 'experienced_parent' | 'grandparent' | 'caregiver'
+          baby_info?: {
+            due_date?: string
+            birth_date?: string
+            baby_count?: number
+            baby_names?: string[]
+          }
+          cultural_preferences?: {
+            use_honorifics?: boolean
+            preferred_address_style?: 'casual' | 'respectful' | 'formal'
+            show_family_info?: boolean
+          }
         }
         Update: {
           id?: string
@@ -22,6 +49,19 @@ export type Database = {
           full_name?: string
           avatar_url?: string
           created_at?: string
+          language_preference?: 'formal' | 'informal' | 'mixed'
+          family_role?: 'expecting_mom' | 'expecting_dad' | 'new_mom' | 'new_dad' | 'experienced_parent' | 'grandparent' | 'caregiver'
+          baby_info?: {
+            due_date?: string
+            birth_date?: string
+            baby_count?: number
+            baby_names?: string[]
+          }
+          cultural_preferences?: {
+            use_honorifics?: boolean
+            preferred_address_style?: 'casual' | 'respectful' | 'formal'
+            show_family_info?: boolean
+          }
         }
       }
       posts: {
@@ -121,6 +161,29 @@ export type Database = {
           post_id?: string
           user_id?: string
           created_at?: string
+        }
+      }
+      comment_likes: {
+        Row: {
+          id: string
+          comment_id: string
+          user_id: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          comment_id: string
+          user_id: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          comment_id?: string
+          user_id?: string
+          created_at?: string
+          updated_at?: string
         }
       }
       educational_metadata: {
