@@ -1,0 +1,323 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - link "ParentWise home" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "Parent and child emoji" [ref=e8] [cursor=pointer]: 🤱
+          - heading "첫돌까지" [level=1] [ref=e9] [cursor=pointer]
+        - navigation "User menu" [ref=e10]:
+          - button "Select language" [ref=e12]:
+            - img [ref=e13]
+            - img [ref=e16]
+          - button "시스템 설정" [ref=e18]:
+            - img [ref=e19]
+          - link "로그인 페이지로 이동" [ref=e21] [cursor=pointer]:
+            - /url: /login
+            - button "로그인" [ref=e22]
+    - main [ref=e23]:
+      - generic [ref=e24]:
+        - generic [ref=e31]:
+          - generic [ref=e33]:
+            - button "예비맘" [ref=e34]:
+              - img [ref=e36]
+              - generic [ref=e38]: 예비맘
+            - button "신생아맘" [ref=e40]:
+              - img [ref=e42]
+              - generic [ref=e45]: 신생아맘
+            - button "성장기맘" [ref=e47]:
+              - img [ref=e49]
+              - generic [ref=e52]: 성장기맘
+            - button "선배맘" [ref=e54]:
+              - img [ref=e56]
+              - generic [ref=e61]: 선배맘
+          - generic [ref=e63]:
+            - heading "임신부터 첫돌까지, 모든 순간을 함께" [level=1] [ref=e64]
+            - paragraph [ref=e65]: 21개월의 소중한 여정을 혼자 걸어가지 마세요. 따뜻한 엄마들의 커뮤니티가 함께합니다
+            - generic [ref=e68]:
+              - img [ref=e69]
+              - generic [ref=e71]: 12,000+
+              - generic [ref=e72]: 전체 회원
+            - generic [ref=e73]:
+              - link "여정 시작하기" [ref=e74] [cursor=pointer]:
+                - /url: /community
+                - button "여정 시작하기" [ref=e75]:
+                  - generic [ref=e76]:
+                    - img [ref=e77]
+                    - generic [ref=e79]: 여정 시작하기
+              - link "둘러보기" [ref=e80] [cursor=pointer]:
+                - /url: /
+                - button "둘러보기" [ref=e81]
+          - generic [ref=e82]:
+            - paragraph [ref=e83]: 12,000+ 엄마들이 함께하는 따뜻한 커뮤니티
+            - generic [ref=e86]: 실시간으로 공유되는 엄마들의 소중한 경험들
+        - generic [ref=e88]:
+          - generic [ref=e89]:
+            - generic [ref=e90]:
+              - img [ref=e91]
+              - generic [ref=e96]: 👶 실시간 양육자들의 이야기
+            - heading "첫돌까지 함께하는 여정" [level=2] [ref=e97]:
+              - generic [ref=e98]: 첫돌까지 함께하는 여정
+            - paragraph [ref=e99]: 소중한 21개월의 여정을 2,847명의 양육자들과 함께 나누고 있어요
+          - generic [ref=e102]:
+            - button [ref=e103]:
+              - img [ref=e104]
+            - generic [ref=e106]:
+              - button "🏠 전체" [ref=e107]:
+                - generic [ref=e108]: 🏠
+                - generic [ref=e109]: 전체
+              - button "🤰 예비양육자" [ref=e110]:
+                - generic [ref=e111]: 🤰
+                - generic [ref=e112]: 예비양육자
+              - button "👶 신생아 양육자" [ref=e113]:
+                - generic [ref=e114]: 👶
+                - generic [ref=e115]: 신생아 양육자
+              - button "🧒 성장기 양육자" [ref=e116]:
+                - generic [ref=e117]: 🧒
+                - generic [ref=e118]: 성장기 양육자
+              - button "👩‍👧‍👦 선배 양육자" [ref=e119]:
+                - generic [ref=e120]: 👩‍👧‍👦
+                - generic [ref=e121]: 선배 양육자
+              - button "⏰ 최신글" [ref=e123]:
+                - generic [ref=e124]: ⏰
+                - generic [ref=e125]: 최신글
+              - button "🔥 인기글" [ref=e126]:
+                - generic [ref=e127]: 🔥
+                - generic [ref=e128]: 인기글
+              - button "💬 댓글많은글" [ref=e129]:
+                - generic [ref=e130]: 💬
+                - generic [ref=e131]: 댓글많은글
+              - button "⭐ 전문가글" [ref=e132]:
+                - generic [ref=e133]: ⭐
+                - generic [ref=e134]: 전문가글
+          - generic [ref=e135]:
+            - generic [ref=e136]:
+              - generic [ref=e137]:
+                - heading "첫돌까지 함께하는 여정" [level=3] [ref=e138]
+                - generic [ref=e139]: 소중한 21개월을 함께 걸어가고 있어요
+                - generic [ref=e140]:
+                  - generic [ref=e141]:
+                    - generic [ref=e143]: ❤️
+                    - generic [ref=e144]: 89.2K
+                    - generic [ref=e145]: +15%
+                    - generic [ref=e146]: 포근한 응원
+                  - generic [ref=e147]:
+                    - generic [ref=e149]: 👥
+                    - generic [ref=e150]: 2,847
+                    - generic [ref=e151]: +23%
+                    - generic [ref=e152]: 활성 양육자들
+                - generic [ref=e153]:
+                  - generic [ref=e154]:
+                    - generic [ref=e156]: ⭐
+                    - generic [ref=e157]: 94%
+                    - generic [ref=e158]: +4%
+                    - generic [ref=e159]: 만족도 지수
+                  - generic [ref=e160]:
+                    - generic [ref=e162]: ⏰
+                    - generic [ref=e163]: 1,234
+                    - generic [ref=e164]: +38%
+                    - generic [ref=e165]: 월간 글
+                - generic [ref=e166]:
+                  - button "응원하기" [ref=e167]:
+                    - img [ref=e168]
+                    - generic [ref=e170]: 응원하기
+                  - button "⏰ 신속한 피드" [ref=e171]:
+                    - generic [ref=e172]: ⏰
+                    - generic [ref=e173]: 신속한 피드
+                  - button "🎭 커뮤니티 소식" [ref=e174]:
+                    - generic [ref=e175]: 🎭
+                    - generic [ref=e176]: 커뮤니티 소식
+                  - button "📘 진료기록" [ref=e177]:
+                    - generic [ref=e178]: 📘
+                    - generic [ref=e179]: 진료기록
+              - generic [ref=e180]:
+                - heading "🎯 육아 도움 도구" [level=3] [ref=e181]
+                - generic [ref=e182]: 회원가입하면 더 많은 기능을 이용할 수 있어요
+                - generic [ref=e183]:
+                  - generic [ref=e184] [cursor=pointer]:
+                    - generic [ref=e185] [cursor=pointer]: 👶
+                    - generic [ref=e186] [cursor=pointer]:
+                      - generic [ref=e187] [cursor=pointer]: 월령별 발달
+                      - generic [ref=e188] [cursor=pointer]: 우리 아이 발달 체크리스트
+                    - generic [ref=e189] [cursor=pointer]: →
+                  - generic [ref=e190] [cursor=pointer]:
+                    - generic [ref=e191] [cursor=pointer]: 🥄
+                    - generic [ref=e192] [cursor=pointer]:
+                      - generic [ref=e193] [cursor=pointer]: 이유식 가이드
+                      - generic [ref=e194] [cursor=pointer]: 월령별 이유식 레시피
+                    - generic [ref=e195] [cursor=pointer]: →
+                  - generic [ref=e196]:
+                    - generic [ref=e197]: 💉
+                    - generic [ref=e198]:
+                      - generic [ref=e199]:
+                        - text: 예방접종 일정
+                        - generic [ref=e200]: 🔒 로그인 필요
+                      - generic [ref=e201]: 필수 예방접종 캘린더
+                    - generic [ref=e202]: 🔒
+                  - generic [ref=e203]:
+                    - generic [ref=e204]: 📊
+                    - generic [ref=e205]:
+                      - generic [ref=e206]:
+                        - text: 성장 곡선
+                        - generic [ref=e207]: 🔒 로그인 필요
+                      - generic [ref=e208]: 키/몸무게 성장 추이
+                    - generic [ref=e209]: 🔒
+              - generic [ref=e210]:
+                - heading "필요한 정보를 찾는 가장 빠른 방법" [level=3] [ref=e211]
+                - generic [ref=e212]: 인육 정보를 찾을 수 있는 가장 스마트한 태도로 원하는 것을 찾아보세요
+                - generic [ref=e213]:
+                  - 'button "예: 육아용품, 병원, 전문가" [ref=e214]':
+                    - generic [ref=e215]: "예: 육아용품, 병원, 전문가"
+                  - generic [ref=e216]: "🎯 맞춤 정보 예시:"
+                  - generic [ref=e217]:
+                    - generic [ref=e220]:
+                      - text: "💝 전용 육아 후기:"
+                      - generic [ref=e221]: 324건 발견
+                    - generic [ref=e224]:
+                      - text: "🎯 단계별 자료 24건:"
+                      - generic [ref=e225]: 3.2K 공유
+                    - generic [ref=e228]:
+                      - text: "🏆 맞춤 요청 55건:"
+                      - generic [ref=e229]: 15분 평균
+                - link "검색" [ref=e230] [cursor=pointer]:
+                  - /url: /login
+                  - button "검색" [ref=e231]
+            - article [ref=e234]:
+              - generic [ref=e235]:
+                - generic [ref=e236]:
+                  - img [ref=e238]
+                  - generic [ref=e241]:
+                    - generic [ref=e242]:
+                      - heading "test" [level=3] [ref=e243]
+                      - generic [ref=e244]: 🤰 예비양육자
+                    - generic [ref=e245]:
+                      - img [ref=e246]
+                      - generic [ref=e249]: 20시간 전
+                - button [ref=e250]:
+                  - img [ref=e251]
+              - paragraph [ref=e256]: test00
+              - generic [ref=e257]:
+                - generic [ref=e258]:
+                  - button "0" [ref=e259]:
+                    - img [ref=e260]
+                    - generic [ref=e262]: "0"
+                  - generic [ref=e263]:
+                    - img [ref=e264]
+                    - generic [ref=e266]: "0"
+                  - button [ref=e267]:
+                    - img [ref=e268]
+                - generic [ref=e270]: 조회 2
+        - generic [ref=e272]:
+          - generic [ref=e273]:
+            - heading "엄마들이 신뢰하는 이유" [level=2] [ref=e274]
+            - paragraph [ref=e275]: 진심 어린 마음으로 만든 따뜻한 커뮤니티
+            - generic [ref=e276]:
+              - generic [ref=e277]:
+                - img [ref=e279]
+                - generic [ref=e284]: 12,000+
+                - generic [ref=e285]: 전체 맘버
+                - generic [ref=e286]: 임신부터 첫돌까지 함께하는 엄마들
+              - generic [ref=e287]:
+                - img [ref=e289]
+                - generic [ref=e292]: 21개월
+                - generic [ref=e293]: 완전한 여정
+                - generic [ref=e294]: 임신부터 첫돌까지 모든 단계 지원
+              - generic [ref=e295]:
+                - img [ref=e297]
+                - generic [ref=e300]: 94%
+                - generic [ref=e301]: 도움이 되었어요
+                - generic [ref=e302]: 지난 6개월 엄마들의 만족도
+              - generic [ref=e303]:
+                - img [ref=e305]
+                - generic [ref=e307]: 4.9/5
+                - generic [ref=e308]: 커뮤니티 평점
+                - generic [ref=e309]: 3,200+ 엄마들의 진심 평가
+          - generic [ref=e310]:
+            - generic [ref=e311]:
+              - heading "엄마들의 진심 어린 후기" [level=3] [ref=e312]
+              - paragraph [ref=e313]: 같은 길을 걸어온 선배맘들의 이야기
+            - generic [ref=e314]:
+              - generic [ref=e315]:
+                - img [ref=e317]
+                - generic [ref=e320]:
+                  - img [ref=e321]
+                  - img [ref=e323]
+                  - img [ref=e325]
+                  - img [ref=e327]
+                  - img [ref=e329]
+                - blockquote [ref=e331]: “초보맘이라 너무 많은 게 궁금했는데, 여기서 꽤 많은 도움을 받았어요. 신생아 케어부터 수유까지 매일 겁나던 일들을 선배맘들이 친절하게 알려주셔서 많이 편해졌어요.”
+                - generic [ref=e332]:
+                  - img [ref=e333]
+                  - text: 육아 스트레스 80% 감소
+                - generic [ref=e336]:
+                  - generic [ref=e337]: 수유
+                  - generic [ref=e338]: 신생아케어
+                  - generic [ref=e339]: 초보맘
+                - generic [ref=e340]:
+                  - generic [ref=e342]: KS
+                  - generic [ref=e343]:
+                    - generic [ref=e344]: 김소아
+                    - generic [ref=e345]: 예비맘 • 생후 3개월
+              - generic [ref=e346]:
+                - img [ref=e348]
+                - generic [ref=e351]:
+                  - img [ref=e352]
+                  - img [ref=e354]
+                  - img [ref=e356]
+                  - img [ref=e358]
+                  - img [ref=e360]
+                - blockquote [ref=e362]: “첫째와 달리 둘째는 이유식을 너무 안 먹어서 고민이 많았는데, 여기서 만난 선배맘들 덕분에 단계별로 차근차근 시도해서 결국 성공했어요! 같은 고민하는 엄마들에게 정말 도움이 되는 커뮤니티예요.”
+                - generic [ref=e363]:
+                  - img [ref=e364]
+                  - text: 이유식 성공 달성
+                - generic [ref=e367]:
+                  - generic [ref=e368]: 이유식
+                  - generic [ref=e369]: 편식개선
+                  - generic [ref=e370]: 둑째아이
+                - generic [ref=e371]:
+                  - generic [ref=e373]: PJ
+                  - generic [ref=e374]:
+                    - generic [ref=e375]: 박지은
+                    - generic [ref=e376]: 성장기맘 • 둘째 아기 8개월
+              - generic [ref=e377]:
+                - img [ref=e379]
+                - generic [ref=e382]:
+                  - img [ref=e383]
+                  - img [ref=e385]
+                  - img [ref=e387]
+                  - img [ref=e389]
+                  - img [ref=e391]
+                - blockquote [ref=e393]: “초보맘일 때의 기억을 떠올리며 후배맘들에게 도움을 주고 싶어 가입했어요. 제 경험이 누군가에게 도움이 되고, 저도 다른 엄마들의 새로운 아이디어를 배울 수 있어서 보람있어요.”
+                - generic [ref=e394]:
+                  - img [ref=e395]
+                  - text: 경험 공유를 통한 성장
+                - generic [ref=e398]:
+                  - generic [ref=e399]: 뒤늹생활
+                  - generic [ref=e400]: 유치원
+                  - generic [ref=e401]: 멘토링
+                - generic [ref=e402]:
+                  - generic [ref=e404]: LM
+                  - generic [ref=e405]:
+                    - generic [ref=e406]: 이미영
+                    - generic [ref=e407]: 선배맘 • 세듸맘 (첫째 5세, 둘째 3세)
+          - generic [ref=e409]:
+            - heading "당신도 행복한 엄마가 되어보세요" [level=3] [ref=e410]
+            - paragraph [ref=e411]: 매주 200+ 새로운 엄마들이 우리와 함께 여정을 시작하고 있습니다
+            - generic [ref=e414]: 실시간으로 공유되는 엄마들의 소중한 경험들
+        - generic [ref=e416]:
+          - heading "지금 바로 시작하세요" [level=2] [ref=e417]
+          - paragraph [ref=e418]: 12,000+ 엄마들이 선택한 신뢰할 수 있는 육아 커뮤니티
+          - generic [ref=e419]:
+            - link "무료로 시작하기" [ref=e420] [cursor=pointer]:
+              - /url: /login
+              - button "무료로 시작하기" [ref=e421]
+            - link "둘러보기" [ref=e422] [cursor=pointer]:
+              - /url: /
+              - button "둘러보기" [ref=e423]
+          - generic [ref=e424]: 💳 카드 등록 없음 · 📧 이메일만으로 간편 가입 · 🎯 맞춤 추천 즉시 시작
+  - region "Notifications alt+T"
+  - alert [ref=e425]
+```

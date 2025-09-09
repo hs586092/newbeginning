@@ -8,7 +8,8 @@ import {
   User, 
   LogOut, 
   PenSquare, 
-  FileText
+  FileText,
+  MessageCircle
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
 import { useTranslation } from '@/lib/i18n'
@@ -70,6 +71,13 @@ export function Header() {
               <div className="w-8 h-8 animate-spin rounded-full border-2 border-gray-300 border-t-blue-500" role="status" aria-label="Loading"></div>
             ) : isAuthenticated ? (
               <>
+                <Link href="/chat-test" aria-label="채팅 테스트 페이지로 이동">
+                  <Button variant="outline" size="sm" className="flex items-center h-9 px-3">
+                    <MessageCircle className="w-4 h-4 mr-1.5 sm:mr-2" aria-hidden="true" />
+                    <span className="text-sm">채팅</span>
+                  </Button>
+                </Link>
+                
                 <Link href="/write" aria-label="새 게시글 작성하기">
                   <Button size="sm" className="flex items-center h-9 px-3">
                     <PenSquare className="w-4 h-4 mr-1.5 sm:mr-2" aria-hidden="true" />

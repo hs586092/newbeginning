@@ -1,0 +1,50 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e5]:
+        - link "ParentWise home" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "Parent and child emoji" [ref=e8] [cursor=pointer]: 🤱
+          - heading "첫돌까지" [level=1] [ref=e9] [cursor=pointer]
+        - navigation "User menu" [ref=e10]:
+          - button "Select language" [ref=e12]:
+            - img [ref=e13]
+            - img [ref=e16]
+          - button "시스템 설정" [ref=e18]:
+            - img [ref=e19]
+          - link "로그인 페이지로 이동" [ref=e21] [cursor=pointer]:
+            - /url: /login
+            - button "로그인" [ref=e22]
+    - main [ref=e23]:
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - generic [ref=e28]:
+            - heading "로그인" [level=1] [ref=e29]
+            - paragraph [ref=e30]: 계정에 로그인하세요
+          - generic [ref=e31]:
+            - generic [ref=e32]:
+              - generic [ref=e33]: 이메일
+              - textbox "이메일" [ref=e34]
+            - generic [ref=e35]:
+              - generic [ref=e36]: 비밀번호
+              - textbox "비밀번호" [ref=e37]
+            - button "로그인" [ref=e38]
+          - generic [ref=e43]: 또는
+          - generic [ref=e44]:
+            - button "Google로 로그인" [ref=e45]:
+              - img [ref=e46]
+              - text: Google로 로그인
+            - button "카카오로 로그인" [ref=e51]:
+              - img [ref=e52]
+              - text: 카카오로 로그인
+        - paragraph [ref=e55]:
+          - text: 계정이 없으신가요?
+          - button "회원가입" [ref=e56]
+        - link "메인으로 돌아가기" [ref=e58] [cursor=pointer]:
+          - /url: https://newbeginning-seven.vercel.app/
+  - region "Notifications alt+T"
+  - alert [ref=e59]
+```
