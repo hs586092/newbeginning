@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n'
 
 interface Category {
   id: string
@@ -17,69 +18,51 @@ interface HorizontalCategoryFilterProps {
   compact?: boolean
 }
 
-const CATEGORIES: Category[] = [
+const CATEGORY_CONFIG = [
   {
     id: 'all',
-    name: '전체',
     icon: '🏠',
-    color: 'gray',
-    description: '모든 카테고리의 게시글'
+    color: 'gray'
   },
   {
     id: 'pregnancy',
-    name: '임신',
     icon: '🤰',
-    color: 'purple',
-    description: '임신 관련 경험과 정보'
+    color: 'purple'
   },
   {
     id: 'newborn',
-    name: '신생아',
     icon: '👶',
-    color: 'pink',
-    description: '0-3개월 신생아 돌봄'
+    color: 'pink'
   },
   {
     id: 'infant',
-    name: '영아',
     icon: '🍼',
-    color: 'blue',
-    description: '4-12개월 영아 돌봄'
+    color: 'blue'
   },
   {
     id: 'babyfood',
-    name: '이유식',
     icon: '🥄',
-    color: 'green',
-    description: '이유식 레시피와 노하우'
+    color: 'green'
   },
   {
     id: 'sleep',
-    name: '수면',
     icon: '😴',
-    color: 'indigo',
-    description: '수면 패턴과 수면 교육'
+    color: 'indigo'
   },
   {
     id: 'health',
-    name: '건강',
     icon: '🏥',
-    color: 'red',
-    description: '아기 건강과 병원 정보'
+    color: 'red'
   },
   {
     id: 'daily',
-    name: '일상',
     icon: '💬',
-    color: 'yellow',
-    description: '육아 일상과 소소한 이야기'
+    color: 'yellow'
   },
   {
     id: 'emergency',
-    name: '응급',
     icon: '🚨',
-    color: 'red',
-    description: '응급상황 대처와 안전'
+    color: 'red'
   }
 ]
 
@@ -102,6 +85,17 @@ export default function HorizontalCategoryFilter({
   onCategoryChange, 
   compact = false 
 }: HorizontalCategoryFilterProps) {
+  const { t } = useTranslation()
+  
+  // Generate categories with translations
+  const CATEGORIES: Category[] = CATEGORY_CONFIG.map(config => ({
+    id: config.id,
+    name: t(`categories.${config.id}`),
+    description: t(`categories.descriptions.${config.id}`),
+    icon: config.icon,
+    color: config.color
+  }))
+  
   const scrollRef = useRef<HTMLDivElement>(null)
   const [showLeftArrow, setShowLeftArrow] = useState(false)
   const [showRightArrow, setShowRightArrow] = useState(false)
@@ -139,9 +133,9 @@ export default function HorizontalCategoryFilter({
     <div className={`relative ${compact ? 'bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-gray-100' : 'bg-white rounded-xl p-6 shadow-sm border border-gray-100'}`}>
       {!compact && (
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-900">카테고리</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{t('postForm.category')}</h3>
           <div className="text-sm text-gray-500">
-            {selectedCategory === 'all' ? '전체' : CATEGORIES.find(c => c.id === selectedCategory)?.name}
+            {selectedCategory === 'all' ? t('categories.all') : CATEGORIES.find(c => c.id === selectedCategory)?.name}
           </div>
         </div>
       )}
