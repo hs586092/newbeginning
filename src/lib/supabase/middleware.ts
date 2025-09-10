@@ -61,6 +61,7 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/write') ||
     request.nextUrl.pathname.startsWith('/my-posts') ||
     request.nextUrl.pathname.startsWith('/profile') ||
+    request.nextUrl.pathname.startsWith('/chat') ||
     request.nextUrl.pathname.includes('/edit')
   )) {
     const url = request.nextUrl.clone()

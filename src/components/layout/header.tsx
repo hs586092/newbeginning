@@ -122,9 +122,14 @@ export function Header() {
                 </div>
               </>
             ) : (
-              <Link href="/login" aria-label="로그인 페이지로 이동">
-                <Button size="sm">로그인</Button>
-              </Link>
+              <div className="flex items-center space-x-2">
+                <Link href="/signup" aria-label="회원가입 페이지로 이동">
+                  <Button variant="outline" size="sm">회원가입</Button>
+                </Link>
+                <Link href="/login" aria-label="로그인 페이지로 이동">
+                  <Button size="sm">로그인</Button>
+                </Link>
+              </div>
             )}
           </nav>
         </div>
