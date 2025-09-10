@@ -1,6 +1,6 @@
 const { chromium } = require('playwright');
 
-const SITE_URL = 'http://localhost:3000';
+const SITE_URL = 'https://newbeginning-g0nx1zheg-hs586092s-projects.vercel.app';
 
 async function evaluateSite() {
   const browser = await chromium.launch({ headless: true });

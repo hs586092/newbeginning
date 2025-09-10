@@ -12,12 +12,17 @@ export async function updateSession(request: NextRequest) {
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   
   // If environment variables are not configured, continue without auth
-  if (!supabaseUrl || !supabaseKey || 
-      supabaseUrl === 'https://placeholder.supabase.co' || 
-      supabaseKey === 'placeholder-key') {
-    console.log('Supabase environment variables not configured, continuing without auth')
-    return supabaseResponse
-  }
+  // TEMPORARY: Disabled for debugging
+  // if (!supabaseUrl || !supabaseKey || 
+  //     supabaseUrl === 'https://placeholder.supabase.co' || 
+  //     supabaseKey === 'placeholder-key') {
+  //   console.log('Supabase environment variables not configured, continuing without auth')
+  //   return supabaseResponse
+  // }
+  
+  // Debug: Log environment variables
+  console.log('Supabase URL:', supabaseUrl)
+  console.log('Supabase Key:', supabaseKey ? 'Present' : 'Missing')
 
   const supabase = createServerClient<Database>(
     supabaseUrl,
