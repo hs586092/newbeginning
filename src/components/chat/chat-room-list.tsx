@@ -339,7 +339,7 @@ const ChatRoomItem = ({ room, isSelected, onClick }: ChatRoomItemProps) => {
             <p className="text-sm text-gray-600 truncate">
               {room.type !== 'direct' && (
                 <span className="font-medium">
-                  {room.last_message.sender?.username}: 
+                  {room.last_message.sender?.username || room.last_message.sender?.email || '사용자'}: 
                 </span>
               )}
               {room.last_message.message_type === 'image' ? '📷 사진' :

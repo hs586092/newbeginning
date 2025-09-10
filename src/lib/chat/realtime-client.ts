@@ -24,11 +24,11 @@ export interface ChatMessage {
   created_at: string
   updated_at: string
   
-  // 조인된 데이터
+  // 조인된 데이터 (별도 로딩)
   sender?: {
     id: string
-    username: string
-    avatar_url: string
+    email: string
+    username?: string
   }
   reply_to?: Partial<ChatMessage>
 }

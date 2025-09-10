@@ -341,7 +341,7 @@ const MessageBubble = ({ message, showAvatar, onReply }: MessageBubbleProps) => 
         {showAvatar && !isOwn && (
           <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
             <span className="text-white text-xs font-medium">
-              {message.sender?.username?.[0]?.toUpperCase() || '👤'}
+              {(message.sender?.username || message.sender?.email)?.[0]?.toUpperCase() || '👤'}
             </span>
           </div>
         )}
@@ -351,7 +351,7 @@ const MessageBubble = ({ message, showAvatar, onReply }: MessageBubbleProps) => 
           {/* 답글 표시 */}
           {message.reply_to && (
             <div className="text-xs text-gray-500 px-3 py-1 bg-gray-100 rounded-lg">
-              ↳ {message.reply_to.sender?.username}: {message.reply_to.content}
+              ↳ {message.reply_to.sender?.username || message.reply_to.sender?.email || '사용자'}: {message.reply_to.content}
             </div>
           )}
           
@@ -366,7 +366,7 @@ const MessageBubble = ({ message, showAvatar, onReply }: MessageBubbleProps) => 
             {/* 발신자 이름 (그룹 채팅) */}
             {!isOwn && showAvatar && (
               <div className="text-xs font-semibold text-gray-600 mb-1">
-                {message.sender?.username}
+                {message.sender?.username || message.sender?.email || '사용자'}
               </div>
             )}
             
@@ -431,7 +431,7 @@ const MessageInput = React.forwardRef<HTMLTextAreaElement, MessageInputProps>(({
       {replyTo && (
         <div className="flex items-center justify-between mb-3 p-2 bg-blue-50 rounded-lg">
           <div className="text-sm text-blue-700">
-            <span className="font-medium">{replyTo.sender?.username}</span>에게 답장
+            <span className="font-medium">{replyTo.sender?.username || replyTo.sender?.email || '사용자'}</span>에게 답장
             <p className="text-blue-600 truncate">{replyTo.content}</p>
           </div>
           <button
