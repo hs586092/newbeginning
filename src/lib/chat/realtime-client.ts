@@ -27,7 +27,7 @@ export interface ChatMessage {
   // 조인된 데이터
   sender?: {
     id: string
-    full_name: string
+    username: string
     avatar_url: string
   }
   reply_to?: Partial<ChatMessage>

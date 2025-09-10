@@ -85,8 +85,8 @@ export class ChatService {
         })
         .select(`
           *,
-          sender:sender_id(id, full_name, avatar_url),
-          reply_to:reply_to_id(id, content, sender:sender_id(full_name))
+          sender:profiles!sender_id(id, username, avatar_url),
+          reply_to:reply_to_id(id, content, sender:profiles!sender_id(username))
         `)
         .single()
 
@@ -284,7 +284,7 @@ export class ChatService {
       .select(`
         *,
         members:chat_room_members!inner(user_id, role, last_read_at),
-        last_message:messages(id, content, message_type, created_at, sender:sender_id(full_name))
+        last_message:messages(id, content, message_type, created_at, sender:profiles!sender_id(username))
       `)
       .eq('members.user_id', (await supabase.auth.getUser()).data.user?.id)
       .eq('members.is_active', true)
@@ -311,8 +311,8 @@ export class ChatService {
       .from('messages')
       .select(`
         *,
-        sender:sender_id(id, full_name, avatar_url),
-        reply_to:reply_to_id(id, content, sender:sender_id(full_name))
+        sender:profiles!sender_id(id, username, avatar_url),
+        reply_to:reply_to_id(id, content, sender:profiles!sender_id(username))
       `)
       .eq('room_id', roomId)
       .eq('is_deleted', false)
