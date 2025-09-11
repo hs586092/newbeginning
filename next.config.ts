@@ -9,6 +9,23 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: process.env.NODE_ENV !== 'production',
   },
   
+  // Domain redirects - redirect all Vercel URLs to custom domain
+  async redirects() {
+    return [
+      {
+        source: '/(.*)',
+        has: [
+          {
+            type: 'host',
+            value: '(?!fortheorlingas\\.com).*\\.vercel\\.app',
+          },
+        ],
+        destination: 'https://fortheorlingas.com/$1',
+        permanent: true,
+      },
+    ]
+  },
+  
   // Performance optimizations
   experimental: {
     // Enable optimized package imports
