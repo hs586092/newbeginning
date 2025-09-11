@@ -1,6 +1,6 @@
 const { chromium } = require('playwright');
 
-const SITE_URL = 'https://newbeginning-g0nx1zheg-hs586092s-projects.vercel.app';
+const SITE_URL = 'https://fortheorlingas.com';
 
 async function evaluateSite() {
   const browser = await chromium.launch({ headless: true });
