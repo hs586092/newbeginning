@@ -6,7 +6,8 @@ import { z } from 'zod'
 
 const createCommentSchema = z.object({
   postId: z.string().uuid(),
-  content: z.string().min(1, '댓글 내용을 입력해주세요').max(500, '댓글은 500자 이하로 입력해주세요'),
+  content: z.string().min(1, '댓글 내용을 입력해주세요').max(1000, '댓글은 1000자 이하로 입력해주세요'),
+  parentCommentId: z.string().uuid().optional(),
 })
 
 export async function createComment(formData: FormData) {
@@ -27,6 +28,7 @@ export async function createComment(formData: FormData) {
   const rawData = {
     postId: formData.get('postId') as string,
     content: formData.get('content') as string,
+    parentCommentId: formData.get('parentCommentId') as string || undefined,
   }
 
   try {
@@ -38,7 +40,8 @@ export async function createComment(formData: FormData) {
         post_id: validatedData.postId,
         content: validatedData.content,
         user_id: user.id,
-        author_name: (profile as any)?.username || user.email || '익명'
+        author_name: (profile as any)?.username || user.email || '익명',
+        parent_comment_id: validatedData.parentCommentId || null
       } as any)
 
     if (error) {

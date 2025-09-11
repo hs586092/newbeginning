@@ -2,11 +2,23 @@
   "name": "newbeginning",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:query": "node scripts/db-execute.js",
+    "db:schema": "node scripts/db-schema.js",
+    "db:monitor": "node scripts/db-monitor.js",
+    "db:migrate": "node scripts/db-migrate.js",
+    "db:watch": "node scripts/db-monitor.js --watch",
+    "db:stats": "node scripts/db-monitor.js",
+    "db:tables": "node scripts/db-schema.js",
+    "db:migrate:create": "node scripts/db-migrate.js create",
+    "db:migrate:run": "node scripts/db-migrate.js run",
+    "db:migrate:list": "node scripts/db-migrate.js list",
+    "db:migrate:comments": "node scripts/db-migrate.js comments"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
@@ -20,9 +32,11 @@
     "@tanstack/react-query": "^5.85.6",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.18",
+    "dotenv": "^17.2.2",
     "isomorphic-dompurify": "^2.26.0",
     "lucide-react": "^0.542.0",
     "next": "15.5.2",
+    "pg": "^8.16.3",
     "playwright": "^1.55.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -39,6 +53,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
+    "supabase": "^2.40.7",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

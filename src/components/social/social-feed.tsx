@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { MoreVertical, Baby, Clock } from 'lucide-react'
 import Image from 'next/image'
-import { PostInteractions } from '@/components/posts/post-interactions'
+import { PostInteractionsV2 } from '@/components/posts/post-interactions-v2'
+import { GlobalCommentSystem } from '@/components/comments/global-comment-system'
 
 interface PostAuthor {
   id: string
@@ -472,6 +473,7 @@ export default function SocialFeed({ activeFilter, smartFilter, isLoading: filte
   }
 
   return (
+    <>
     <div className="space-y-6">
       {filteredPosts.map(post => (
         <article key={post.id} className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
@@ -549,7 +551,7 @@ export default function SocialFeed({ activeFilter, smartFilter, isLoading: filte
           )}
 
           {/* Post Actions */}
-          <PostInteractions 
+          <PostInteractionsV2 
             postId={post.id}
             initialLiked={post.is_hugged_by_me}
             initialBookmarked={post.is_bookmarked_by_me}
@@ -561,5 +563,9 @@ export default function SocialFeed({ activeFilter, smartFilter, isLoading: filte
         </article>
       ))}
     </div>
+    
+    {/* Global Comment System Portal */}
+    <GlobalCommentSystem currentUserId="anonymous" />
+  </>
   )
 }

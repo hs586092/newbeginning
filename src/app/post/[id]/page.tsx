@@ -39,6 +39,7 @@ async function getComments(postId: string): Promise<CommentWithProfile[]> {
       )
     `)
     .eq('post_id', postId)
+    .eq('is_deleted', false)
     .order('created_at', { ascending: true })
 
   if (error) {
@@ -94,6 +95,7 @@ export default async function PostPage({ params }: PostPageProps) {
             comments={comments}
             currentUserId={user?.id}
             postId={id}
+            isLoggedIn={!!user}
           />
         </div>
       </div>

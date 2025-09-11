@@ -7,10 +7,21 @@ import { toast } from 'sonner'
 
 interface CommentFormProps {
   postId: string
+  parentCommentId?: string
   isLoggedIn: boolean
+  onSuccess?: () => void
+  placeholder?: string
+  buttonText?: string
 }
 
-export function CommentForm({ postId, isLoggedIn }: CommentFormProps) {
+export function CommentForm({ 
+  postId, 
+  parentCommentId,
+  isLoggedIn, 
+  onSuccess,
+  placeholder = '댓글을 입력하세요...',
+  buttonText = '댓글 작성'
+}: CommentFormProps) {
   const [isPending, startTransition] = useTransition()
   const [content, setContent] = useState('')
 
@@ -27,7 +38,11 @@ export function CommentForm({ postId, isLoggedIn }: CommentFormProps) {
         toast.error(result.error)
       } else {
         setContent('')
-        toast.success('댓글이 작성되었습니다.')
+        if (onSuccess) {
+          onSuccess()
+        } else {
+          toast.success('댓글이 작성되었습니다.')
+        }
       }
     })
   }
@@ -44,12 +59,15 @@ export function CommentForm({ postId, isLoggedIn }: CommentFormProps) {
     <div className="bg-white rounded-lg border border-gray-200 p-4">
       <form action={handleSubmit} className="space-y-4">
         <input type="hidden" name="postId" value={postId} />
+        {parentCommentId && (
+          <input type="hidden" name="parentCommentId" value={parentCommentId} />
+        )}
         
         <textarea
           name="content"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="댓글을 입력하세요..."
+          placeholder={placeholder}
           rows={3}
           required
           className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-vertical"
@@ -57,7 +75,7 @@ export function CommentForm({ postId, isLoggedIn }: CommentFormProps) {
         
         <div className="flex justify-end">
           <Button type="submit" loading={isPending} disabled={!content.trim()}>
-            댓글 작성
+            {buttonText}
           </Button>
         </div>
       </form>

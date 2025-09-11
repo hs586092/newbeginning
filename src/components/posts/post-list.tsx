@@ -1,6 +1,7 @@
 'use client'
 
-import { PostCard } from './post-card'
+import { PostCardUltimate } from './post-card-ultimate'
+import { GlobalCommentSystem } from '@/components/comments/global-comment-system'
 import { PostListSkeleton } from '@/components/ui/loading'
 import type { PostWithDetails } from '@/types/database.types'
 
@@ -26,16 +27,21 @@ export function PostList({ posts, currentUserId, emptyMessage = "아직 게시�
   }
 
   return (
-    <div className="space-y-6">
-      {posts.map((post) => (
-        <PostCard
-          key={post.id}
-          post={post}
-          currentUserId={currentUserId}
-          isOwner={currentUserId === post.user_id}
-          onDelete={onDelete}
-        />
-      ))}
-    </div>
+    <>
+      <div className="space-y-6">
+        {posts.map((post) => (
+          <PostCardUltimate
+            key={post.id}
+            post={post}
+            currentUserId={currentUserId}
+            isOwner={currentUserId === post.user_id}
+            onDelete={onDelete}
+          />
+        ))}
+      </div>
+      
+      {/* Global Comment System Portal */}
+      <GlobalCommentSystem currentUserId={currentUserId} />
+    </>
   )
 }

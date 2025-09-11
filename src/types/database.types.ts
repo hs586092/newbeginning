@@ -130,6 +130,8 @@ export type Database = {
           user_id: string
           author_name: string
           content: string
+          parent_comment_id: string | null
+          is_deleted: boolean
           created_at: string
           updated_at: string
         }
@@ -139,6 +141,8 @@ export type Database = {
           user_id: string
           author_name: string
           content: string
+          parent_comment_id?: string | null
+          is_deleted?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -148,6 +152,8 @@ export type Database = {
           user_id?: string
           author_name?: string
           content?: string
+          parent_comment_id?: string | null
+          is_deleted?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -262,4 +268,22 @@ export type CommentWithProfile = Database['public']['Tables']['comments']['Row']
     username: string
     avatar_url?: string
   }
+  replies?: CommentWithProfile[]
+}
+
+// RPC 함수 결과 타입
+export type CommentRPC = {
+  id: string
+  post_id: string
+  user_id: string
+  author_name: string
+  content: string
+  parent_comment_id: string | null
+  is_deleted: boolean
+  created_at: string
+  updated_at: string
+  profile_username: string | null
+  profile_avatar_url: string | null
+  reply_count: number
+  like_count: number
 }

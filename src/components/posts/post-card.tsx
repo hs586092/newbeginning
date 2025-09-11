@@ -1,12 +1,14 @@
 'use client'
 
-import { useState, useOptimistic, useEffect } from 'react'
+import { useState, useOptimistic, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { Heart, MessageCircle, Eye, MoreHorizontal, Edit, Trash2 } from 'lucide-react'
 import { formatDate, getCategoryLabel, getCategoryColor, truncateText, isEducationalContent, getCategoryIcon, formatReadTime, getTargetAudienceLabel } from '@/lib/utils'
-import { toggleLike, deletePost, createComment, getComments, toggleCommentLike, getCommentLikes } from '@/lib/posts/actions'
+import { toggleLike, deletePost } from '@/lib/posts/actions'
+import { CommentForm } from '@/components/comments/comment-form'
+import { CommentList } from '@/components/comments/comment-list'
 import { Button } from '@/components/ui/button'
-import type { PostWithDetails } from '@/types/database.types'
+import type { PostWithDetails, CommentWithProfile } from '@/types/database.types'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 
@@ -18,15 +20,21 @@ interface PostCardProps {
 }
 
 export function PostCard({ post, currentUserId, isOwner, onDelete }: PostCardProps) {
+  console.log('🚀 PostCard 컴포넌트 렌더링 시작! Post ID:', post.id, 'Title:', post.title.substring(0, 30))
+  
   const router = useRouter()
   const [showActions, setShowActions] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [showComments, setShowComments] = useState(false)
-  const [newComment, setNewComment] = useState('')
-  const [isSubmittingComment, setIsSubmittingComment] = useState(false)
-  const [comments, setComments] = useState<any[]>([])
+  const [comments, setComments] = useState<CommentWithProfile[]>([])
   const [isLoadingComments, setIsLoadingComments] = useState(false)
-  const [commentLikes, setCommentLikes] = useState<{[key: string]: {liked: boolean, count: number}}>({})
+  
+  console.log('🚀 PostCard 상태:', { 
+    showComments, 
+    commentsCount: comments.length, 
+    isLoadingComments, 
+    postId: post.id 
+  })
   
   const isEducational = isEducationalContent(post.category)
   const metadata = post.educational_metadata
@@ -85,142 +93,79 @@ export function PostCard({ post, currentUserId, isOwner, onDelete }: PostCardPro
   }
 
 
-  const handleCommentSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!currentUserId) {
-      router.push('/login')
-      return
-    }
-    if (!newComment.trim()) return
-
-    setIsSubmittingComment(true)
-    
-    try {
-      const result = await createComment(post.id, newComment)
-      
-      if (result.error) {
-        toast.error(result.error)
-      } else {
-        toast.success('댓글이 작성되었습니다!')
-        setNewComment('')
-        // 댓글 목록 새로고침
-        loadComments()
-      }
-    } catch (error) {
-      toast.error('댓글 작성 중 오류가 발생했습니다.')
-    } finally {
-      setIsSubmittingComment(false)
-    }
-  }
-
-  const loadComments = async () => {
+  const loadComments = useCallback(async () => {
     setIsLoadingComments(true)
     try {
-      const result = await getComments(post.id)
-      if (result.success) {
-        setComments(result.comments)
-        
-        // Initialize comment likes with default values for better performance
-        if (result.comments.length > 0) {
-          const likesData: {[key: string]: {liked: boolean, count: number}} = {}
-          result.comments.forEach((comment: any) => {
-            likesData[comment.id] = { liked: false, count: 0 }
-          })
-          setCommentLikes(likesData)
-        }
-      } else if (result.error) {
-        console.error('Comments loading error:', result.error)
+      // 클라이언트 Supabase 인스턴스 생성
+      const { createClient } = await import('@supabase/supabase-js')
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      
+      if (!supabaseUrl || !supabaseKey) {
+        console.error('Supabase 환경변수가 설정되지 않았습니다')
+        console.error('NEXT_PUBLIC_SUPABASE_URL:', supabaseUrl)
+        console.error('NEXT_PUBLIC_SUPABASE_ANON_KEY:', supabaseKey ? '[설정됨]' : '[없음]')
         setComments([])
+        return
+      }
+      
+      const supabase = createClient(supabaseUrl, supabaseKey)
+      
+      console.log('댓글 로딩 중...', post.id)
+      
+      const { data: comments, error } = await supabase
+        .from('comments')
+        .select(`
+          *,
+          profiles!comments_user_id_fkey (
+            username,
+            avatar_url
+          )
+        `)
+        .eq('post_id', post.id)
+        .eq('is_deleted', false)
+        .order('created_at', { ascending: true })
+
+      if (error) {
+        console.error('댓글 로딩 오류:', error)
+        setComments([])
+      } else {
+        console.log('댓글 로딩 성공:', comments?.length || 0, '개')
+        setComments(comments || [])
       }
     } catch (error) {
-      console.error('Comments loading error:', error)
+      console.error('댓글 로딩 예외:', error)
       setComments([])
     } finally {
       setIsLoadingComments(false)
     }
-  }
+  }, [post.id])
 
-  const handleCommentLike = async (commentId: string) => {
-    if (!currentUserId) {
-      router.push('/login')
-      return
+  const handleCommentToggle = useCallback(async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
     }
-
-    // Load current like data if not loaded yet
-    if (!commentLikes[commentId]) {
-      try {
-        const likesResult = await getCommentLikes(commentId)
-        if (likesResult.success) {
-          setCommentLikes(prev => ({
-            ...prev,
-            [commentId]: {
-              liked: likesResult.userLiked || false,
-              count: likesResult.count || 0
-            }
-          }))
-        }
-      } catch (error) {
-        console.error('Error loading comment likes:', error)
-        setCommentLikes(prev => ({
-          ...prev,
-          [commentId]: { liked: false, count: 0 }
-        }))
-      }
-      // Wait a moment for the state to update
-      await new Promise(resolve => setTimeout(resolve, 100))
-    }
-
-    // Optimistic update
-    const currentLikeData = commentLikes[commentId] || { liked: false, count: 0 }
-    const newLiked = !currentLikeData.liked
-    const newCount = newLiked ? currentLikeData.count + 1 : Math.max(0, currentLikeData.count - 1)
-
-    setCommentLikes(prev => ({
-      ...prev,
-      [commentId]: {
-        liked: newLiked,
-        count: newCount
-      }
-    }))
-
+    
+    console.log('🔄 댓글 토글 클릭됨! 현재 showComments:', showComments)
     try {
-      const result = await toggleCommentLike(commentId)
-      if (result.error) {
-        // Revert optimistic update on error
-        setCommentLikes(prev => ({
-          ...prev,
-          [commentId]: currentLikeData
-        }))
-        toast.error(result.error)
+      if (!showComments) {
+        console.log('📂 댓글 섹션 열기...')
+        // 댓글 섹션을 먼저 열고 로딩 상태로 표시
+        setShowComments(true)
+        console.log('✅ showComments 상태를 true로 설정')
+        // 댓글을 처음 열 때만 로드
+        await loadComments()
+        console.log('✅ 댓글 로딩 완료')
       } else {
-        // Update with actual result from server
-        if (result.success && result.data) {
-          setCommentLikes(prev => ({
-            ...prev,
-            [commentId]: {
-              liked: result.data.userLiked || false,
-              count: result.data.count || 0
-            }
-          }))
-        }
+        console.log('📁 댓글 섹션 닫기...')
+        setShowComments(false)
+        console.log('✅ showComments 상태를 false로 설정')
       }
     } catch (error) {
-      // Revert optimistic update on error
-      setCommentLikes(prev => ({
-        ...prev,
-        [commentId]: currentLikeData
-      }))
-      toast.error('좋아요 처리 중 오류가 발생했습니다.')
+      console.error('❌ handleCommentToggle 오류:', error)
     }
-  }
-
-  const handleCommentToggle = async () => {
-    if (!showComments) {
-      // 댓글을 처음 열 때만 로드
-      await loadComments()
-    }
-    setShowComments(!showComments)
-  }
+  }, [showComments, loadComments])
 
   // 컴포넌트 마운트 시 댓글이 이미 열려있다면 로드
   useEffect(() => {
@@ -374,15 +319,42 @@ export function PostCard({ post, currentUserId, isOwner, onDelete }: PostCardPro
             <span>{optimisticLike.count}</span>
           </button>
           
-          <button
-            onClick={handleCommentToggle}
-            className="flex items-center space-x-1 text-sm text-gray-500 hover:text-blue-600 transition-colors"
+          <div
+            onMouseDown={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              console.log('🔥 DIV 마우스다운 핸들러 실행됨!')
+              console.log('🔥 현재 showComments 상태:', showComments)
+              
+              // 강제로 상태 변경 시도
+              console.log('🔥 setShowComments(!showComments) 호출')
+              setShowComments(!showComments)
+              
+              // 댓글 로딩도 강제 실행
+              if (!showComments) {
+                console.log('🔥 loadComments() 강제 실행')
+                loadComments()
+              }
+            }}
+            className="flex items-center space-x-1 text-sm text-gray-500 hover:text-blue-600 transition-colors cursor-pointer select-none"
+            role="button"
+            tabIndex={0}
             aria-label={`댓글 ${showComments ? '숨기기' : '보기'} - 댓글 ${comments.length || post.comments?.length || 0}개`}
             aria-expanded={showComments}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                console.log('🔥 DIV 키보드 이벤트!')
+                setShowComments(!showComments)
+                if (!showComments) {
+                  loadComments()
+                }
+              }
+            }}
           >
             <MessageCircle className="w-5 h-5" aria-hidden="true" />
             <span>{comments.length || post.comments?.length || 0}</span>
-          </button>
+          </div>
           
           <div className="flex items-center space-x-1 text-sm text-gray-500" role="text" aria-label={`조회수 ${post.view_count}회`}>
             <Eye className="w-5 h-5" aria-hidden="true" />
@@ -405,118 +377,30 @@ export function PostCard({ post, currentUserId, isOwner, onDelete }: PostCardPro
       {/* Inline Comments Section */}
       {showComments && (
         <div className="mt-4 pt-4 border-t border-gray-100">
-          <div className="space-y-4">
-            {/* Comment Form */}
-            {currentUserId ? (
-              <form onSubmit={handleCommentSubmit} className="flex gap-3">
-                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-sm font-medium text-gray-700">
-                    {currentUserId.charAt(0)?.toUpperCase()}
-                  </span>
-                </div>
-                <div className="flex-1">
-                  <textarea
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Write a comment..."
-                    rows={2}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    aria-label="Comment input area"
-                  />
-                  <div className="flex justify-end mt-2">
-                    <button
-                      type="submit"
-                      disabled={!newComment.trim() || isSubmittingComment}
-                      className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                      {isSubmittingComment ? 'Posting...' : 'Post Comment'}
-                    </button>
-                  </div>
-                </div>
-              </form>
-            ) : (
-              <div className="text-center py-4 text-gray-500">
-                <button
-                  onClick={() => router.push('/login')}
-                  className="text-blue-600 hover:text-blue-700 font-medium"
-                >
-                  Log in
-                </button>
-                {' '}to post a comment.
-              </div>
-            )}
-
-            {/* Comments List */}
-            {isLoadingComments ? (
-              <div className="text-center py-4 text-gray-500">
-                <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                <span className="ml-2">Loading comments...</span>
-              </div>
-            ) : comments.length > 0 ? (
-              <div className="space-y-3">
-                {comments.map((comment) => (
-                  <div key={comment.id} className="flex gap-3">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <span className="text-sm font-medium text-blue-700">
-                        {comment.author_name ? comment.author_name.charAt(0).toUpperCase() : 'U'}
-                      </span>
-                    </div>
-                    <div className="flex-1">
-                      <div className="bg-gray-50 rounded-lg px-3 py-2">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-sm font-semibold text-gray-900">
-                            {comment.author_name || '익명'}
-                          </span>
-                          <span className="text-xs text-gray-500">
-                            {formatDate(comment.created_at)}
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-700">
-                          {comment.content}
-                        </p>
-                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
-                          <button
-                            onClick={() => handleCommentLike(comment.id)}
-                            className={`flex items-center gap-2 px-2 py-1 rounded-full transition-all duration-200 ${
-                              commentLikes[comment.id]?.liked
-                                ? 'bg-pink-50 text-pink-600 hover:bg-pink-100'
-                                : 'text-gray-400 hover:text-pink-500 hover:bg-pink-50'
-                            }`}
-                            aria-label={`댓글 ${commentLikes[comment.id]?.liked ? '좋아요 취소' : '좋아요'} - 현재 ${commentLikes[comment.id]?.count || 0}개`}
-                          >
-                            <Heart 
-                              className={`w-4 h-4 transition-all duration-200 ${
-                                commentLikes[comment.id]?.liked 
-                                  ? 'fill-pink-500 text-pink-500 scale-110' 
-                                  : 'hover:scale-105'
-                              }`}
-                              aria-hidden="true"
-                            />
-                            <span className={`text-sm font-medium ${
-                              commentLikes[comment.id]?.liked 
-                                ? 'text-pink-600' 
-                                : 'text-gray-500'
-                            }`}>
-                              {commentLikes[comment.id]?.count > 0 
-                                ? commentLikes[comment.id].count 
-                                : 'Like'
-                              }
-                            </span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              showComments && !isLoadingComments && (
-                <div className="text-center py-4 text-gray-500">
-                  <p className="text-sm">Be the first to comment!</p>
-                </div>
-              )
-            )}
-          </div>
+          {isLoadingComments ? (
+            <div className="text-center py-4 text-gray-500">
+              <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+              <span className="ml-2">댓글 로딩 중...</span>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <CommentForm 
+                postId={post.id} 
+                isLoggedIn={!!currentUserId}
+                onSuccess={() => {
+                  loadComments() // 댓글 목록 새로고침
+                  toast.success('댓글이 작성되었습니다.')
+                }}
+              />
+              
+              <CommentList
+                comments={comments}
+                currentUserId={currentUserId}
+                postId={post.id}
+                isLoggedIn={!!currentUserId}
+              />
+            </div>
+          )}
         </div>
       )}
     </article>
