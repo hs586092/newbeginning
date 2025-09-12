@@ -229,55 +229,22 @@ export function UnifiedHomepage({
       ) : (
         /* 비인증 사용자: 매력적인 랜딩페이지 with 중심 피드 */
         <>
-          {/* 매력적인 히어로 섹션 */}
-          <div className="relative bg-gradient-to-br from-pink-500 via-purple-600 to-blue-600 overflow-hidden">
-            {/* 배경 장식 */}
-            <div className="absolute inset-0">
-              <div className="absolute -top-1/2 -right-1/2 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
-              <div className="absolute -bottom-1/2 -left-1/2 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
-            </div>
-
-            {/* 히어로 컨텐츠 */}
-            <div className="relative z-10 py-16">
+          {/* 간소화된 히어로 섹션 */}
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600">
+            {/* 히어로 컨텐츠 - 배경 장식 제거 */}
+            <div className="py-12">
               <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-                  임신부터 첫돌까지,<br />
-                  <span className="text-yellow-300">모든 순간을 함께</span>
+                <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                  임신부터 첫돌까지, 모든 순간을 함께
                 </h1>
-                <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-                  21개월의 소중한 여정을 혼자 걸어가지 마세요.<br />
-                  따뜻한 엄마들의 커뮤니티가 함께합니다.
+                <p className="text-lg text-white/90 mb-6 max-w-xl mx-auto">
+                  따뜻한 양육자들의 커뮤니티
                 </p>
                 
-                {/* 주요 통계 */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                  <div className="text-center">
-                    <div className="text-2xl md:text-3xl font-bold text-white">12,500+</div>
-                    <div className="text-white/80 text-sm">활성 회원</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl md:text-3xl font-bold text-white">8,230+</div>
-                    <div className="text-white/80 text-sm">월 게시글</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl md:text-3xl font-bold text-white">95%</div>
-                    <div className="text-white/80 text-sm">만족도</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl md:text-3xl font-bold text-white">24시간</div>
-                    <div className="text-white/80 text-sm">실시간 소통</div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <div className="flex justify-center">
                   <Link href="/signup">
-                    <Button size="lg" className="bg-white text-purple-600 hover:bg-gray-100 font-semibold px-8">
+                    <Button className="bg-white text-purple-600 hover:bg-gray-100 px-6">
                       무료로 시작하기
-                    </Button>
-                  </Link>
-                  <Link href="#feed">
-                    <Button variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/20 font-semibold px-8">
-                      커뮤니티 둘러보기
                     </Button>
                   </Link>
                 </div>
