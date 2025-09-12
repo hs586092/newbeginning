@@ -287,3 +287,47 @@ export type CommentRPC = {
   reply_count: number
   like_count: number
 }
+
+// 좋아요 시스템용 새 타입들
+export type PostLike = Database['public']['Tables']['likes']['Row']
+
+export type PostLikeWithProfile = PostLike & {
+  profiles: {
+    username: string
+    avatar_url?: string
+  }
+  posts: {
+    title: string
+    category: string
+  }
+}
+
+export type PostLikeRPC = {
+  id: string
+  post_id: string
+  user_id: string
+  created_at: string
+  profile_username: string | null
+  profile_avatar_url: string | null
+  post_title: string
+  post_category: string
+  like_count: number
+}
+
+export type LikeToggleResponse = {
+  success: boolean
+  liked: boolean
+  like_count: number
+}
+
+// 확장 가능한 인터랙션 타입
+export type InteractionType = 'like' | 'bookmark' | 'comment' | 'share'
+
+export type PostInteraction = {
+  id: string
+  post_id: string
+  user_id: string
+  type: InteractionType
+  created_at: string
+  metadata?: Record<string, any>
+}
