@@ -154,14 +154,18 @@ export function LikeProvider({ children }: LikeProviderProps) {
         }
       }))
     }
-  }, [getSupabaseClient, getCurrentUser])
+  }, [supabaseClient, getCurrentUser])
   
   // 좋아요 토글
   const toggleLike = useCallback(async (postId: string): Promise<LikeToggleResponse | null> => {
     console.log('🔄 LikeProvider: 좋아요 토글', postId)
     
+    if (!supabaseClient) {
+      console.error('❌ Supabase 클라이언트가 초기화되지 않았습니다')
+      return null
+    }
+    
     try {
-      const supabase = await getSupabaseClient()
       const user = await getCurrentUser()
       
       if (!user) {
@@ -184,7 +188,7 @@ export function LikeProvider({ children }: LikeProviderProps) {
       }))
       
       // RPC 함수 호출
-      const { data, error } = await supabase.rpc('toggle_post_like', {
+      const { data, error } = await supabaseClient.rpc('toggle_post_like', {
         p_post_id: postId,
         p_user_id: user.id
       })
@@ -221,7 +225,7 @@ export function LikeProvider({ children }: LikeProviderProps) {
       console.error('❌ LikeProvider: 좋아요 토글 오류', error)
       return null
     }
-  }, [getSupabaseClient, getCurrentUser, likeState])
+  }, [supabaseClient, getCurrentUser, likeState])
   
   // 좋아요 목록 열기
   const openLikes = useCallback(async (postId: string) => {
