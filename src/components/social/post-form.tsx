@@ -362,6 +362,8 @@ export default function PostForm({ onClose, onSubmit }: PostFormProps) {
                       src={URL.createObjectURL(image)}
                       alt={`Upload ${index + 1}`}
                       className="w-full h-32 object-cover rounded-lg"
+                      loading="lazy"
+                      decoding="async"
                     />
                     <button
                       type="button"

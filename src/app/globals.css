@@ -1,5 +1,20 @@
 @import "tailwindcss";
 
+/* Critical CSS - Above the fold 최적화 */
+.hero-section {
+  background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #3b82f6 100%);
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -42,6 +57,13 @@ body {
   color: var(--foreground);
   font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   line-height: 1.6;
+  font-display: swap;
+}
+
+/* 폰트 로딩 최적화 */
+@font-face {
+  font-family: 'Inter';
+  font-display: swap;
 }
 
 /* Custom scrollbar */

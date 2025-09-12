@@ -7,6 +7,7 @@
 
 import { PostLikeWithProfile } from '@/types/database.types'
 import { Heart, Clock, User } from 'lucide-react'
+import { OptimizedImage } from '@/components/ui/optimized-image'
 
 interface LikeListProps {
   likes: PostLikeWithProfile[]
@@ -51,10 +52,14 @@ export function LikeList({ likes, currentUserId, postId }: LikeListProps) {
         {/* 프로필 이미지 */}
         <div className="relative">
           {like.profiles.avatar_url ? (
-            <img
+            <OptimizedImage
               src={like.profiles.avatar_url}
               alt={like.profiles.username || 'User'}
-              className="w-10 h-10 rounded-full object-cover"
+              width={40}
+              height={40}
+              className="rounded-full"
+              objectFit="cover"
+              sizes="40px"
             />
           ) : (
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-red-500 flex items-center justify-center">

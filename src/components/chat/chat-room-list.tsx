@@ -25,6 +25,7 @@ import {
 import { chatService } from '@/lib/chat/chat-service'
 import type { ChatRoom } from '@/lib/chat/realtime-client'
 import { Button } from '@/components/ui/button'
+import { OptimizedImage } from '@/components/ui/optimized-image'
 
 // 🏠 채팅방 목록 Props
 interface ChatRoomListProps {
@@ -267,10 +268,13 @@ const ChatRoomItem = ({ room, isSelected, onClick }: ChatRoomItemProps) => {
               : 'bg-gradient-to-br from-pink-400 to-purple-500'
           }`}>
             {room.avatar_url ? (
-              <img 
+              <OptimizedImage 
                 src={room.avatar_url} 
                 alt={room.name || 'Chat'}
-                className="w-full h-full rounded-full object-cover"
+                fill={true}
+                className="rounded-full"
+                objectFit="cover"
+                sizes="48px"
               />
             ) : (
               <span className="text-white font-semibold">

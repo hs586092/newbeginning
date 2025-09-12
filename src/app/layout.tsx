@@ -10,7 +10,12 @@ import { LikeProvider } from '@/contexts/like-context'
 import { Toaster } from 'sonner'
 import { PerformanceMonitor } from '@/components/performance-monitor'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap',
+  preload: true,
+  weight: ['400', '500', '600', '700']
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://newbeginning-community.vercel.app'),
