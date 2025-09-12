@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { Header } from '@/components/layout/header'
+import { ConditionalHeader } from '@/components/layout/conditional-header'
 import { WebsiteStructuredData } from '@/components/seo/structured-data'
 import { ThemeProvider } from '@/components/providers/theme-provider'
 import { AuthProvider } from '@/contexts/auth-context'
@@ -101,7 +101,7 @@ export default function RootLayout({
               <CommentProvider>
                 <LikeProvider>
                   <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-blue-50 dark:from-pink-900/10 dark:via-gray-900 dark:to-blue-900/10 transition-colors">
-                    <Header />
+                    <ConditionalHeader />
                     <main>{children}</main>
                   </div>
                 </LikeProvider>

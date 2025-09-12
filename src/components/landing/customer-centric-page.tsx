@@ -6,7 +6,7 @@ import { SocialProof } from './social-proof'
 import { Button } from '@/components/ui/button'
 import { Heart, Users } from 'lucide-react'
 import Link from 'next/link'
-import SocialFeed from '@/components/social/social-feed'
+import { UnifiedFeed } from '@/components/feed/unified-feed'
 import FeedTabNavigation from '@/components/navigation/feed-tab-navigation'
 import type { CommunityCategory } from '@/types/navigation'
 
@@ -231,9 +231,17 @@ export function CustomerCentricPage({ initialUserType = null }: CustomerCentricP
 
             {/* Main Content - Social Feed */}
             <div className="flex-1">
-              <SocialFeed
-                selectedCategory={communityCategory === 'all' ? undefined : communityCategory}
+              <UnifiedFeed
+                posts={[]}
+                isLoading={false}
+                isAuthenticated={false}
+                variant="landing"
+                selectedCategory={communityCategory === 'all' ? 'all' : communityCategory}
+                activeFilter="all"
                 smartFilter={activeSmartFilter}
+                showSearch={false}
+                showAdvancedFilters={false}
+                onAuthRequired={() => window.location.href = '/login'}
               />
             </div>
           </div>

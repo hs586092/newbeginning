@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OAuth 디버깅</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .debug { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .error { background: #ffe6e6; border-left: 4px solid #ff0000; }
+        .success { background: #e6ffe6; border-left: 4px solid #00aa00; }
+        button { padding: 10px 20px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 OAuth 로그인 디버깅</h1>
+    
+    <div class="debug">
+        <h3>환경 정보</h3>
+        <div id="env-info">Loading...</div>
+    </div>
+
+    <button id="test-google" onclick="testGoogle()">Google OAuth 테스트</button>
+    <button id="test-kakao" onclick="testKakao()">Kakao OAuth 테스트</button>
+    
+    <div id="results"></div>
+
+    <script type="module">
+        // 환경 정보 표시
+        document.getElementById('env-info').innerHTML = `
+            <strong>URL:</strong> ${window.location.origin}<br>
+            <strong>User Agent:</strong> ${navigator.userAgent}<br>
+            <strong>Time:</strong> ${new Date().toISOString()}
+        `;
+
+        // 결과 표시 함수
+        function addResult(message, isError = false) {
+            const div = document.createElement('div');
+            div.className = 'debug ' + (isError ? 'error' : 'success');
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            document.getElementById('results').appendChild(div);
+        }
+
+        // Google OAuth 테스트
+        window.testGoogle = async function() {
+            addResult('🔄 Google OAuth 시작...');
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/test-oauth', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ provider: 'google' })
+                });
+                
+                const result = await response.json();
+                addResult(`Google OAuth 응답: ${JSON.stringify(result)}`, !result.success);
+                
+            } catch (error) {
+                addResult(`❌ Google OAuth 에러: ${error.message}`, true);
+                console.error('Google OAuth 에러:', error);
+            }
+        }
+
+        // Kakao OAuth 테스트
+        window.testKakao = async function() {
+            addResult('🔄 Kakao OAuth 시작...');
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/test-oauth', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ provider: 'kakao' })
+                });
+                
+                const result = await response.json();
+                addResult(`Kakao OAuth 응답: ${JSON.stringify(result)}`, !result.success);
+                
+            } catch (error) {
+                addResult(`❌ Kakao OAuth 에러: ${error.message}`, true);
+                console.error('Kakao OAuth 에러:', error);
+            }
+        }
+    </script>
+</body>
+</html>

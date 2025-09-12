@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OAuth 테스트</title>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>OAuth 로그인 테스트</h1>
+    <button id="googleBtn">Google 로그인 테스트</button>
+    <button id="kakaoBtn">Kakao 로그인 테스트</button>
+    <div id="result"></div>
+
+    <script>
+        const supabase = window.supabase.createClient(
+            'https://spgcihtrquywmaieflue.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwZ2NpaHRycXV5d21haWVmbHVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2MjU2OTYsImV4cCI6MjA3MjIwMTY5Nn0.MjUPXYGYcwEzyPuNG4t5lGFkfEYrYZP7-mKER6CCuJc'
+        )
+
+        const result = document.getElementById('result')
+
+        document.getElementById('googleBtn').onclick = async () => {
+            result.innerHTML = '⏳ Google OAuth 시도 중...'
+            try {
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: 'http://localhost:8000/oauth-test.html'
+                    }
+                })
+                
+                if (error) {
+                    result.innerHTML = '❌ Google OAuth 실패: ' + error.message
+                } else {
+                    result.innerHTML = '✅ Google OAuth 성공!'
+                }
+            } catch (err) {
+                result.innerHTML = '❌ 예외 발생: ' + err.message
+            }
+        }
+
+        document.getElementById('kakaoBtn').onclick = async () => {
+            result.innerHTML = '⏳ Kakao OAuth 시도 중...'
+            try {
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'kakao',
+                    options: {
+                        redirectTo: 'http://localhost:8000/oauth-test.html'
+                    }
+                })
+                
+                if (error) {
+                    result.innerHTML = '❌ Kakao OAuth 실패: ' + error.message
+                } else {
+                    result.innerHTML = '✅ Kakao OAuth 성공!'
+                }
+            } catch (err) {
+                result.innerHTML = '❌ 예외 발생: ' + err.message
+            }
+        }
+    </script>
+</body>
+</html>

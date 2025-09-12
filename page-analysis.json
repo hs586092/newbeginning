@@ -1,0 +1,373 @@
+{
+  "beforeLogin": {
+    "url": "https://www.fortheorlingas.com/",
+    "title": "ParentWise - Global Parenting Community",
+    "main": {
+      "tagName": "MAIN",
+      "className": "",
+      "id": "",
+      "textContent": "예비맘신생아맘성장기맘선배맘임신부터 첫돌까지, 모든 순간을 함께21개월의 소중한 여정을 혼자 걸어가지 마세요. 따뜻한 엄마들의 커뮤니티가 함께합니다12,000+전체 회원여정 시작하기둘러보기12,000+ 엄마들이 함께하는 따뜻한 커뮤니티실시간으로 공유되는 엄마들의 소중한 경험들엄마들이 신뢰하는 이유진심 어린 마음으로 만든 따뜻한 커뮤니티12,000+전체 맘버임",
+      "children": [
+        {
+          "tagName": "DIV",
+          "className": "min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900",
+          "id": ""
+        }
+      ]
+    },
+    "header": {
+      "tagName": "HEADER",
+      "className": "bg-gradient-to-r from-pink-50 to-blue-50 dark:from-pink-900/20 dark:to-blue-900/20 shadow-sm border-b border-pink-100 dark:border-pink-800 transition-colors",
+      "id": "",
+      "textContent": "🤱첫돌까지회원가입로그인",
+      "children": [
+        {
+          "tagName": "DIV",
+          "className": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+          "id": ""
+        }
+      ]
+    },
+    "nav": {
+      "tagName": "NAV",
+      "className": "flex items-center space-x-4",
+      "id": "",
+      "textContent": "회원가입로그인",
+      "children": [
+        {
+          "tagName": "BUTTON",
+          "className": "inline-flex items-center justify-center rounded-md p-2  text-gray-500 hover:bg-gray-100 hover:text-gray-900  dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2  focus:ring-purple-500 focus:ring-offset-2",
+          "id": ""
+        },
+        {
+          "tagName": "DIV",
+          "className": "flex items-center space-x-2",
+          "id": ""
+        }
+      ]
+    },
+    "unifiedFeed": null,
+    "socialFeed": null,
+    "postList": null,
+    "posts": [
+      {
+        "className": "bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden",
+        "textContent": "재재현파파👶신생아 양육자1일 전4개월 아기 아빠입니다. 밤중 수유할 때 조명을 어둡게 하고, 말을 최소화하면 아기가 다시 쉽게 잠들어요.00조회 67로그인 필요"
+      },
+      {
+        "className": "bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden",
+        "textContent": "현현우아빠🧒성장기 양육자1일 전12개월 첫째가 이유식을 정말 안 먹어서 고생했는데, 지금은 잘 먹어요! 아이와 함께 먹으면서 재미있게 해보세요.00조회 89로그인 필요"
+      },
+      {
+        "className": "bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden",
+        "textContent": "민민주맘👶신생아 양육자2일 전첫째 때는 정말 무서웠는데, 이제 둘째하면서 깨달은 신생아 목욕 꿀팁들이 있어요. 물온도는 37-38도가 적당하고, 목욕시간은 5분 이내로 짧게 하세"
+      },
+      {
+        "className": "bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden",
+        "textContent": "은은희맘🧒성장기 양육자2일 전비오는 날 집에서 18개월 아들과 할 수 있는 놀이들! 쌀놀이, 박스놀이, 물놀이가 인기만점이에요.00조회 78로그인 필요"
+      },
+      {
+        "className": "bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden",
+        "textContent": "ttest🤰예비양육자3일 전test0000조회 2로그인 필요"
+      },
+      {
+        "className": "bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden",
+        "textContent": "한한할머니👩‍👧‍👦선배 양육자7일 전50년 넘게 아이들을 키워본 할머니로서, 완벽하려 하지 마세요. 아이와 함께 성장하는 마음으로 육아하시길 바라요.00조회 203로그인 필요"
+      }
+    ],
+    "layout": {
+      "hasHeroSection": false,
+      "hasSocialProof": false,
+      "hasSidebar": false,
+      "mainWidth": "none"
+    },
+    "interactions": {
+      "likeButtons": 0,
+      "commentButtons": 0,
+      "loginPrompts": 0
+    }
+  },
+  "afterLogin": {
+    "url": "https://www.fortheorlingas.com/",
+    "title": "ParentWise - Global Parenting Community",
+    "main": {
+      "tagName": "MAIN",
+      "className": "",
+      "id": "",
+      "textContent": "예비맘신생아맘성장기맘선배맘임신부터 첫돌까지, 모든 순간을 함께21개월의 소중한 여정을 혼자 걸어가지 마세요. 따뜻한 엄마들의 커뮤니티가 함께합니다12,000+전체 회원여정 시작하기둘러보기12,000+ 엄마들이 함께하는 따뜻한 커뮤니티실시간으로 공유되는 엄마들의 소중한 경험들엄마들이 신뢰하는 이유진심 어린 마음으로 만든 따뜻한 커뮤니티12,000+전체 맘버임",
+      "children": [
+        {
+          "tagName": "DIV",
+          "className": "min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900",
+          "id": ""
+        }
+      ]
+    },
+    "header": {
+      "tagName": "HEADER",
+      "className": "bg-gradient-to-r from-pink-50 to-blue-50 dark:from-pink-900/20 dark:to-blue-900/20 shadow-sm border-b border-pink-100 dark:border-pink-800 transition-colors",
+      "id": "",
+      "textContent": "🤱첫돌까지회원가입로그인",
+      "children": [
+        {
+          "tagName": "DIV",
+          "className": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+          "id": ""
+        }
+      ]
+    },
+    "nav": {
+      "tagName": "NAV",
+      "className": "flex items-center space-x-4",
+      "id": "",
+      "textContent": "회원가입로그인",
+      "children": [
+        {
+          "tagName": "BUTTON",
+          "className": "inline-flex items-center justify-center rounded-md p-2  text-gray-500 hover:bg-gray-100 hover:text-gray-900  dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2  focus:ring-purple-500 focus:ring-offset-2",
+          "id": ""
+        },
+        {
+          "tagName": "DIV",
+          "className": "flex items-center space-x-2",
+          "id": ""
+        }
+      ]
+    },
+    "unifiedFeed": null,
+    "socialFeed": null,
+    "postList": null,
+    "posts": [
+      {
+        "className": "bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden",
+        "textContent": "재재현파파👶신생아 양육자1일 전4개월 아기 아빠입니다. 밤중 수유할 때 조명을 어둡게 하고, 말을 최소화하면 아기가 다시 쉽게 잠들어요.00조회 67로그인 필요"
+      },
+      {
+        "className": "bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden",
+        "textContent": "현현우아빠🧒성장기 양육자1일 전12개월 첫째가 이유식을 정말 안 먹어서 고생했는데, 지금은 잘 먹어요! 아이와 함께 먹으면서 재미있게 해보세요.00조회 89로그인 필요"
+      },
+      {
+        "className": "bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden",
+        "textContent": "민민주맘👶신생아 양육자2일 전첫째 때는 정말 무서웠는데, 이제 둘째하면서 깨달은 신생아 목욕 꿀팁들이 있어요. 물온도는 37-38도가 적당하고, 목욕시간은 5분 이내로 짧게 하세"
+      },
+      {
+        "className": "bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden",
+        "textContent": "은은희맘🧒성장기 양육자2일 전비오는 날 집에서 18개월 아들과 할 수 있는 놀이들! 쌀놀이, 박스놀이, 물놀이가 인기만점이에요.00조회 78로그인 필요"
+      },
+      {
+        "className": "bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden",
+        "textContent": "ttest🤰예비양육자3일 전test0000조회 2로그인 필요"
+      },
+      {
+        "className": "bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200 overflow-hidden",
+        "textContent": "한한할머니👩‍👧‍👦선배 양육자7일 전50년 넘게 아이들을 키워본 할머니로서, 완벽하려 하지 마세요. 아이와 함께 성장하는 마음으로 육아하시길 바라요.00조회 203로그인 필요"
+      }
+    ],
+    "layout": {
+      "hasHeroSection": false,
+      "hasSocialProof": false,
+      "hasSidebar": false,
+      "mainWidth": "none"
+    },
+    "interactions": {
+      "likeButtons": 0,
+      "commentButtons": 0,
+      "loginPrompts": 0
+    }
+  },
+  "differences": [],
+  "networkRequests": [
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:10.498Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.588Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/df2b9b3bd1380e4f.css?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.588Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/146f90d7c1a7ab0a.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.589Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/974f4774e470911c.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.589Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/17dce11733475459.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.589Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/c19da6693934fea1.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.589Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/cf8c37ccc7fdf248.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.589Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/08f066ab8af3cded.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.590Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/turbopack-cb965de34b2ec594.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.590Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/127ffc574eb698aa.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.590Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/296fcb9346a6d392.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.590Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/afee8c7e7678ce0e.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.591Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/7836eac5bc36c3ee.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.591Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/ada414ebfc6ac321.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.591Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/ff1a16fafef87110.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.591Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/7dd66bdf8a7e5707.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.591Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/5448dc359800df37.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.591Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/02d5a4b3cc3186f4.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.591Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/8252fb4be8fc7a40.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.591Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/395c0673225ca938.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.591Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/01d8a4150f2b20f0.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:11.591Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/favicon.ico?favicon.0b3bf435.ico",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:12.106Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/146f023b8c624a9a.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:12.107Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://spgcihtrquywmaieflue.supabase.co/rest/v1/posts?select=*&order=created_at.desc&limit=10",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:12.116Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/signup?_rsc=3lb4g",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:12.131Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/login?_rsc=3lb4g",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:12.131Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/community?_rsc=3lb4g",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:12.131Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/efcc26ea72092a28.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:12.670Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/ea03dc7dfae7139e.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:13.133Z"
+    },
+    {
+      "state": "before-login",
+      "url": "https://www.fortheorlingas.com/_next/static/chunks/f6ceec20b60ceedc.js?dpl=dpl_BXDQHCuZ1i8MnBsT4PtMA8gfD1XR",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:13.133Z"
+    },
+    {
+      "state": "after-login",
+      "url": "https://www.fortheorlingas.com/favicon.ico?favicon.0b3bf435.ico",
+      "method": "GET",
+      "timestamp": "2025-09-12T02:07:14.581Z"
+    }
+  ]
+}
