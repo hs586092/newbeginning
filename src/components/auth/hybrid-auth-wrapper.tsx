@@ -2,13 +2,12 @@
 
 import { useAuth } from '@/contexts/auth-context'
 import { AuthMachineState } from '@/types/auth-state-machine.types'
-import PersonalizedDashboard from '@/components/dashboard/personalized-dashboard'
+import { UnifiedHomepage } from '@/components/pages/unified-homepage'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 
 interface HybridAuthWrapperProps {
   serverUser: SupabaseUser | null
   searchParams: { [key: string]: string | undefined }
-  fallbackComponent: React.ReactNode
 }
 
 /**
@@ -18,8 +17,7 @@ interface HybridAuthWrapperProps {
  */
 export function HybridAuthWrapper({ 
   serverUser, 
-  searchParams, 
-  fallbackComponent 
+  searchParams
 }: HybridAuthWrapperProps) {
   const { 
     user: clientUser, 
@@ -102,17 +100,15 @@ export function HybridAuthWrapper({
     )
   }
 
-  // Authenticated state - show dashboard
+  // 통합된 홈페이지 - 로그인 상태에 관계없이 일관된 UI 제공
   const effectiveUser = getEffectiveUser()
-  if (shouldShowDashboard() && effectiveUser) {
-    return (
-      <PersonalizedDashboard 
-        searchParams={searchParams} 
-        user={effectiveUser} 
-      />
-    )
-  }
-
-  // Unauthenticated state - show fallback component
-  return <>{fallbackComponent}</>
+  const isUserAuthenticated = shouldShowDashboard()
+  
+  return (
+    <UnifiedHomepage 
+      user={effectiveUser}
+      isAuthenticated={isUserAuthenticated}
+      searchParams={searchParams}
+    />
+  )
 }
