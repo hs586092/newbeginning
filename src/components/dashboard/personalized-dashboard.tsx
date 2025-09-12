@@ -250,7 +250,7 @@ export default function PersonalizedDashboard({ searchParams, user }: Personaliz
                   안녕하세요, {user.user_metadata?.full_name || user.email?.split('@')[0] || '양육자'}님!
                 </h1>
               </div>
-              <p className="text-lg md:text-xl text-white/90 mb-6">
+              <p className="text-lg md:text-xl text-white mb-6">
                 {hasSearchParams ? '검색하신 정보를 찾아드릴게요' : '오늘도 함께하는 소중한 육아 여정이에요 💕'}
               </p>
               

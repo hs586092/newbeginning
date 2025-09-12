@@ -189,45 +189,45 @@ export default function CommunityPage() {
           </p>
         </div>
 
-        {/* Community Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card variant="default" className="text-center">
+        {/* Community Stats - Enhanced Magic Integration */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+          <Card variant="interactive" className="text-center group">
             <CardContent className="pt-6">
-              <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Users className="w-6 h-6 text-pink-600" />
+              <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                <Users className="w-8 h-8 text-white" />
               </div>
-              <div className="text-2xl font-bold text-gray-900 mb-1">2,847</div>
-              <div className="text-sm text-gray-600">활동 중인 부모</div>
+              <div className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-2">2,847</div>
+              <div className="text-sm font-medium text-gray-700">활동 중인 부모</div>
             </CardContent>
           </Card>
           
-          <Card variant="default" className="text-center">
+          <Card variant="interactive" className="text-center group">
             <CardContent className="pt-6">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <MessageCircle className="w-6 h-6 text-blue-600" />
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                <MessageCircle className="w-8 h-8 text-white" />
               </div>
-              <div className="text-2xl font-bold text-gray-900 mb-1">12,456</div>
-              <div className="text-sm text-gray-600">공유된 이야기</div>
+              <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">12,456</div>
+              <div className="text-sm font-medium text-gray-700">공유된 이야기</div>
             </CardContent>
           </Card>
           
-          <Card variant="default" className="text-center">
+          <Card variant="interactive" className="text-center group">
             <CardContent className="pt-6">
-              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <Heart className="w-6 h-6 text-purple-600" />
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                <Heart className="w-8 h-8 text-white" />
               </div>
-              <div className="text-2xl font-bold text-gray-900 mb-1">89,234</div>
-              <div className="text-sm text-gray-600">따뜻한 마음</div>
+              <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">89,234</div>
+              <div className="text-sm font-medium text-gray-700">따뜻한 마음</div>
             </CardContent>
           </Card>
           
-          <Card variant="default" className="text-center">
+          <Card variant="interactive" className="text-center group">
             <CardContent className="pt-6">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <TrendingUp className="w-6 h-6 text-green-600" />
+              <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                <TrendingUp className="w-8 h-8 text-white" />
               </div>
-              <div className="text-2xl font-bold text-gray-900 mb-1">94%</div>
-              <div className="text-sm text-gray-600">만족도</div>
+              <div className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-2">94%</div>
+              <div className="text-sm font-medium text-gray-700">만족도</div>
             </CardContent>
           </Card>
         </div>
@@ -240,15 +240,15 @@ export default function CommunityPage() {
               onCategoryChange={setSelectedCategory}
             />
             
-            {/* Quick Actions */}
-            <Card variant="default" className="mb-6">
-              <CardHeader>
-                <h3 className="text-lg font-semibold text-gray-900">빠른 작업</h3>
+            {/* Quick Actions - Premium Magic Style */}
+            <Card variant="gradient" className="mb-6 overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-pink-500/10 to-purple-500/10">
+                <h3 className="text-lg font-semibold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">✨ 빠른 작업</h3>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button 
                   onClick={() => setShowPostForm(true)}
-                  className="w-full justify-start bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600"
+                  className="w-full justify-start bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
                 >
                   <PlusCircle className="w-4 h-4 mr-2" />
                   새 글 쓰기
@@ -256,7 +256,7 @@ export default function CommunityPage() {
                 <Button 
                   onClick={() => setShowPostForm(true)}
                   variant="outline" 
-                  className="w-full justify-start"
+                  className="w-full justify-start border-2 border-purple-200 hover:border-purple-300 hover:bg-purple-50 transition-all duration-300"
                 >
                   <MessageCircle className="w-4 h-4 mr-2" />
                   질문하기
@@ -264,8 +264,8 @@ export default function CommunityPage() {
               </CardContent>
             </Card>
 
-            {/* Baby Month Filter */}
-            <Card variant="default">
+            {/* Baby Month Filter - Premium Style */}
+            <Card variant="premium">
               <CardHeader>
                 <h3 className="text-lg font-semibold text-gray-900">아기 나이</h3>
               </CardHeader>

@@ -100,7 +100,7 @@ export function HeroSection({ userType = null, onUserTypeSelect }: HeroSectionPr
                 className={`group relative flex items-center justify-center space-x-2 px-3 py-2.5 sm:px-4 sm:py-3 rounded-xl font-semibold transition-all duration-300 transform min-w-0 whitespace-nowrap ${
                   selectedType === key
                     ? 'bg-white text-blue-600 shadow-xl scale-[1.02] sm:scale-105 ring-2 ring-white/30'
-                    : 'text-white/90 hover:text-white hover:bg-white/20 hover:scale-[1.01] sm:hover:scale-102 hover:shadow-lg active:scale-[0.98] sm:active:scale-95'
+                    : 'text-white hover:text-white hover:bg-white/20 hover:scale-[1.01] sm:hover:scale-102 hover:shadow-lg active:scale-[0.98] sm:active:scale-95'
                 }`}
               >
                 <div className={`transition-transform duration-300 ${selectedType === key ? 'scale-110' : 'group-hover:scale-110'}`}>
@@ -126,7 +126,7 @@ export function HeroSection({ userType = null, onUserTypeSelect }: HeroSectionPr
             {content.headline}
           </h1>
           
-          <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-6 sm:mb-8 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl md:text-2xl text-white mb-6 sm:mb-8 max-w-4xl mx-auto leading-relaxed">
             {content.subtext}
           </p>
 
@@ -136,7 +136,7 @@ export function HeroSection({ userType = null, onUserTypeSelect }: HeroSectionPr
               <div className="flex items-center space-x-2 text-white">
                 <Star className="w-5 h-5 fill-current" />
                 <span className="font-semibold">{content.stats.value}</span>
-                <span className="text-white/80">{content.stats.label}</span>
+                <span className="text-white hover:text-gray-100">{content.stats.label}</span>
               </div>
             </div>
           </div>
@@ -194,10 +194,10 @@ export function HeroSection({ userType = null, onUserTypeSelect }: HeroSectionPr
 
         {/* Trust Indicators */}
         <div className="mt-20 text-center">
-          <p className="text-white/60 text-sm mb-6">12,000+ 엄마들이 함께하는 따뜻한 커뮤니티</p>
+          <p className="text-white text-sm mb-6">12,000+ 엄마들이 함께하는 따뜻한 커뮤니티</p>
           <div className="flex justify-center items-center space-x-2 text-sm">
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-white/60">실시간으로 공유되는 엄마들의 소중한 경험들</span>
+            <span className="text-white">실시간으로 공유되는 엄마들의 소중한 경험들</span>
           </div>
         </div>
       </div>

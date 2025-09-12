@@ -242,7 +242,7 @@ export function UnifiedHomepage({
                 <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
                   임신부터 첫돌까지, 모든 순간을 함께
                 </h1>
-                <p className="text-lg text-white/90 mb-6 max-w-xl mx-auto">
+                <p className="text-lg text-white mb-6 max-w-xl mx-auto">
                   따뜻한 양육자들의 커뮤니티
                 </p>
                 
@@ -292,7 +292,7 @@ export function UnifiedHomepage({
                     <h3 className="text-lg font-bold mb-2">
                       지금 바로 시작하세요! 🚀
                     </h3>
-                    <p className="text-white/90 text-sm mb-4">
+                    <p className="text-white text-sm mb-4">
                       2분만에 가입하고 12,500명의 양육자들과 함께하세요
                     </p>
                     <Link href="/signup" className="w-full">
@@ -301,7 +301,7 @@ export function UnifiedHomepage({
                       </Button>
                     </Link>
                     <div className="mt-3 text-center">
-                      <Link href="/login" className="text-white/80 hover:text-white text-sm underline">
+                      <Link href="/login" className="text-white hover:text-gray-100 text-sm underline">
                         이미 회원이신가요?
                       </Link>
                     </div>

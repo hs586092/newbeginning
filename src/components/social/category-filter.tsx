@@ -105,11 +105,11 @@ export default function CategoryFilter({ selectedCategory, onCategoryChange }: C
   const hasMore = CATEGORIES.length > 6
 
   return (
-    <Card variant="default" className="mb-6">
-      <CardHeader compact={true}>
+    <Card variant="elevated" className="mb-6 overflow-hidden">
+      <CardHeader compact={true} className="bg-gradient-to-r from-blue-50 to-indigo-50">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">Categories</h2>
-          <Badge variant="secondary">
+          <h2 className="text-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">🏷️ Categories</h2>
+          <Badge variant="secondary" className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white border-0 shadow-sm">
             {selectedCategory === 'all' ? 'All' : CATEGORIES.find(c => c.id === selectedCategory)?.name}
           </Badge>
         </div>

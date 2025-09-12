@@ -4,15 +4,17 @@ import { cn } from "@/lib/utils"
 
 // Card variants for different use cases
 const cardVariants = cva(
-  "rounded-lg border bg-card text-card-foreground shadow-sm transition-shadow",
+  "rounded-xl border bg-card text-card-foreground transition-all duration-300 ease-in-out",
   {
     variants: {
       variant: {
-        default: "hover:shadow-md",
-        elevated: "shadow-md hover:shadow-lg",
-        interactive: "cursor-pointer hover:shadow-md hover:scale-[1.02] transition-transform",
-        outline: "border-2 shadow-none hover:shadow-sm",
-        ghost: "border-none shadow-none bg-transparent"
+        default: "shadow-lg hover:shadow-xl hover:-translate-y-1 border-gray-200/60 bg-white/80 backdrop-blur-sm",
+        elevated: "shadow-xl hover:shadow-2xl hover:-translate-y-2 border-gray-300/60 bg-white/90",
+        interactive: "cursor-pointer shadow-lg hover:shadow-2xl hover:scale-[1.03] hover:-translate-y-2 border-gray-200/60 bg-gradient-to-br from-white to-gray-50/80 backdrop-blur-sm transition-all duration-500",
+        outline: "border-2 shadow-md hover:shadow-xl hover:-translate-y-1 bg-white/60 backdrop-blur-sm",
+        ghost: "border-none shadow-none bg-transparent hover:bg-white/20 hover:backdrop-blur-sm",
+        gradient: "bg-gradient-to-br from-pink-50 to-purple-50 border-pink-200/60 shadow-lg hover:shadow-xl hover:-translate-y-1 hover:from-pink-100 hover:to-purple-100",
+        premium: "bg-gradient-to-br from-blue-50 via-white to-indigo-50 border-blue-200/60 shadow-xl hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02]"
       },
       size: {
         default: "p-6",

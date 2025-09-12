@@ -176,7 +176,7 @@ export function SocialProof() {
             <h3 className="text-2xl font-bold mb-4">
               당신도 행복한 엄마가 되어보세요
             </h3>
-            <p className="text-white/90 mb-6">
+            <p className="text-white mb-6">
               매주 200+ 새로운 엄마들이 우리와 함께 여정을 시작하고 있습니다
             </p>
             <div className="flex justify-center items-center space-x-2 text-sm">
