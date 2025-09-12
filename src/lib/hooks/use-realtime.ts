@@ -2,11 +2,10 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { supabase } from '@/lib/supabase/client' // Use Realtime-enabled client
 
 export function useRealtimeSubscription() {
   const router = useRouter()
-  const supabase = createClient()
 
   useEffect(() => {
     // Subscribe to posts changes
@@ -114,12 +113,11 @@ export function useRealtimeSubscription() {
       supabase.removeChannel(commentsChannel)
       supabase.removeChannel(likesChannel)
     }
-  }, [router, supabase])
+  }, [router])
 }
 
 export function usePostRealtime(postId: string) {
   const router = useRouter()
-  const supabase = createClient()
 
   useEffect(() => {
     const channel = supabase
@@ -153,5 +151,5 @@ export function usePostRealtime(postId: string) {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [postId, router, supabase])
+  }, [postId, router])
 }

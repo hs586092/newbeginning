@@ -36,6 +36,15 @@ export class AuthStateMachine {
     { from: AuthMachineState.OAUTH_CALLBACK, event: AuthMachineEvent.SIGN_IN_SUCCESS, to: AuthMachineState.AUTHENTICATED },
     { from: AuthMachineState.OAUTH_CALLBACK, event: AuthMachineEvent.SIGN_IN_ERROR, to: AuthMachineState.UNAUTHENTICATED },
     
+    // Handle duplicate SIGN_IN_SUCCESS when already authenticated (ignore gracefully)
+    { from: AuthMachineState.AUTHENTICATED, event: AuthMachineEvent.SIGN_IN_SUCCESS, to: AuthMachineState.AUTHENTICATED, 
+      condition: (context) => true, // Allow but ignore duplicate sign-in success
+      action: (context) => {
+        console.log('[AuthStateMachine] Ignoring duplicate SIGN_IN_SUCCESS in AUTHENTICATED state')
+        return {} // No context changes needed
+      }
+    },
+    
     // Sign out flows
     { from: AuthMachineState.AUTHENTICATED, event: AuthMachineEvent.SIGN_OUT_START, to: AuthMachineState.SIGNING_OUT },
     { from: AuthMachineState.SIGNING_OUT, event: AuthMachineEvent.SIGN_OUT_SUCCESS, to: AuthMachineState.UNAUTHENTICATED },
