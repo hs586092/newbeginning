@@ -237,30 +237,6 @@ export function UnifiedHomepage({
               <div className="absolute -bottom-1/2 -left-1/2 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
             </div>
 
-            {/* 헤더 */}
-            <header className="relative z-10 border-b border-white/20">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-center h-16">
-                  <div className="flex items-center space-x-2">
-                    <div className="text-2xl">👶</div>
-                    <span className="text-xl font-bold text-white">첫돌까지</span>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <Link href="/login">
-                      <Button variant="outline" size="sm" className="border-white/30 text-white hover:bg-white/20">
-                        로그인
-                      </Button>
-                    </Link>
-                    <Link href="/signup">
-                      <Button className="bg-white text-purple-600 hover:bg-gray-100" size="sm">
-                        회원가입
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </header>
-
             {/* 히어로 컨텐츠 */}
             <div className="relative z-10 py-16">
               <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
