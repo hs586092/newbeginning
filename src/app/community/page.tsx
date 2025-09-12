@@ -166,7 +166,7 @@ export default function CommunityPage() {
     }
     
     fetchPosts()
-  }, [])
+  }, [supabase])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-blue-50">
