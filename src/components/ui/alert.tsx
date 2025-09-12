@@ -10,10 +10,10 @@ const alertVariants = cva(
     variants: {
       variant: {
         default: "bg-background text-foreground border-border",
-        destructive: "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive bg-destructive/5",
-        warning: "border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200 [&>svg]:text-amber-600 dark:[&>svg]:text-amber-400",
-        success: "border-green-200 bg-green-50 text-green-900 dark:border-green-800 dark:bg-green-950 dark:text-green-200 [&>svg]:text-green-600 dark:[&>svg]:text-green-400",
-        info: "border-blue-200 bg-blue-50 text-blue-900 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-200 [&>svg]:text-blue-600 dark:[&>svg]:text-blue-400"
+        destructive: "border-destructive/50 text-destructive bg-destructive/5 [&>svg]:text-destructive",
+        warning: "border-amber-200 bg-amber-50 text-amber-900 [&>svg]:text-amber-600",
+        success: "border-green-200 bg-green-50 text-green-900 [&>svg]:text-green-600",
+        info: "border-blue-200 bg-blue-50 text-blue-900 [&>svg]:text-blue-600"
       },
       size: {
         default: "p-4",

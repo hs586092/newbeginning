@@ -122,7 +122,7 @@ export function UnifiedNavigation({
   }
 
   return (
-    <nav className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-16 z-40 backdrop-blur-sm bg-white/95">
+    <nav className="bg-white border-b border-gray-200 sticky top-16 z-40 backdrop-blur-sm bg-white/95">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* 메인 탭 네비게이션 */}
         <div className="flex items-center justify-between py-4">
@@ -135,7 +135,7 @@ export function UnifiedNavigation({
                   flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap
                   ${activeTab === tab.id 
                     ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-md' 
-                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    : 'text-gray-600 hover:bg-gray-100'
                   }
                 `}
                 title={tab.description}
@@ -153,7 +153,7 @@ export function UnifiedNavigation({
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                className="text-gray-500 hover:text-gray-700"
               >
                 <Search className="w-4 h-4" />
               </Button>
@@ -165,7 +165,7 @@ export function UnifiedNavigation({
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                className="text-gray-500 hover:text-gray-700"
               >
                 <Filter className="w-4 h-4" />
                 {isFiltersOpen && <Badge variant="secondary" className="ml-1">ON</Badge>}
@@ -186,7 +186,7 @@ export function UnifiedNavigation({
                     placeholder="게시글 검색..."
                     value={searchQuery}
                     onChange={(e) => onSearchChange?.(e.target.value)}
-                    className="pl-10 bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                    className="pl-10 bg-gray-50 border-gray-200"
                   />
                 </div>
                 {resultCount > 0 && (
@@ -196,8 +196,8 @@ export function UnifiedNavigation({
                 )}
               </div>
             ) : (
-              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
-                <p className="text-gray-600 dark:text-gray-300 mb-2">
+              <div className="bg-gray-50 rounded-lg p-4 text-center">
+                <p className="text-gray-600 mb-2">
                   검색 기능을 사용하려면 로그인이 필요합니다
                 </p>
                 <Button onClick={handleAuthRequired} size="sm">
@@ -210,12 +210,12 @@ export function UnifiedNavigation({
 
         {/* 고급 필터 */}
         {isFiltersOpen && (
-          <div className="pb-4 border-t border-gray-100 dark:border-gray-700 pt-4">
+          <div className="pb-4 border-t border-gray-100 pt-4">
             {isAuthenticated || showAdvancedFilters ? (
               <div className="space-y-4">
                 {/* 스마트 필터 */}
                 <div>
-                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">정렬</h4>
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">정렬</h4>
                   <div className="flex flex-wrap gap-2">
                     {SMART_FILTERS.map((filter) => (
                       <button
@@ -225,7 +225,7 @@ export function UnifiedNavigation({
                           flex items-center space-x-1 px-3 py-1.5 rounded-full text-xs font-medium transition-colors
                           ${activeFilter === filter.id
                             ? 'bg-blue-500 text-white'
-                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                           }
                         `}
                       >
@@ -238,7 +238,7 @@ export function UnifiedNavigation({
 
                 {/* 월령 필터 */}
                 <div>
-                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">월령</h4>
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">월령</h4>
                   <div className="flex flex-wrap gap-2">
                     {BABY_MONTHS.map((month) => (
                       <button
@@ -248,7 +248,7 @@ export function UnifiedNavigation({
                           flex items-center space-x-1 px-3 py-1.5 rounded-full text-xs font-medium transition-colors
                           ${activeCategory === month.id
                             ? 'bg-purple-500 text-white'
-                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                           }
                         `}
                       >
@@ -260,8 +260,8 @@ export function UnifiedNavigation({
                 </div>
               </div>
             ) : (
-              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 text-center">
-                <p className="text-gray-600 dark:text-gray-300 mb-2">
+              <div className="bg-gray-50 rounded-lg p-4 text-center">
+                <p className="text-gray-600 mb-2">
                   고급 필터를 사용하려면 로그인이 필요합니다
                 </p>
                 <Button onClick={handleAuthRequired} size="sm">

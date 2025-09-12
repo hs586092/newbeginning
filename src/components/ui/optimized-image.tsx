@@ -55,7 +55,7 @@ export function OptimizedImage({
   if (hasError) {
     return (
       <div 
-        className={`bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-500 ${className}`}
+        className={`bg-gray-200 flex items-center justify-center text-gray-400 ${className}`}
         style={fill ? undefined : { width, height }}
       >
         <span className="text-sm">이미지 로드 실패</span>
@@ -68,7 +68,7 @@ export function OptimizedImage({
       {/* Loading overlay */}
       {isLoading && (
         <div 
-          className={`absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse rounded ${className}`}
+          className={`absolute inset-0 bg-gray-200 animate-pulse rounded ${className}`}
           style={fill ? undefined : { width, height }}
         >
           <div className="flex items-center justify-center w-full h-full">

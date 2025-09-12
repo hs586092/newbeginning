@@ -9,7 +9,6 @@ const tooltipVariants = cva(
     variants: {
       variant: {
         default: "bg-popover text-popover-foreground border-border",
-        dark: "bg-gray-900 text-gray-100 border-gray-800",
         light: "bg-white text-gray-900 border-gray-200",
         accent: "bg-accent text-accent-foreground border-accent",
         destructive: "bg-destructive text-destructive-foreground border-destructive"

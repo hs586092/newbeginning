@@ -23,7 +23,7 @@ export function MainContainer({
 }: MainContainerProps) {
   return (
     <main className={cn(
-      "min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900",
+      "min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50",
       "transition-colors duration-300",
       className
     )}>
@@ -36,18 +36,18 @@ export function MainContainer({
             <>
               {/* 사이드바 영역 */}
               <aside className="lg:col-span-1 space-y-6">
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                  <h3 className="font-semibold text-gray-900 mb-4">
                     빠른 액세스
                   </h3>
                   <div className="space-y-2">
-                    <button className="w-full text-left p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-600 dark:text-gray-300">
+                    <button className="w-full text-left p-2 rounded-lg hover:bg-gray-100 text-sm text-gray-600">
                       📝 내 게시글
                     </button>
-                    <button className="w-full text-left p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-600 dark:text-gray-300">
+                    <button className="w-full text-left p-2 rounded-lg hover:bg-gray-100 text-sm text-gray-600">
                       ❤️ 좋아요한 글
                     </button>
-                    <button className="w-full text-left p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-sm text-gray-600 dark:text-gray-300">
+                    <button className="w-full text-left p-2 rounded-lg hover:bg-gray-100 text-sm text-gray-600">
                       🔖 북마크
                     </button>
                   </div>
@@ -89,12 +89,12 @@ export function ContentSection({
       {(title || subtitle) && (
         <div className="mb-6">
           {title && (
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
               {title}
             </h2>
           )}
           {subtitle && (
-            <p className="text-gray-600 dark:text-gray-300 text-lg">
+            <p className="text-gray-600 text-lg">
               {subtitle}
             </p>
           )}
@@ -114,7 +114,7 @@ interface ContentCardProps {
 export function ContentCard({ children, className }: ContentCardProps) {
   return (
     <div className={cn(
-      "bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700",
+      "bg-white rounded-xl shadow-sm border border-gray-100",
       "hover:shadow-md transition-all duration-200",
       className
     )}>

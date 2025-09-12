@@ -210,7 +210,7 @@ export function UnifiedHomepage({
   if (!mounted) return null
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50">
       {isAuthenticated ? (
         /* 인증된 사용자: 기존 구조 유지 */
         <>
@@ -375,13 +375,13 @@ export function UnifiedHomepage({
         >
           <div className="space-y-6">
             {/* 대시보드 헤더 */}
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                  <h1 className="text-2xl font-bold text-gray-900">
                     안녕하세요, {user?.email}님! 👋
                   </h1>
-                  <p className="text-gray-600 dark:text-gray-300 mt-1">
+                  <p className="text-gray-600 mt-1">
                     오늘도 따뜻한 육아 이야기를 나누어요
                   </p>
                 </div>
@@ -396,12 +396,12 @@ export function UnifiedHomepage({
               {/* 커뮤니티 통계 */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {STATS_DATA.map((stat, index) => (
-                  <div key={index} className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div key={index} className="text-center p-3 bg-gray-50 rounded-lg">
                     <div className="text-2xl mb-1">{stat.icon}</div>
                     <div className={`text-lg font-semibold ${stat.color}`}>
                       {stat.value}
                     </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                    <div className="text-xs text-gray-500">
                       {stat.label}
                     </div>
                   </div>
