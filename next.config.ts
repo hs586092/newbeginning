@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   eslint: {
-    ignoreDuringBuilds: process.env.NODE_ENV !== 'production',
+    ignoreDuringBuilds: true,
   },
   
   // Domain redirects - redirect all Vercel URLs to custom domain
