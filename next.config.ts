@@ -57,9 +57,13 @@ const nextConfig: NextConfig = {
   // Bundle analysis (enable only when needed)
   ...(process.env.ANALYZE === 'true' && {
     webpack: (config: any) => {
-      config.resolve.alias = {
-        ...config.resolve.alias,
-      };
+      const { BundleAnalyzerPlugin } = require('@next/bundle-analyzer')();
+      config.plugins.push(
+        new BundleAnalyzerPlugin({
+          analyzerMode: 'server',
+          openAnalyzer: true,
+        })
+      );
       return config;
     },
   }),

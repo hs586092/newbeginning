@@ -6,13 +6,18 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { MainContainer, ContentSection } from '@/components/layout/main-container'
-import { UnifiedNavigation } from '@/components/navigation/unified-navigation'
-import { UnifiedFeed } from '@/components/feed/unified-feed'
-import { HeroSection } from '@/components/landing/hero-section'
-import { SocialProof } from '@/components/landing/social-proof'
+import { MainContainer } from '@/components/layout/main-container'
+import dynamic from 'next/dynamic'
+
+// 중요하지 않은 컴포넌트들을 지연 로딩
+const UnifiedNavigation = dynamic(() => import('@/components/navigation/unified-navigation').then(mod => ({default: mod.UnifiedNavigation})), {
+  loading: () => <div className="h-16 bg-gray-50 animate-pulse rounded-md mb-4" />
+})
+const UnifiedFeed = dynamic(() => import('@/components/feed/unified-feed').then(mod => ({default: mod.UnifiedFeed})), {
+  loading: () => <div className="space-y-4">{Array(3).fill(0).map((_, i) => <div key={i} className="h-48 bg-gray-50 animate-pulse rounded-lg" />)}</div>
+})
 import { Button } from '@/components/ui/button'
-import { PenSquare, Users, TrendingUp, Clock } from 'lucide-react'
+import { PenSquare } from 'lucide-react'
 import Link from 'next/link'
 import type { CommunityCategory } from '@/types/navigation'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
