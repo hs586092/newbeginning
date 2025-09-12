@@ -1,6 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { Card, CardHeader, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 
 interface Category {
   id: string
@@ -102,13 +105,16 @@ export default function CategoryFilter({ selectedCategory, onCategoryChange }: C
   const hasMore = CATEGORIES.length > 6
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Categories</h2>
-        <div className="text-sm text-gray-500">
-          {selectedCategory === 'all' ? 'All' : CATEGORIES.find(c => c.id === selectedCategory)?.name}
+    <Card variant="default" className="mb-6">
+      <CardHeader compact={true}>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-gray-900">Categories</h2>
+          <Badge variant="secondary">
+            {selectedCategory === 'all' ? 'All' : CATEGORIES.find(c => c.id === selectedCategory)?.name}
+          </Badge>
         </div>
-      </div>
+      </CardHeader>
+      <CardContent>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-4">
         {visibleCategories.map(category => (
@@ -128,24 +134,26 @@ export default function CategoryFilter({ selectedCategory, onCategoryChange }: C
         ))}
       </div>
 
-      {hasMore && (
-        <div className="text-center">
-          <button
-            onClick={() => setShowAll(!showAll)}
-            className="text-sm text-gray-500 hover:text-gray-700 font-medium"
-          >
-            {showAll ? 'Show Less' : 'Show More'}
-          </button>
-        </div>
-      )}
+        {hasMore && (
+          <div className="text-center">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => setShowAll(!showAll)}
+            >
+              {showAll ? 'Show Less' : 'Show More'}
+            </Button>
+          </div>
+        )}
 
-      {selectedCategory !== 'all' && (
-        <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-          <p className="text-sm text-gray-600">
-            {CATEGORIES.find(c => c.id === selectedCategory)?.description}
-          </p>
-        </div>
-      )}
-    </div>
+        {selectedCategory !== 'all' && (
+          <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+            <p className="text-sm text-gray-600">
+              {CATEGORIES.find(c => c.id === selectedCategory)?.description}
+            </p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   )
 }
