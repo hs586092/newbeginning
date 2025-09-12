@@ -3,7 +3,6 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { ConditionalHeader } from '@/components/layout/conditional-header'
 import { WebsiteStructuredData } from '@/components/seo/structured-data'
-import { ThemeProvider } from '@/components/providers/theme-provider'
 import { AuthProvider } from '@/contexts/auth-context'
 import { CommentProvider } from '@/contexts/comment-context'
 import { LikeProvider } from '@/contexts/like-context'
@@ -104,7 +103,6 @@ export default function RootLayout({
         <meta name="format-detection" content="telephone=no" />
       </head>
       <body className={inter.className}>
-        <ThemeProvider>
             <AuthProvider 
               config={{
                 redirectOnSignIn: '/',
@@ -115,7 +113,7 @@ export default function RootLayout({
             >
               <CommentProvider>
                 <LikeProvider>
-                  <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-blue-50 dark:from-pink-900/10 dark:via-gray-900 dark:to-blue-900/10 transition-colors">
+                  <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-blue-50 transition-colors">
                     <ConditionalHeader />
                     <main>{children}</main>
                   </div>
@@ -123,12 +121,10 @@ export default function RootLayout({
                 <Toaster 
                   position="top-right"
                   richColors
-                  theme="system"
                 />
                 <PerformanceMonitor />
               </CommentProvider>
             </AuthProvider>
-        </ThemeProvider>
       </body>
     </html>
   )
