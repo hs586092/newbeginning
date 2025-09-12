@@ -94,34 +94,41 @@ export function GlobalLikeSystem({ currentUserId }: GlobalLikeSystemProps) {
         
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
-          {state.isLoading ? (
+          {state.error ? (
+            <div className="text-center py-12 text-red-500 bg-red-50 m-4 rounded-lg border border-red-200">
+              <Heart className="w-8 h-8 mx-auto mb-2 text-red-400" />
+              <p className="font-medium">좋아요 목록을 불러올 수 없습니다</p>
+              <p className="text-sm mt-1">{state.error}</p>
+            </div>
+          ) : state.isLoading && (!state.likes || state.likes.length === 0) ? (
+            /* 초기 로딩 시에만 스피너 표시 */
             <div className="text-center py-12 text-gray-500">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-red-500 mb-4"></div>
-              <p>좋아요 목록 로딩 중...</p>
+              <div className="inline-block animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-red-500 mb-3"></div>
+              <p className="text-sm">좋아요 목록 불러오는 중...</p>
             </div>
-          ) : state.error ? (
-            <div className="text-center py-12 text-red-500">
-              <Heart className="w-12 h-12 mx-auto mb-4 text-red-300" />
-              <p className="text-lg font-medium mb-2">좋아요 목록을 불러올 수 없습니다</p>
-              <p className="text-sm text-gray-500 mb-4">{state.error}</p>
-              <button 
-                onClick={() => window.location.reload()} 
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-              >
-                다시 시도
-              </button>
-            </div>
-          ) : state.likes && state.likes.length > 0 ? (
-            <LikeList
-              likes={state.likes}
-              currentUserId={currentUserId}
-              postId={postId}
-            />
           ) : (
-            <div className="text-center py-12 text-gray-500">
-              <Heart className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-              <p className="text-lg font-medium mb-2">아직 좋아요가 없습니다</p>
-              <p className="text-sm text-gray-400">첫 번째 좋아요를 눌러보세요!</p>
+            <div className="space-y-1">
+              {state.isLoading && (
+                /* 기존 좋아요가 있는 상태에서 업데이트 중일 때 작은 로딩 표시 */
+                <div className="flex items-center justify-center py-2 text-gray-400 text-xs border-b border-gray-100">
+                  <div className="animate-spin rounded-full h-3 w-3 border border-gray-300 border-t-red-500 mr-2"></div>
+                  업데이트 중...
+                </div>
+              )}
+              
+              {state.likes && state.likes.length > 0 ? (
+                <LikeList
+                  likes={state.likes}
+                  currentUserId={currentUserId}
+                  postId={postId}
+                />
+              ) : !state.isLoading ? (
+                <div className="text-center py-12 text-gray-500">
+                  <Heart className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                  <p className="text-lg font-medium mb-2">아직 좋아요가 없습니다</p>
+                  <p className="text-sm text-gray-400">첫 번째 좋아요를 눌러보세요!</p>
+                </div>
+              ) : null}
             </div>
           )}
         </div>

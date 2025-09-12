@@ -5,7 +5,7 @@
 
 'use client'
 
-import { useState, useTransition, useEffect, useRef } from 'react'
+import { useState, useTransition, useEffect, useRef, memo, useMemo } from 'react'
 import { Heart, MessageCircle, Bookmark, Users } from 'lucide-react'
 import { toggleBookmark } from '@/lib/posts/actions'
 import { useComments } from '@/contexts/comment-context'
@@ -25,7 +25,7 @@ interface PostInteractionsV3Props {
   showLikesModal?: boolean
 }
 
-export function PostInteractionsV3({
+const PostInteractionsV3Component = memo(function PostInteractionsV3({
   postId,
   initialLiked = false,
   initialBookmarked,
@@ -58,11 +58,17 @@ export function PostInteractionsV3({
   const likeButtonRef = useRef<HTMLDivElement>(null)
   const likesListButtonRef = useRef<HTMLDivElement>(null)
   
-  // 동적 상태 값들
-  const liked = isLiked(postId)
-  const likesCount = getLikesCount(postId) || initialLikesCount
-  const commentsCount = getCommentsCount(postId) || initialCommentsCount
-  const commentsOpen = isCommentsOpen(postId)
+  // ✨ 성능 최적화: 동적 상태 값들을 useMemo로 캐시
+  const memoizedValues = useMemo(() => {
+    const liked = isLiked(postId)
+    const likesCount = getLikesCount(postId) || initialLikesCount
+    const commentsCount = getCommentsCount(postId) || initialCommentsCount
+    const commentsOpen = isCommentsOpen(postId)
+    
+    return { liked, likesCount, commentsCount, commentsOpen }
+  }, [postId, isLiked, getLikesCount, getCommentsCount, isCommentsOpen, initialLikesCount, initialCommentsCount])
+  
+  const { liked, likesCount, commentsCount, commentsOpen } = memoizedValues
   
   // 컴포넌트 마운트 시 좋아요 상태 로드
   useEffect(() => {
@@ -380,4 +386,7 @@ export function PostInteractionsV3({
       </div>
     </div>
   )
-}
+})
+
+// 성능 최적화를 위한 export
+export const PostInteractionsV3 = PostInteractionsV3Component

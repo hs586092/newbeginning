@@ -52,29 +52,40 @@ interface LikeProviderProps {
 export function LikeProvider({ children }: LikeProviderProps) {
   const [likeState, setLikeState] = useState<LikeState>({})
   
-  // Supabase 클라이언트 생성
-  const getSupabaseClient = useCallback(async () => {
-    const { createClient } = await import('@supabase/supabase-js')
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    
-    if (!supabaseUrl || !supabaseKey) {
-      throw new Error('Supabase 환경변수가 설정되지 않았습니다')
+  // ✨ 성능 최적화: 사전 초기화된 Supabase 클라이언트
+  const [supabaseClient, setSupabaseClient] = useState<any>(null)
+  
+  // 컴포넌트 마운트 시 Supabase 클라이언트 사전 초기화
+  React.useEffect(() => {
+    const initSupabase = async () => {
+      const { createClient } = await import('@supabase/supabase-js')
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      
+      if (supabaseUrl && supabaseKey) {
+        const client = createClient(supabaseUrl, supabaseKey)
+        setSupabaseClient(client)
+      }
     }
     
-    return createClient(supabaseUrl, supabaseKey)
+    initSupabase()
   }, [])
   
   // 현재 사용자 정보 가져오기
   const getCurrentUser = useCallback(async () => {
-    const supabase = await getSupabaseClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    if (!supabaseClient) return null
+    const { data: { user } } = await supabaseClient.auth.getUser()
     return user
-  }, [getSupabaseClient])
+  }, [supabaseClient])
   
   // 좋아요 목록 로드
   const loadLikes = useCallback(async (postId: string) => {
     console.log('🔄 LikeProvider: 좋아요 로딩 시작', postId)
+    
+    if (!supabaseClient) {
+      console.error('❌ Supabase 클라이언트가 초기화되지 않았습니다')
+      return
+    }
     
     setLikeState(prev => ({
       ...prev,
@@ -86,11 +97,10 @@ export function LikeProvider({ children }: LikeProviderProps) {
     }))
     
     try {
-      const supabase = await getSupabaseClient()
       const user = await getCurrentUser()
       
       // RPC 함수 호출 (추후 생성 예정)
-      const { data: likes, error } = await supabase
+      const { data: likes, error } = await supabaseClient
         .rpc('get_post_likes', { p_post_id: postId })
 
       if (error) {
@@ -218,22 +228,25 @@ export function LikeProvider({ children }: LikeProviderProps) {
     console.log('🔄 LikeProvider: 좋아요 목록 열기', postId)
     
     const currentState = likeState[postId]
+    const hasLikes = currentState?.likes?.length > 0
     
+    // ✨ 성능 최적화: 모달 즉시 표시
     setLikeState(prev => ({
       ...prev,
       [postId]: {
         ...prev[postId],
         isOpen: true,
         likes: prev[postId]?.likes || [],
-        isLoading: false,
+        isLoading: !hasLikes, // 기존 좋아요가 있으면 로딩 상태 false
         isLiked: prev[postId]?.isLiked || false,
         likesCount: prev[postId]?.likesCount || 0
       }
     }))
     
-    // 좋아요 목록이 로드되지 않았다면 로드
-    if (!currentState?.likes?.length) {
-      await loadLikes(postId)
+    // 좋아요 목록이 없거나 업데이트가 필요하면 백그라운드에서 로딩
+    if (!hasLikes) {
+      // 비동기적으로 좋아요 로딩 (UI 블로킹 없음)
+      loadLikes(postId)
     }
   }, [likeState, loadLikes])
   

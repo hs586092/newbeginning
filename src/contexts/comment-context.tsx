@@ -39,8 +39,32 @@ interface CommentProviderProps {
 export function CommentProvider({ children }: CommentProviderProps) {
   const [commentState, setCommentState] = useState<CommentState>({})
   
+  // 사전 초기화된 Supabase 클라이언트 (성능 최적화)
+  const [supabaseClient, setSupabaseClient] = useState<any>(null)
+  
+  // 컴포넌트 마운트 시 Supabase 클라이언트 사전 초기화
+  React.useEffect(() => {
+    const initSupabase = async () => {
+      const { createClient } = await import('@supabase/supabase-js')
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      
+      if (supabaseUrl && supabaseKey) {
+        const client = createClient(supabaseUrl, supabaseKey)
+        setSupabaseClient(client)
+      }
+    }
+    
+    initSupabase()
+  }, [])
+  
   const loadComments = useCallback(async (postId: string) => {
     console.log('🔄 CommentProvider: 댓글 로딩 시작', postId)
+    
+    if (!supabaseClient) {
+      console.error('❌ Supabase 클라이언트가 초기화되지 않았습니다')
+      return
+    }
     
     setCommentState(prev => ({
       ...prev,
@@ -52,19 +76,9 @@ export function CommentProvider({ children }: CommentProviderProps) {
     }))
     
     try {
-      // 클라이언트 Supabase 인스턴스 생성
-      const { createClient } = await import('@supabase/supabase-js')
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-      
-      if (!supabaseUrl || !supabaseKey) {
-        throw new Error('Supabase 환경변수가 설정되지 않았습니다')
-      }
-      
-      const supabase = createClient(supabaseUrl, supabaseKey)
       
       // RPC 함수 호출로 변경
-      const { data: comments, error } = await supabase
+      const { data: comments, error } = await supabaseClient
         .rpc('get_post_comments', { p_post_id: postId })
 
       if (error) {
@@ -112,7 +126,7 @@ export function CommentProvider({ children }: CommentProviderProps) {
         }
       }))
     }
-  }, [])
+  }, [supabaseClient]) // supabaseClient 의존성 추가
   
   const toggleComments = useCallback(async (postId: string) => {
     console.log('🔄 CommentProvider: 댓글 토글', postId)
@@ -121,20 +135,24 @@ export function CommentProvider({ children }: CommentProviderProps) {
     const isCurrentlyOpen = currentState?.isOpen || false
     
     if (!isCurrentlyOpen) {
-      // 댓글을 열 때
+      // ✨ 성능 최적화: 댓글 모달을 즉시 표시하고 동시에 데이터 로딩
+      const hasComments = currentState?.comments?.length > 0
+      
+      // 모달 즉시 열기
       setCommentState(prev => ({
         ...prev,
         [postId]: {
           ...prev[postId],
           isOpen: true,
           comments: prev[postId]?.comments || [],
-          isLoading: false
+          isLoading: !hasComments // 기존 댓글이 있으면 로딩 상태 false
         }
       }))
       
-      // 댓글이 로드되지 않았다면 로드
-      if (!currentState?.comments?.length) {
-        await loadComments(postId)
+      // 댓글이 없거나 업데이트가 필요하면 백그라운드에서 로딩
+      if (!hasComments) {
+        // 비동기적으로 댓글 로딩 (UI 블로킹 없음)
+        loadComments(postId)
       }
     } else {
       // 댓글을 닫을 때
