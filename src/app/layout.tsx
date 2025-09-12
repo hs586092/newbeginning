@@ -92,6 +92,16 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <WebsiteStructuredData />
+        {/* Critical Resource Preloading */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://vercel.com" />
+        <link rel="dns-prefetch" href="https://fortheorlingas.com" />
+        <link rel="preload" href="/og-baby.png" as="image" type="image/png" />
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta httpEquiv="x-dns-prefetch-control" content="on" />
+        <meta name="format-detection" content="telephone=no" />
       </head>
       <body className={inter.className}>
         <ThemeProvider>

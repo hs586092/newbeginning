@@ -32,6 +32,15 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react', 'date-fns', 'clsx'],
     // Disable optimizeCss temporarily due to critters module issue
     // optimizeCss: true,
+    // Enable faster builds and smaller bundles
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
   },
   
   // Image optimization
