@@ -92,9 +92,9 @@ export function NotificationBell() {
 
       {/* 알림 드롭다운 */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-200 z-50">
+        <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-80 max-w-sm bg-white rounded-lg shadow-xl border border-gray-200 z-50">
           {/* 헤더 */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-100">
+          <div className="flex items-center justify-between p-3 sm:p-4 border-b border-gray-100">
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-gray-900">알림</h3>
               {unreadCount > 0 && (
@@ -128,16 +128,16 @@ export function NotificationBell() {
           {/* 알림 목록 */}
           <div className="max-h-96 overflow-y-auto">
             {notifications.length === 0 ? (
-              <div className="p-8 text-center text-gray-500">
-                <Bell className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-sm">새로운 알림이 없습니다</p>
+              <div className="p-6 sm:p-8 text-center text-gray-500">
+                <Bell className="w-10 h-10 sm:w-12 sm:h-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-xs sm:text-sm">새로운 알림이 없습니다</p>
               </div>
             ) : (
               notifications.map((notification) => (
                 <div
                   key={notification.id}
                   className={cn(
-                    'relative p-4 border-b border-gray-50 hover:bg-gray-50 transition-colors',
+                    'relative p-3 sm:p-4 border-b border-gray-50 hover:bg-gray-50 transition-colors',
                     !notification.read && 'bg-blue-50/50'
                   )}
                 >
@@ -179,10 +179,10 @@ export function NotificationBell() {
 
           {/* 푸터 */}
           {notifications.length > 5 && (
-            <div className="p-3 border-t border-gray-100 text-center">
+            <div className="p-2 sm:p-3 border-t border-gray-100 text-center">
               <Link
                 href="/notifications"
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                className="text-xs sm:text-sm text-blue-600 hover:text-blue-700 font-medium"
                 onClick={() => setIsOpen(false)}
               >
                 모든 알림 보기
@@ -198,14 +198,14 @@ export function NotificationBell() {
 
 function NotificationContent({ notification }: { notification: any }) {
   return (
-    <div className="flex items-start gap-3 cursor-pointer group">
+    <div className="flex items-start gap-2 sm:gap-3 cursor-pointer group">
       <div className="flex-shrink-0 text-xl">
         {getNotificationIcon(notification.type)}
       </div>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <p className="font-medium text-sm text-gray-900 truncate">
+          <p className="font-medium text-xs sm:text-sm text-gray-900 truncate">
             {notification.title}
           </p>
           {!notification.read && (
@@ -213,7 +213,7 @@ function NotificationContent({ notification }: { notification: any }) {
           )}
         </div>
 
-        <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+        <p className="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-2">
           {notification.message}
         </p>
 

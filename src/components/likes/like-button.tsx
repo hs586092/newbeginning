@@ -173,7 +173,7 @@ export function LikeButton({
       <div className={`flex items-center space-x-2 ${className}`}>
         <div
           ref={likeButtonRef}
-          className={`p-2 rounded-full transition-colors cursor-pointer select-none touch-manipulation ${
+          className={`p-3 sm:p-2 rounded-full transition-colors cursor-pointer select-none touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center ${
             liked
               ? 'bg-red-100 text-red-600'
               : 'text-gray-500 hover:bg-gray-100'
@@ -189,7 +189,7 @@ export function LikeButton({
         {showLikesModal && likesCount > 0 && (
           <div
             ref={likesListButtonRef}
-            className="text-sm text-gray-500 hover:text-gray-700 cursor-pointer select-none"
+            className="text-sm text-gray-500 hover:text-gray-700 cursor-pointer select-none px-2 py-1 rounded min-h-[44px] min-w-[44px] flex items-center justify-center"
             role="button"
             tabIndex={0}
             aria-label={`좋아요 목록 보기 - ${likesCount}개`}
@@ -206,7 +206,7 @@ export function LikeButton({
     return (
       <div
         ref={likeButtonRef}
-        className={`p-2 rounded-full transition-colors cursor-pointer select-none touch-manipulation ${
+        className={`p-3 sm:p-2 rounded-full transition-colors cursor-pointer select-none touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center ${
           liked
             ? 'bg-red-100 text-red-600'
             : 'text-gray-500 hover:bg-gray-100'
@@ -227,7 +227,7 @@ export function LikeButton({
       {/* 좋아요 버튼 */}
       <div
         ref={likeButtonRef}
-        className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-colors cursor-pointer select-none min-h-[44px] touch-manipulation ${
+        className={`flex items-center space-x-2 px-4 sm:px-3 py-3 sm:py-2 rounded-full transition-colors cursor-pointer select-none min-h-[44px] touch-manipulation ${
           liked
             ? 'bg-red-100 text-red-600'
             : 'text-gray-500 hover:bg-gray-100'
@@ -246,7 +246,7 @@ export function LikeButton({
       {showLikesModal && likesCount > 0 && (
         <div
           ref={likesListButtonRef}
-          className="flex items-center space-x-1 px-2 py-1 rounded-full text-gray-500 hover:bg-gray-100 transition-colors cursor-pointer select-none"
+          className="flex items-center space-x-1 px-3 sm:px-2 py-2 sm:py-1 rounded-full text-gray-500 hover:bg-gray-100 transition-colors cursor-pointer select-none min-h-[44px] min-w-[44px] justify-center"
           role="button"
           tabIndex={0}
           aria-label={`좋아요 목록 보기 - ${likesCount}명`}

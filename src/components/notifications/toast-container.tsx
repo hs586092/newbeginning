@@ -64,7 +64,7 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
   return (
     <div
       className={cn(
-        'flex items-start gap-3 p-4 rounded-lg border shadow-lg max-w-sm w-full',
+        'flex items-start gap-2 sm:gap-3 p-3 sm:p-4 rounded-lg border shadow-lg max-w-sm w-full',
         'transform transition-all duration-300 ease-out',
         getColorClasses(),
         isVisible && !isExiting ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
@@ -75,12 +75,12 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
       </div>
 
       <div className="flex-1 min-w-0">
-        <div className="font-medium text-sm">
+        <div className="font-medium text-xs sm:text-sm">
           {toast.title}
         </div>
 
         {toast.message && (
-          <div className="text-sm opacity-80 mt-1">
+          <div className="text-xs sm:text-sm opacity-80 mt-1">
             {toast.message}
           </div>
         )}
@@ -100,7 +100,7 @@ function ToastItem({ toast, onRemove }: ToastItemProps) {
 
       <button
         onClick={handleClose}
-        className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+        className="flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors p-1 min-h-[44px] min-w-[44px] sm:min-h-auto sm:min-w-auto sm:p-0 flex items-center justify-center"
         aria-label="닫기"
       >
         <X className="w-4 h-4" />
@@ -113,7 +113,7 @@ export function ToastContainer() {
   const { toasts, removeToast } = useNotifications()
 
   return (
-    <div className="fixed top-4 right-4 z-50 space-y-3 pointer-events-none">
+    <div className="fixed top-4 right-2 sm:right-4 left-2 sm:left-auto z-50 space-y-3 pointer-events-none">
       <div className="space-y-3 pointer-events-auto">
         {toasts.map((toast) => (
           <ToastItem

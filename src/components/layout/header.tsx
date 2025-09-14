@@ -60,26 +60,35 @@ export function Header() {
           </div>
 
           {/* User Actions */}
-          <nav className="flex items-center space-x-4" role="navigation" aria-label="User menu">
-            
+          <nav className="flex items-center space-x-2 sm:space-x-4" role="navigation" aria-label="User menu">
+
             {isLoading ? (
               <div className="w-8 h-8 animate-spin rounded-full border-2 border-gray-300 border-t-blue-500" role="status" aria-label="Loading"></div>
             ) : isAuthenticated ? (
               <>
+                {/* 채팅 버튼 - 모바일에서는 아이콘만 */}
                 <Link href="/chat" aria-label="채팅 페이지로 이동">
-                  <Button variant="outline" size="sm" className="flex items-center h-9 px-3">
-                    <MessageCircle className="w-4 h-4 mr-1.5 sm:mr-2" aria-hidden="true" />
-                    <span className="text-sm">채팅</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center h-10 px-2 sm:px-3 min-w-[2.5rem]"
+                  >
+                    <MessageCircle className="w-4 h-4 sm:mr-2" aria-hidden="true" />
+                    <span className="text-sm hidden sm:inline">채팅</span>
                   </Button>
                 </Link>
 
                 {/* 알림 벨 */}
                 <NotificationBell />
 
+                {/* 글쓰기 버튼 - 모바일에서는 아이콘만 */}
                 <Link href="/write" aria-label="새 게시글 작성하기">
-                  <Button size="sm" className="flex items-center h-9 px-3">
-                    <PenSquare className="w-4 h-4 mr-1.5 sm:mr-2" aria-hidden="true" />
-                    <span className="text-sm">글쓰기</span>
+                  <Button
+                    size="sm"
+                    className="flex items-center h-10 px-2 sm:px-3 min-w-[2.5rem]"
+                  >
+                    <PenSquare className="w-4 h-4 sm:mr-2" aria-hidden="true" />
+                    <span className="text-sm hidden sm:inline">글쓰기</span>
                   </Button>
                 </Link>
                 
