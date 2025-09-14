@@ -8,13 +8,12 @@
 import { useEffect, useRef } from 'react'
 import { Heart, Users } from 'lucide-react'
 import { useLikes } from '@/contexts/like-context'
+import { useAuth } from '@/contexts/auth-context'
 import { toast } from 'sonner'
 
 interface LikeButtonProps {
   postId: string
   initialLikesCount?: number
-  isLoggedIn?: boolean
-  currentUserId?: string
   variant?: 'default' | 'compact' | 'icon-only'
   showLikesModal?: boolean
   className?: string
@@ -23,12 +22,11 @@ interface LikeButtonProps {
 export function LikeButton({
   postId,
   initialLikesCount = 0,
-  isLoggedIn = false,
-  currentUserId,
   variant = 'default',
   showLikesModal = true,
   className = ''
 }: LikeButtonProps) {
+  const { user, isAuthenticated } = useAuth() // AuthContext에서 직접 가져오기
   const { 
     toggleLike, 
     isLiked, 
@@ -46,10 +44,10 @@ export function LikeButton({
   
   // 컴포넌트 마운트 시 초기 상태 로드
   useEffect(() => {
-    if (currentUserId) {
+    if (user?.id) {
       loadLikes(postId)
     }
-  }, [postId, currentUserId, loadLikes])
+  }, [postId, user?.id, loadLikes])
   
   // 좋아요 토글 Native DOM 이벤트 처리
   useEffect(() => {
@@ -63,9 +61,21 @@ export function LikeButton({
       event.stopPropagation()
       
       console.log('🔥 LikeButton: 좋아요 토글 이벤트 발생!', postId)
+      console.log('🔍 LikeButton: 인증 상태 확인', { 
+        user: user?.id, 
+        isAuthenticated, 
+        email: user?.email 
+      })
       
-      if (!isLoggedIn) {
+      if (!isAuthenticated) {
+        console.error('❌ LikeButton: 인증되지 않은 사용자')
         toast.error('로그인이 필요합니다.')
+        return
+      }
+      
+      if (!user?.id) {
+        console.error('❌ LikeButton: 사용자 ID가 없음')
+        toast.error('사용자 정보를 가져올 수 없습니다.')
         return
       }
       
@@ -107,7 +117,7 @@ export function LikeButton({
       likeButton.removeEventListener('touchstart', handleLikeToggle)
       likeButton.removeEventListener('keydown', handleKeyDown)
     }
-  }, [postId, toggleLike, isLoggedIn])
+  }, [postId, toggleLike, isAuthenticated])
   
   // 좋아요 목록 보기 Native DOM 이벤트 처리
   useEffect(() => {

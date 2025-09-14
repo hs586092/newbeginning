@@ -2,6 +2,9 @@
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react'
 import { CommentWithProfile, CommentRPC } from '@/types/database.types'
+import { useAuth } from '@/contexts/auth-context'
+import { createClient } from '@/lib/supabase/client'
+import { isValidForSupabase, getUUIDValidationError } from '@/lib/utils/uuid-validation'
 
 interface CommentState {
   [postId: string]: {
@@ -38,31 +41,16 @@ interface CommentProviderProps {
 
 export function CommentProvider({ children }: CommentProviderProps) {
   const [commentState, setCommentState] = useState<CommentState>({})
-  
-  // 사전 초기화된 Supabase 클라이언트 (성능 최적화)
-  const [supabaseClient, setSupabaseClient] = useState<any>(null)
-  
-  // 컴포넌트 마운트 시 Supabase 클라이언트 사전 초기화
-  React.useEffect(() => {
-    const initSupabase = async () => {
-      const { createClient } = await import('@supabase/supabase-js')
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-      
-      if (supabaseUrl && supabaseKey) {
-        const client = createClient(supabaseUrl, supabaseKey)
-        setSupabaseClient(client)
-      }
-    }
-    
-    initSupabase()
-  }, [])
+  const { user, isAuthenticated } = useAuth() // AuthContext에서 사용자 정보 가져오기
+  const supabase = createClient() // 통합된 Supabase 클라이언트 사용
   
   const loadComments = useCallback(async (postId: string) => {
-    console.log('🔄 CommentProvider: 댓글 로딩 시작', postId)
+    console.log('🔄 CommentProvider: 댓글 로딩 시작', postId, { user: user?.id, isAuthenticated })
     
-    if (!supabaseClient) {
-      console.error('❌ Supabase 클라이언트가 초기화되지 않았습니다')
+    // UUID 유효성 검사
+    if (!isValidForSupabase(postId)) {
+      const error = getUUIDValidationError(postId)
+      console.error('❌ CommentProvider: 유효하지 않은 UUID (로딩)', { postId, error })
       return
     }
     
@@ -78,7 +66,7 @@ export function CommentProvider({ children }: CommentProviderProps) {
     try {
       
       // RPC 함수 호출로 변경
-      const { data: comments, error } = await supabaseClient
+      const { data: comments, error } = await supabase
         .rpc('get_post_comments', { p_post_id: postId })
 
       if (error) {
@@ -126,7 +114,7 @@ export function CommentProvider({ children }: CommentProviderProps) {
         }
       }))
     }
-  }, [supabaseClient]) // supabaseClient 의존성 추가
+  }, [supabase, user?.id, isAuthenticated]) // supabase 및 인증 상태 의존성 추가
   
   const toggleComments = useCallback(async (postId: string) => {
     console.log('🔄 CommentProvider: 댓글 토글', postId)
@@ -164,7 +152,7 @@ export function CommentProvider({ children }: CommentProviderProps) {
         }
       }))
     }
-  }, [commentState, loadComments])
+  }, [commentState, loadComments, user, isAuthenticated])
   
   const closeComments = useCallback((postId: string) => {
     setCommentState(prev => ({

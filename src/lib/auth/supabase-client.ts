@@ -256,7 +256,7 @@ export class SupabaseAuthClient {
       const baseUrl = typeof window !== 'undefined' 
         ? window.location.origin
         : (process.env.NODE_ENV === 'production' 
-            ? 'https://newbeginning-seven.vercel.app' 
+            ? process.env.NEXT_PUBLIC_SITE_URL || 'https://fortheorlingas.com' 
             : 'http://localhost:3000')
 
       const { data, error } = await this.supabase.auth.signInWithOAuth({
@@ -302,7 +302,7 @@ export class SupabaseAuthClient {
       const baseUrl = typeof window !== 'undefined' 
         ? window.location.origin
         : (process.env.NODE_ENV === 'production' 
-            ? 'https://newbeginning-seven.vercel.app' 
+            ? process.env.NEXT_PUBLIC_SITE_URL || 'https://fortheorlingas.com' 
             : 'http://localhost:3000')
 
       const { data, error } = await this.supabase.auth.signInWithOAuth({

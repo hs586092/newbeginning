@@ -7,6 +7,9 @@
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react'
 import { PostLikeWithProfile, PostLikeRPC, LikeToggleResponse } from '@/types/database.types'
+import { useAuth } from '@/contexts/auth-context'
+import { createClient } from '@/lib/supabase/client'
+import { isValidForSupabase, getUUIDValidationError } from '@/lib/utils/uuid-validation'
 
 // 1. 좋아요 상태 인터페이스
 interface LikeState {
@@ -51,39 +54,17 @@ interface LikeProviderProps {
 // 5. Provider 구현
 export function LikeProvider({ children }: LikeProviderProps) {
   const [likeState, setLikeState] = useState<LikeState>({})
-  
-  // ✨ 성능 최적화: 사전 초기화된 Supabase 클라이언트
-  const [supabaseClient, setSupabaseClient] = useState<any>(null)
-  
-  // 컴포넌트 마운트 시 Supabase 클라이언트 사전 초기화
-  React.useEffect(() => {
-    const initSupabase = async () => {
-      const { createClient } = await import('@supabase/supabase-js')
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-      
-      if (supabaseUrl && supabaseKey) {
-        const client = createClient(supabaseUrl, supabaseKey)
-        setSupabaseClient(client)
-      }
-    }
-    
-    initSupabase()
-  }, [])
-  
-  // 현재 사용자 정보 가져오기
-  const getCurrentUser = useCallback(async () => {
-    if (!supabaseClient) return null
-    const { data: { user } } = await supabaseClient.auth.getUser()
-    return user
-  }, [supabaseClient])
+  const { user, isAuthenticated } = useAuth() // AuthContext에서 사용자 정보 가져오기
+  const supabase = createClient() // 통합된 Supabase 클라이언트 사용
   
   // 좋아요 목록 로드
   const loadLikes = useCallback(async (postId: string) => {
-    console.log('🔄 LikeProvider: 좋아요 로딩 시작', postId)
+    console.log('🔄 LikeProvider: 좋아요 로딩 시작', postId, { user: user?.id, isAuthenticated })
     
-    if (!supabaseClient) {
-      console.error('❌ Supabase 클라이언트가 초기화되지 않았습니다')
+    // UUID 유효성 검사
+    if (!isValidForSupabase(postId)) {
+      const error = getUUIDValidationError(postId)
+      console.error('❌ LikeProvider: 유효하지 않은 UUID (로딩)', { postId, error })
       return
     }
     
@@ -97,10 +78,8 @@ export function LikeProvider({ children }: LikeProviderProps) {
     }))
     
     try {
-      const user = await getCurrentUser()
-      
-      // RPC 함수 호출 (추후 생성 예정)
-      const { data: likes, error } = await supabaseClient
+      // RPC 함수 호출 (AuthContext의 user 사용)
+      const { data: likes, error } = await supabase
         .rpc('get_post_likes', { p_post_id: postId })
 
       if (error) {
@@ -154,23 +133,32 @@ export function LikeProvider({ children }: LikeProviderProps) {
         }
       }))
     }
-  }, [supabaseClient, getCurrentUser])
+  }, [supabase, user?.id])
   
   // 좋아요 토글
   const toggleLike = useCallback(async (postId: string): Promise<LikeToggleResponse | null> => {
-    console.log('🔄 LikeProvider: 좋아요 토글', postId)
+    console.log('🔄 LikeProvider: 좋아요 토글', postId, { 
+      user: user?.id, 
+      email: user?.email,
+      isAuthenticated,
+      timestamp: new Date().toISOString()
+    })
     
-    if (!supabaseClient) {
-      console.error('❌ Supabase 클라이언트가 초기화되지 않았습니다')
+    // UUID 유효성 검사
+    if (!isValidForSupabase(postId)) {
+      const error = getUUIDValidationError(postId)
+      console.error('❌ LikeProvider: 유효하지 않은 UUID', { postId, error })
       return null
     }
     
+    if (!isAuthenticated || !user) {
+      console.error('❌ LikeProvider: 인증 실패', { isAuthenticated, user: !!user, userId: user?.id })
+      return null
+    }
+    
+    console.log('✅ LikeProvider: 인증 성공, RPC 호출 준비')
+    
     try {
-      const user = await getCurrentUser()
-      
-      if (!user) {
-        throw new Error('로그인이 필요합니다')
-      }
       
       const currentState = likeState[postId]
       const wasLiked = currentState?.isLiked || false
@@ -188,12 +176,21 @@ export function LikeProvider({ children }: LikeProviderProps) {
       }))
       
       // RPC 함수 호출
-      const { data, error } = await supabaseClient.rpc('toggle_post_like', {
+      console.log('🚀 LikeProvider: RPC 호출 시작', { 
+        function: 'toggle_post_like',
+        p_post_id: postId, 
+        p_user_id: user.id 
+      })
+      
+      const { data, error } = await supabase.rpc('toggle_post_like', {
         p_post_id: postId,
         p_user_id: user.id
       })
       
+      console.log('📡 LikeProvider: RPC 응답', { data, error })
+      
       if (error) {
+        console.error('❌ LikeProvider: RPC 오류', error)
         // Revert optimistic update
         setLikeState(prev => ({
           ...prev,
@@ -225,7 +222,7 @@ export function LikeProvider({ children }: LikeProviderProps) {
       console.error('❌ LikeProvider: 좋아요 토글 오류', error)
       return null
     }
-  }, [supabaseClient, getCurrentUser, likeState])
+  }, [supabase, likeState, user, isAuthenticated])
   
   // 좋아요 목록 열기
   const openLikes = useCallback(async (postId: string) => {

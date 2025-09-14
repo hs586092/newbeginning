@@ -6,7 +6,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { MainContainer } from '@/components/layout/main-container'
+import { LandingLayout } from '@/components/layout/unified-layout'
 import dynamic from 'next/dynamic'
 
 // 중요하지 않은 컴포넌트들을 지연 로딩
@@ -17,11 +17,13 @@ const UnifiedFeed = dynamic(() => import('@/components/feed/unified-feed').then(
   loading: () => <div className="space-y-4">{Array(3).fill(0).map((_, i) => <div key={i} className="h-48 bg-gray-50 animate-pulse rounded-lg" />)}</div>
 })
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import { PenSquare } from 'lucide-react'
 import Link from 'next/link'
 import type { CommunityCategory } from '@/types/navigation'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
+import { useAuth } from '@/contexts/auth-context'
 
 interface UnifiedHomepageProps {
   user?: SupabaseUser | null
@@ -48,10 +50,10 @@ const STATS_DATA = [
 ]
 
 export function UnifiedHomepage({
-  user,
-  isAuthenticated = false,
   searchParams = {}
-}: UnifiedHomepageProps) {
+}: Omit<UnifiedHomepageProps, 'user' | 'isAuthenticated'>) {
+  // Use AuthContext for real authentication state
+  const { user, isAuthenticated } = useAuth()
   const [activeTab, setActiveTab] = useState<string>('all')
   const [activeCategory, setActiveCategory] = useState<string>('all')
   const [activeFilter, setActiveFilter] = useState<string>('latest')
@@ -210,223 +212,87 @@ export function UnifiedHomepage({
   if (!mounted) return null
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50">
-      {isAuthenticated ? (
-        /* 인증된 사용자: 기존 구조 유지 */
-        <>
-          {/* 통합 네비게이션 */}
-          <UnifiedNavigation
-            isAuthenticated={isAuthenticated}
-            activeTab={activeTab}
-            activeCategory={activeCategory}
-            activeFilter={activeFilter}
-            searchQuery={searchQuery}
-            showSearch={isAuthenticated}
-            showAdvancedFilters={isAuthenticated}
-            resultCount={posts.length}
-            onTabChange={handleTabChange}
-            onCategoryChange={handleCategoryChange}
-            onFilterChange={handleFilterChange}
-            onSearchChange={handleSearchChange}
-            onAuthRequired={handleAuthRequired}
-          />
-        </>
-      ) : (
-        /* 비인증 사용자: 매력적인 랜딩페이지 with 중심 피드 */
-        <>
-          {/* 간소화된 히어로 섹션 */}
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600">
-            {/* 히어로 컨텐츠 - 배경 장식 제거 */}
-            <div className="py-12">
-              <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-                <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                  임신부터 첫돌까지, 모든 순간을 함께
-                </h1>
-                <p className="text-lg text-white mb-6 max-w-xl mx-auto">
-                  따뜻한 양육자들의 커뮤니티
-                </p>
-                
-                <div className="flex justify-center">
-                  <Link href="/signup">
-                    <Button className="bg-white text-purple-600 hover:bg-gray-100 px-6">
-                      무료로 시작하기
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
+    <LandingLayout isAuthenticated={isAuthenticated} user={user}>
+      {/* 통합 네비게이션 - 모든 사용자에게 표시 */}
+      <UnifiedNavigation
+        isAuthenticated={isAuthenticated}
+        activeTab={activeTab}
+        activeCategory={activeCategory}
+        activeFilter={activeFilter}
+        searchQuery={searchQuery}
+        showSearch={isAuthenticated}
+        showAdvancedFilters={isAuthenticated}
+        resultCount={posts.length}
+        onTabChange={handleTabChange}
+        onCategoryChange={handleCategoryChange}
+        onFilterChange={handleFilterChange}
+        onSearchChange={handleSearchChange}
+        onAuthRequired={handleAuthRequired}
+      />
 
-          {/* 메인 콘텐츠 영역 */}
-          <div id="feed" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-              {/* 메인 피드 (중심) */}
-              <div className="lg:col-span-3 order-2 lg:order-1">
-                <div className="mb-8">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                    👶 실시간 양육자들의 이야기
-                  </h2>
-                  <p className="text-lg text-gray-600">
-                    첫돌까지 함께하는 여정 - 소중한 21개월의 여정을 2,847명의 양육자들과 함께 나누고 있어요
-                  </p>
-                </div>
-
-                {/* 메인 피드 */}
-                <UnifiedFeed
-                  posts={posts}
-                  isLoading={isLoading}
-                  isAuthenticated={false}
-                  variant="landing"
-                  selectedCategory={activeCategory}
-                  activeFilter={activeFilter}
-                  smartFilter={activeFilter}
-                  onAuthRequired={handleAuthRequired}
-                />
-              </div>
-
-              {/* 사이드바 (매력적인 CTA 및 기능 소개) */}
-              <div className="lg:col-span-1 order-1 lg:order-2">
-                <div className="sticky top-6 space-y-6">
-                  {/* 빠른 회원가입 CTA */}
-                  <div className="bg-gradient-to-br from-pink-500 to-purple-600 rounded-xl p-6 text-white">
-                    <h3 className="text-lg font-bold mb-2">
-                      지금 바로 시작하세요! 🚀
-                    </h3>
-                    <p className="text-white text-sm mb-4">
-                      2분만에 가입하고 12,500명의 양육자들과 함께하세요
-                    </p>
-                    <Link href="/signup" className="w-full">
-                      <Button className="w-full bg-white text-purple-600 hover:bg-gray-100 font-semibold">
-                        무료 회원가입
-                      </Button>
-                    </Link>
-                    <div className="mt-3 text-center">
-                      <Link href="/login" className="text-white hover:text-gray-100 text-sm underline">
-                        이미 회원이신가요?
-                      </Link>
-                    </div>
-                  </div>
-
-                  {/* 주요 기능 */}
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
-                      <span className="mr-2">✨</span>
-                      주요 기능
-                    </h4>
-                    <ul className="space-y-3">
-                      <li className="flex items-start">
-                        <span className="mr-3 text-lg">💬</span>
-                        <div>
-                          <div className="font-medium text-gray-900">실시간 커뮤니티</div>
-                          <div className="text-sm text-gray-600">24시간 언제든 소통</div>
-                        </div>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="mr-3 text-lg">📅</span>
-                        <div>
-                          <div className="font-medium text-gray-900">주차별 맞춤 정보</div>
-                          <div className="text-sm text-gray-600">정확도 95% 의료진 검수</div>
-                        </div>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="mr-3 text-lg">👩‍⚕️</span>
-                        <div>
-                          <div className="font-medium text-gray-900">전문의 상담</div>
-                          <div className="text-sm text-gray-600">평균 답변시간 2시간</div>
-                        </div>
-                      </li>
-                      <li className="flex items-start">
-                        <span className="mr-3 text-lg">📊</span>
-                        <div>
-                          <div className="font-medium text-gray-900">성장 기록</div>
-                          <div className="text-sm text-gray-600">AI 기반 발달 분석</div>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-
-                  {/* 사용자 후기 */}
-                  <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
-                    <div className="flex items-center mb-3">
-                      <div className="flex text-yellow-400">
-                        ⭐⭐⭐⭐⭐
-                      </div>
-                      <span className="ml-2 text-sm text-gray-600">4.9/5.0</span>
-                    </div>
-                    <p className="text-gray-700 text-sm mb-3 italic">
-                      &ldquo;첫 아이라 모든게 걱정이었는데, 여기서 많은 도움을 받았어요. 특히 같은 주차 예비맘들과 이야기하니 마음이 든든해졌습니다.&rdquo;
-                    </p>
-                    <div className="text-xs text-gray-500">
-                      - 29주차 예비맘 김○○님
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* 인증된 사용자의 경우 기존 구조 유지 */}
-      {isAuthenticated && (
-        <MainContainer 
-          variant="dashboard"
-          showSidebar={true}
-        >
-          <div className="space-y-6">
-            {/* 대시보드 헤더 */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900">
-                    안녕하세요, {user?.email}님! 👋
-                  </h1>
-                  <p className="text-gray-600 mt-1">
-                    오늘도 따뜻한 육아 이야기를 나누어요
-                  </p>
-                </div>
+      {/* 히어로 섹션 - 모든 사용자에게 동일하게 표시 */}
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 mb-8 rounded-xl overflow-hidden">
+        <div className="py-12">
+          <div className="max-w-4xl mx-auto text-center px-6">
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              임신부터 첫돌까지, 모든 순간을 함께
+            </h1>
+            <p className="text-lg text-blue-100 mb-6 max-w-xl mx-auto">
+              {isAuthenticated 
+                ? `${user?.email}님과 함께하는 따뜻한 양육자들의 커뮤니티`
+                : "따뜻한 양육자들의 커뮤니티에서 소중한 경험을 나누세요"
+              }
+            </p>
+            
+            <div className="flex justify-center">
+              {isAuthenticated ? (
                 <Link href="/write">
-                  <Button className="bg-gradient-to-r from-pink-500 to-purple-600 text-white">
+                  <Button className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold">
                     <PenSquare className="w-4 h-4 mr-2" />
-                    글쓰기
+                    새 글 작성하기
                   </Button>
                 </Link>
-              </div>
-              
-              {/* 커뮤니티 통계 */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                {STATS_DATA.map((stat, index) => (
-                  <div key={index} className="text-center p-3 bg-gray-50 rounded-lg">
-                    <div className="text-2xl mb-1">{stat.icon}</div>
-                    <div className={`text-lg font-semibold ${stat.color}`}>
-                      {stat.value}
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {stat.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
+              ) : (
+                <Link href="/signup">
+                  <Button className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-3 text-lg font-semibold">
+                    무료로 시작하기
+                  </Button>
+                </Link>
+              )}
             </div>
-
-            {/* 통합 피드 */}
-            <UnifiedFeed
-              posts={posts}
-              isLoading={isLoading}
-              isAuthenticated={true}
-              currentUserId={user?.id}
-              variant="dashboard"
-              selectedCategory={activeCategory}
-              activeFilter={activeFilter}
-              smartFilter={activeFilter}
-              showSearch={true}
-              showAdvancedFilters={true}
-              onAuthRequired={handleAuthRequired}
-            />
           </div>
-        </MainContainer>
-      )}
-    </div>
+        </div>
+      </div>
+
+      {/* 메인 피드 섹션 */}
+      <div className="space-y-6">
+        {!isAuthenticated && (
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              👶 실시간 양육자들의 이야기
+            </h2>
+            <p className="text-lg text-gray-600">
+              첫돌까지 함께하는 여정 - 소중한 21개월의 여정을 2,847명의 양육자들과 함께 나누고 있어요
+            </p>
+          </div>
+        )}
+
+        {/* 통합 피드 */}
+        <UnifiedFeed
+          posts={posts}
+          isLoading={isLoading}
+          isAuthenticated={isAuthenticated}
+          currentUserId={user?.id}
+          variant={isAuthenticated ? "dashboard" : "landing"}
+          selectedCategory={activeCategory}
+          activeFilter={activeFilter}
+          smartFilter={activeFilter}
+          showSearch={isAuthenticated}
+          showAdvancedFilters={isAuthenticated}
+          onAuthRequired={handleAuthRequired}
+        />
+      </div>
+    </LandingLayout>
   )
 }
 

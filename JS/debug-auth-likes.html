@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Authentication & Likes Debug</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>Authentication & Likes System Debug</h1>
+    
+    <div id="status">Loading...</div>
+    
+    <button onclick="testAuth()">Test Authentication</button>
+    <button onclick="testLikeFunction()">Test Like RPC Function</button>
+    <button onclick="testCommentFunction()">Test Comment RPC Function</button>
+    
+    <div id="results"></div>
+    
+    <script>
+        // Initialize Supabase client
+        const supabase = window.supabase.createClient(
+            'https://spgcihtrquywmaieflue.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwZ2NpaHRycXV5d21haWVmbHVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2MjU2OTYsImV4cCI6MjA3MjIwMTY5Nn0.MjUPXYGYcwEzyPuNG4t5lGFkfEYrYZP7-mKER6CCuJc'
+        )
+        
+        function log(message, data) {
+            const results = document.getElementById('results')
+            results.innerHTML += `<div><strong>${message}:</strong> ${JSON.stringify(data, null, 2)}</div><br>`
+            console.log(message, data)
+        }
+        
+        async function testAuth() {
+            try {
+                const { data: { user }, error } = await supabase.auth.getUser()
+                log('Current User', { user, error })
+                
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+                log('Current Session', { session, sessionError })
+                
+                if (user) {
+                    document.getElementById('status').textContent = `Authenticated as: ${user.email}`
+                } else {
+                    document.getElementById('status').textContent = 'Not authenticated'
+                }
+            } catch (error) {
+                log('Auth Error', error)
+            }
+        }
+        
+        async function testLikeFunction() {
+            try {
+                const { data: { user } } = await supabase.auth.getUser()
+                if (!user) {
+                    log('Like Test Error', 'User not authenticated')
+                    return
+                }
+                
+                // Test with a sample post ID - using a UUID format
+                const testPostId = '123e4567-e89b-12d3-a456-426614174000'
+                
+                log('Testing toggle_post_like RPC', { postId: testPostId, userId: user.id })
+                
+                const { data, error } = await supabase.rpc('toggle_post_like', {
+                    p_post_id: testPostId,
+                    p_user_id: user.id
+                })
+                
+                log('Like RPC Result', { data, error })
+                
+                // Also test get_post_likes
+                const { data: likesData, error: likesError } = await supabase.rpc('get_post_likes', {
+                    p_post_id: testPostId
+                })
+                
+                log('Get Likes RPC Result', { likesData, likesError })
+                
+            } catch (error) {
+                log('Like Function Error', error)
+            }
+        }
+        
+        async function testCommentFunction() {
+            try {
+                const { data: { user } } = await supabase.auth.getUser()
+                if (!user) {
+                    log('Comment Test Error', 'User not authenticated')
+                    return
+                }
+                
+                // Test with a sample post ID
+                const testPostId = '123e4567-e89b-12d3-a456-426614174000'
+                
+                log('Testing get_post_comments RPC', { postId: testPostId })
+                
+                const { data, error } = await supabase.rpc('get_post_comments', {
+                    p_post_id: testPostId
+                })
+                
+                log('Comment RPC Result', { data, error })
+                
+            } catch (error) {
+                log('Comment Function Error', error)
+            }
+        }
+        
+        // Auto-test on load
+        window.onload = function() {
+            testAuth()
+        }
+    </script>
+</body>
+</html>
