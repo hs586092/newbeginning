@@ -2,14 +2,15 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { 
-  User, 
-  LogOut, 
-  PenSquare, 
+import {
+  User,
+  LogOut,
+  PenSquare,
   FileText,
   MessageCircle
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
+import { NotificationBell } from '@/components/notifications/notification-bell'
 import { toast } from 'sonner'
 
 export function Header() {
@@ -71,7 +72,10 @@ export function Header() {
                     <span className="text-sm">채팅</span>
                   </Button>
                 </Link>
-                
+
+                {/* 알림 벨 */}
+                <NotificationBell />
+
                 <Link href="/write" aria-label="새 게시글 작성하기">
                   <Button size="sm" className="flex items-center h-9 px-3">
                     <PenSquare className="w-4 h-4 mr-1.5 sm:mr-2" aria-hidden="true" />

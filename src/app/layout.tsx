@@ -6,6 +6,9 @@ import { WebsiteStructuredData } from '@/components/seo/structured-data'
 import { AuthProvider } from '@/contexts/auth-context'
 import { CommentProvider } from '@/contexts/comment-context'
 import { LikeProvider } from '@/contexts/like-context'
+import { NotificationProvider } from '@/contexts/notification-context'
+import { RealtimeProvider } from '@/components/providers/realtime-provider'
+import { ToastContainer } from '@/components/notifications/toast-container'
 import { Toaster } from 'sonner'
 import { PerformanceMonitor } from '@/components/performance-monitor'
 
@@ -103,7 +106,7 @@ export default function RootLayout({
         <meta name="format-detection" content="telephone=no" />
       </head>
       <body className={inter.className}>
-            <AuthProvider 
+            <AuthProvider
               config={{
                 redirectOnSignIn: '/',
                 redirectOnSignOut: '/',
@@ -111,19 +114,26 @@ export default function RootLayout({
                 autoRefreshProfile: true
               }}
             >
-              <CommentProvider>
-                <LikeProvider>
-                  <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-blue-50 transition-colors">
-                    <ConditionalHeader />
-                    <main>{children}</main>
-                  </div>
-                </LikeProvider>
-                <Toaster 
-                  position="top-right"
-                  richColors
-                />
-                <PerformanceMonitor />
-              </CommentProvider>
+              <NotificationProvider>
+                <CommentProvider>
+                  <LikeProvider>
+                    <RealtimeProvider>
+                      <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-blue-50 transition-colors">
+                        <ConditionalHeader />
+                        <main>{children}</main>
+                      </div>
+
+                      {/* 토스트 알림 컨테이너 */}
+                      <ToastContainer />
+                    </RealtimeProvider>
+                  </LikeProvider>
+                  <Toaster
+                    position="top-right"
+                    richColors
+                  />
+                  <PerformanceMonitor />
+                </CommentProvider>
+              </NotificationProvider>
             </AuthProvider>
       </body>
     </html>

@@ -9,6 +9,7 @@ import { useEffect, useRef } from 'react'
 import { Heart, Users } from 'lucide-react'
 import { useLikes } from '@/contexts/like-context'
 import { useAuth } from '@/contexts/auth-context'
+import { useNotifications } from '@/contexts/notification-context'
 import { toast } from 'sonner'
 
 interface LikeButtonProps {
@@ -27,20 +28,22 @@ export function LikeButton({
   className = ''
 }: LikeButtonProps) {
   const { user, isAuthenticated } = useAuth() // AuthContext에서 직접 가져오기
-  const { 
-    toggleLike, 
-    isLiked, 
-    getLikesCount, 
-    openLikes, 
-    loadLikes 
+  const {
+    toggleLike,
+    isLiked,
+    getLikesCount,
+    openLikes,
+    loadLikes
   } = useLikes()
-  
+  const { realtimeCounts } = useNotifications()
+
   const likeButtonRef = useRef<HTMLDivElement>(null)
   const likesListButtonRef = useRef<HTMLDivElement>(null)
-  
-  // 상태 값들
+
+  // 상태 값들 - 실시간 카운터 우선 사용
   const liked = isLiked(postId)
-  const likesCount = getLikesCount(postId) || initialLikesCount
+  const realtimeLikesCount = realtimeCounts[postId]?.likes
+  const likesCount = realtimeLikesCount !== undefined ? realtimeLikesCount : (getLikesCount(postId) || initialLikesCount)
   
   // 컴포넌트 마운트 시 초기 상태 로드
   useEffect(() => {
