@@ -335,18 +335,22 @@ export function UnifiedFeed({
             
             {/* 상호작용 버튼들 */}
             {isAuthenticated ? (
-              <PostInteractionsV3
-                postId={post.id}
-                initialLiked={post.is_hugged_by_me}
-                initialBookmarked={post.is_bookmarked_by_me}
-                likesCount={post.hugs}
-                commentsCount={post.comments_count || 0}
-                viewsCount={post.views}
-                isLoggedIn={true}
-                currentUserId={currentUserId}
-                variant="full"
-                showLikesModal={true}
-              />
+              <div>
+                <PostInteractionsV3
+                  postId={post.id}
+                  initialLiked={post.is_hugged_by_me}
+                  initialBookmarked={post.is_bookmarked_by_me}
+                  likesCount={post.hugs}
+                  commentsCount={post.comments_count || 0}
+                  viewsCount={post.views}
+                  isLoggedIn={true}
+                  currentUserId={currentUserId}
+                  variant="full"
+                  showLikesModal={true}
+                  postTitle={post.content.substring(0, 50)}
+                  postContent={post.content}
+                />
+              </div>
             ) : (
               /* 비인증 사용자용 상호작용 표시 */
               <div className="flex items-center justify-between px-6 py-3 border-t border-gray-100 bg-gray-50">

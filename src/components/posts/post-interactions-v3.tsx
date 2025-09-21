@@ -6,16 +6,19 @@
 'use client'
 
 import { useState, useTransition, useEffect, useRef, memo, useMemo } from 'react'
-import { Heart, MessageCircle, Bookmark, Users } from 'lucide-react'
-import { toggleBookmark } from '@/lib/posts/actions'
+import { Heart, MessageCircle, Users } from 'lucide-react'
 import { useComments } from '@/contexts/comment-context'
 import { useLikes } from '@/contexts/like-context'
+import { isValidForSupabase } from '@/lib/utils/uuid-validation'
+import { BookmarkButton } from '@/components/ui/bookmark-button'
+import { ShareButton } from '@/components/ui/share-button'
+import { getBookmarkStatus } from '@/lib/actions/bookmarks'
 import { toast } from 'sonner'
 
 interface PostInteractionsV3Props {
   postId: string
   initialLiked?: boolean
-  initialBookmarked: boolean
+  initialBookmarked?: boolean
   likesCount?: number
   commentsCount?: number
   viewsCount: number
@@ -23,6 +26,8 @@ interface PostInteractionsV3Props {
   currentUserId?: string
   variant?: 'full' | 'compact'
   showLikesModal?: boolean
+  postTitle?: string
+  postContent?: string
 }
 
 const PostInteractionsV3Component = memo(function PostInteractionsV3({
@@ -35,28 +40,57 @@ const PostInteractionsV3Component = memo(function PostInteractionsV3({
   isLoggedIn = false,
   currentUserId,
   variant = 'full',
-  showLikesModal = true
+  showLikesModal = true,
+  postTitle,
+  postContent
 }: PostInteractionsV3Props) {
   console.log('🚀 PostInteractionsV3 렌더링! Post ID:', postId)
-  
-  // 북마크 상태 (기존 로직 유지)
-  const [isBookmarked, setIsBookmarked] = useState(initialBookmarked)
-  const [isPendingBookmark, startBookmarkTransition] = useTransition()
+
+  // Validate UUID but continue rendering with disabled state for invalid UUIDs
+  const isValidPostId = isValidForSupabase(postId)
+  if (!isValidPostId) {
+    console.debug('PostInteractionsV3: Invalid postId, rendering disabled state:', postId)
+  }
+
+  // 북마크 상태 (새로운 컴포넌트 사용)
+  const [isBookmarked, setIsBookmarked] = useState(initialBookmarked || false)
+  const [isLoadingBookmark, setIsLoadingBookmark] = useState(false)
+
+  // 북마크 상태 로드
+  useEffect(() => {
+    if (!currentUserId || initialBookmarked !== undefined) return
+
+    const loadBookmarkStatus = async () => {
+      setIsLoadingBookmark(true)
+      try {
+        const { isBookmarked: bookmarked } = await getBookmarkStatus(postId)
+        setIsBookmarked(bookmarked)
+      } catch (error) {
+        console.error('Failed to load bookmark status:', error)
+      } finally {
+        setIsLoadingBookmark(false)
+      }
+    }
+
+    loadBookmarkStatus()
+  }, [postId, currentUserId, initialBookmarked])
   
   // 댓글 시스템 연동
   const { toggleComments, getCommentsCount, isCommentsOpen } = useComments()
   const commentButtonRef = useRef<HTMLDivElement>(null)
   
   // 좋아요 시스템 연동 (새 아키텍처)
-  const { 
-    toggleLike, 
-    isLiked, 
-    getLikesCount, 
+  const {
+    likeState,
+    toggleLike,
+    isLiked,
+    getLikesCount,
     openLikes,
-    loadLikes 
+    loadLikes
   } = useLikes()
   const likeButtonRef = useRef<HTMLDivElement>(null)
   const likesListButtonRef = useRef<HTMLDivElement>(null)
+  const lastLikeClickRef = useRef<number>(0) // debounce를 위한 ref
   
   // ✨ 성능 최적화: 동적 상태 값들을 useMemo로 캐시
   const memoizedValues = useMemo(() => {
@@ -66,7 +100,7 @@ const PostInteractionsV3Component = memo(function PostInteractionsV3({
     const commentsOpen = isCommentsOpen(postId)
     
     return { liked, likesCount, commentsCount, commentsOpen }
-  }, [postId, isLiked, getLikesCount, getCommentsCount, isCommentsOpen, initialLikesCount, initialCommentsCount])
+  }, [postId, likeState, isLiked, getLikesCount, getCommentsCount, isCommentsOpen, initialLikesCount, initialCommentsCount])
   
   const { liked, likesCount, commentsCount, commentsOpen } = memoizedValues
   
@@ -87,7 +121,15 @@ const PostInteractionsV3Component = memo(function PostInteractionsV3({
     const handleLikeToggle = async (event: Event) => {
       event.preventDefault()
       event.stopPropagation()
-      
+
+      // Debounce: 500ms 이내 중복 클릭 방지
+      const now = Date.now()
+      if (now - lastLikeClickRef.current < 500) {
+        console.log('🚫 PostInteractionsV3: 중복 클릭 무시 (debounce)')
+        return
+      }
+      lastLikeClickRef.current = now
+
       console.log('🔥 PostInteractionsV3: 좋아요 토글 이벤트 발생!', postId)
       
       if (!isLoggedIn) {
@@ -120,17 +162,13 @@ const PostInteractionsV3Component = memo(function PostInteractionsV3({
       }
     }
     
-    // 다중 이벤트 등록
+    // 단일 이벤트 등록 (중복 방지)
     likeButton.addEventListener('click', handleLikeToggle, { passive: false })
-    likeButton.addEventListener('mousedown', handleLikeToggle, { passive: false })
-    likeButton.addEventListener('touchstart', handleLikeToggle, { passive: false })
     likeButton.addEventListener('keydown', handleKeyDown)
-    
+
     return () => {
       console.log('🧹 PostInteractionsV3: 좋아요 네이티브 DOM 이벤트 리스너 제거')
       likeButton.removeEventListener('click', handleLikeToggle)
-      likeButton.removeEventListener('mousedown', handleLikeToggle)
-      likeButton.removeEventListener('touchstart', handleLikeToggle)
       likeButton.removeEventListener('keydown', handleKeyDown)
     }
   }, [postId, toggleLike, isLoggedIn])
@@ -229,35 +267,9 @@ const PostInteractionsV3Component = memo(function PostInteractionsV3({
     }
   }, [postId, toggleComments, isLoggedIn])
   
-  // 북마크 토글 (기존 React 이벤트 방식 유지)
-  const handleBookmark = async () => {
-    if (!isLoggedIn) {
-      toast.error('로그인이 필요합니다.')
-      return
-    }
-
-    startBookmarkTransition(async () => {
-      const previousBookmarked = isBookmarked
-      setIsBookmarked(!isBookmarked)
-
-      try {
-        const result = await toggleBookmark(postId)
-        
-        if (result?.error) {
-          setIsBookmarked(previousBookmarked)
-          toast.error(result.error)
-        } else {
-          if (result?.bookmarked) {
-            toast.success('📚 북마크에 저장했어요!')
-          } else {
-            toast.success('북마크에서 제거했어요.')
-          }
-        }
-      } catch (error) {
-        setIsBookmarked(previousBookmarked)
-        toast.error('오류가 발생했습니다.')
-      }
-    })
+  // 북마크 상태 변경 콜백
+  const handleBookmarkChange = (newState: boolean) => {
+    setIsBookmarked(newState)
   }
   
   // 컴팩트 버전
@@ -296,15 +308,22 @@ const PostInteractionsV3Component = memo(function PostInteractionsV3({
           </div>
           
           {/* 북마크 버튼 */}
-          <button
-            onClick={handleBookmark}
-            disabled={isPendingBookmark}
-            className={`p-2 rounded-full transition-colors touch-manipulation ${
-              isBookmarked ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'
-            } ${isPendingBookmark ? 'opacity-50' : ''}`}
-          >
-            <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
-          </button>
+          <BookmarkButton
+            postId={postId}
+            isBookmarked={isBookmarked}
+            onToggle={handleBookmarkChange}
+            size="sm"
+            variant="ghost"
+          />
+
+          {/* 공유 버튼 */}
+          <ShareButton
+            postId={postId}
+            postTitle={postTitle || postContent?.substring(0, 50) || '게시글'}
+            postContent={postContent}
+            size="sm"
+            variant="ghost"
+          />
         </div>
         
         <div className="text-xs text-gray-400">
@@ -370,15 +389,24 @@ const PostInteractionsV3Component = memo(function PostInteractionsV3({
         </div>
         
         {/* 북마크 버튼 */}
-        <button
-          onClick={handleBookmark}
-          disabled={isPendingBookmark}
-          className={`flex items-center space-x-2 px-3 py-2 rounded-full transition-colors min-h-[44px] touch-manipulation ${
-            isBookmarked ? 'bg-blue-100 text-blue-600' : 'text-gray-500 hover:bg-gray-100'
-          } ${isPendingBookmark ? 'opacity-50' : ''}`}
-        >
-          <Bookmark className={`w-5 h-5 ${isBookmarked ? 'fill-current' : ''}`} />
-        </button>
+        <BookmarkButton
+          postId={postId}
+          isBookmarked={isBookmarked}
+          onToggle={handleBookmarkChange}
+          size="md"
+          variant="ghost"
+          showLabel
+        />
+
+        {/* 공유 버튼 */}
+        <ShareButton
+          postId={postId}
+          postTitle={postTitle || postContent?.substring(0, 50) || '게시글'}
+          postContent={postContent}
+          size="md"
+          variant="ghost"
+          showLabel
+        />
       </div>
       
       <div className="text-xs sm:text-sm text-gray-400 text-center sm:text-right">
