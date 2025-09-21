@@ -180,7 +180,16 @@ export function Header() {
                 </>
               ) : (
                 <div className="flex items-center space-x-2">
-                  {/* 로그인 버튼 제거 - 랜딩페이지에서 자연스럽게 유도 */}
+                  <Link href="/login">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center h-10 px-3"
+                    >
+                      <User className="w-4 h-4 mr-2" aria-hidden="true" />
+                      <span className="text-sm">로그인</span>
+                    </Button>
+                  </Link>
                 </div>
               )}
             </nav>

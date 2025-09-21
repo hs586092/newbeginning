@@ -2,7 +2,8 @@
 
 import { useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase/client' // Use Realtime-enabled client
+import { supabase } from '@/lib/supabase/client'
+import { realtimeManager } from '@/lib/realtime/connection-manager'
 import { useNotifications } from '@/contexts/notification-context'
 import { useAuth } from '@/contexts/auth-context'
 
@@ -38,17 +39,29 @@ export function useRealtimeSubscription() {
   }, [updateRealtimeCount])
 
   useEffect(() => {
-    // Subscribe to posts changes
-    const postsChannel = supabase
-      .channel('posts-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'posts'
-        },
-        (payload: any) => {
+    // Only subscribe if user is authenticated
+    if (!user?.id) {
+      console.log('User not authenticated, skipping realtime subscriptions')
+      return
+    }
+
+    const setupRealtimeSubscriptions = async () => {
+      try {
+        // Subscribe to posts changes
+        const postsChannel = await realtimeManager.createChannel('posts-changes')
+        if (!postsChannel) {
+          console.warn('Failed to create posts channel')
+          return
+        }
+
+        postsChannel.on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'posts'
+          },
+          (payload: any) => {
           console.log('New post created:', payload.new)
 
           // 자신의 게시글이 아닌 경우에만 알림

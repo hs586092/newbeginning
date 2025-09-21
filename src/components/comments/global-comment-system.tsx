@@ -12,7 +12,7 @@ interface GlobalCommentSystemProps {
 }
 
 export function GlobalCommentSystem({ currentUserId }: GlobalCommentSystemProps) {
-  const { commentState, closeComments } = useComments()
+  const { commentState, closeComments, loadComments } = useComments()
   const [mounted, setMounted] = useState(false)
   
   useEffect(() => {
@@ -50,12 +50,13 @@ export function GlobalCommentSystem({ currentUserId }: GlobalCommentSystemProps)
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {/* ✨ 성능 최적화: 댓글 폼은 항상 표시, 로딩은 백그라운드에서 */}
-          <CommentForm 
-            postId={postId} 
+          <CommentForm
+            postId={postId}
             isLoggedIn={!!currentUserId}
-            onSuccess={() => {
-              // 댓글 작성 성공 시 새로고침은 CommentProvider에서 처리
-              console.log('댓글 작성 성공')
+            onSuccess={async () => {
+              // 댓글 작성 성공 시 댓글 목록 새로고침
+              console.log('댓글 작성 성공, 목록 새로고침 중...')
+              await loadComments(postId)
             }}
           />
           

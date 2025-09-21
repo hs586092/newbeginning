@@ -1,12 +1,13 @@
 'use client'
 
-import React, { 
-  createContext, 
-  useContext, 
+import React, {
+  createContext,
+  useContext,
   useState,
-  useEffect, 
+  useEffect,
   useCallback,
-  useRef
+  useRef,
+  useMemo
 } from 'react'
 import { useRouter } from 'next/navigation'
 import { SupabaseAuthClient } from '@/lib/auth/supabase-client'
@@ -651,10 +652,10 @@ export function AuthProvider({ children, config = {} }: AuthProviderProps) {
     return machineContext.profile.user_type === role
   }, [machineContext.profile])
 
-  // Initialize authentication on mount
+  // ✅ CLAUDE.md 원칙: 단순함 우선 - 의존성 배열 제거로 무한 루프 방지
   useEffect(() => {
     initializeAuth()
-  }, [initializeAuth])
+  }, []) // 빈 의존성 배열 - 마운트 시에만 실행
 
   // Subscribe to auth state changes
   useEffect(() => {

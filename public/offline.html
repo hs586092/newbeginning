@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오프라인 - ParentWise</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #fdf2f8 0%, #f8fafc 50%, #dbeafe 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 500px;
+        }
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            color: #1f2937;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        p {
+            color: #6b7280;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        .retry-button {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .retry-button:hover {
+            transform: translateY(-1px);
+        }
+        .features {
+            margin-top: 2rem;
+            text-align: left;
+        }
+        .feature {
+            margin: 0.5rem 0;
+            color: #4b5563;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📶❌</div>
+        <h1>인터넷 연결이 끊어졌습니다</h1>
+        <p>
+            ParentWise 커뮤니티에 접속하려면 인터넷 연결이 필요합니다.<br>
+            네트워크 상태를 확인하고 다시 시도해주세요.
+        </p>
+
+        <button class="retry-button" onclick="window.location.reload()">
+            🔄 다시 시도
+        </button>
+
+        <div class="features">
+            <h3>오프라인 상태에서도:</h3>
+            <div class="feature">• 이전에 방문한 페이지는 캐시에서 볼 수 있습니다</div>
+            <div class="feature">• 네트워크 복구 시 자동으로 동기화됩니다</div>
+            <div class="feature">• 작성 중인 내용은 저장됩니다</div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-retry when online
+        window.addEventListener('online', () => {
+            window.location.reload()
+        })
+
+        // Show connection status
+        function updateConnectionStatus() {
+            if (navigator.onLine) {
+                window.location.reload()
+            }
+        }
+
+        // Check connection periodically
+        setInterval(updateConnectionStatus, 5000)
+    </script>
+</body>
+</html>

@@ -58,35 +58,19 @@ function GoogleSignInButton() {
 }
 
 function KakaoSignInButton() {
-  const { signInWithKakao, isLoading } = useAuth()
-  const [isPending, setIsPending] = useState(false)
-
-  async function handleKakaoSignIn() {
-    setIsPending(true)
-    try {
-      const result = await signInWithKakao()
-      if (!result.success) {
-        toast.error(result.error || '카카오 로그인 중 오류가 발생했습니다.')
-      }
-    } catch (error) {
-      console.error('Kakao sign in error:', error)
-      toast.error('카카오 로그인 중 오류가 발생했습니다.')
-    } finally {
-      setIsPending(false)
-    }
-  }
-
   return (
     <Button
       type="button"
-      className="w-full bg-yellow-300 hover:bg-yellow-400 text-gray-900 border-yellow-300"
-      onClick={handleKakaoSignIn}
-      loading={isPending || isLoading}
+      disabled
+      className="w-full bg-gray-100 hover:bg-gray-100 text-gray-500 border-gray-200 cursor-not-allowed relative"
     >
       <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 3c5.799 0 10.5 3.664 10.5 8.185 0 4.52-4.701 8.184-10.5 8.184a13.5 13.5 0 0 1-1.727-.11l-4.408 2.883c-.501.265-.678.236-.472-.413l.892-3.678c-2.88-1.46-4.785-3.99-4.785-6.866C1.5 6.665 6.201 3 12 3z"/>
       </svg>
       카카오로 로그인
+      <span className="absolute right-3 text-xs bg-gray-200 px-2 py-1 rounded">
+        준비중
+      </span>
     </Button>
   )
 }

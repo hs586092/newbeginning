@@ -1,0 +1,21 @@
+{
+  "timestamp": "2025-09-16T07:01:35.991Z",
+  "bodyStyles": {
+    "fontFamily": "Inter, \"Inter Fallback\"",
+    "backgroundColor": "rgb(255, 255, 255)",
+    "color": "rgb(23, 23, 23)",
+    "fontSize": "16px"
+  },
+  "cssVariables": {
+    "--primary": "#3b82f6",
+    "--secondary": "#f1f5f9",
+    "--accent": "#f1f5f9",
+    "--background": "#fff",
+    "--border": "#e2e8f0"
+  },
+  "screenshots": [
+    "ui-analysis-full.png",
+    "ui-analysis-community.png",
+    "ui-analysis-post.png"
+  ]
+}

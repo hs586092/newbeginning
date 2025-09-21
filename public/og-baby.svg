@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFE5F1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F0F8FF;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#gradient)"/>
+
+  <!-- Baby icon (simplified) -->
+  <circle cx="300" cy="315" r="80" fill="#FF9FB2" opacity="0.3"/>
+  <circle cx="300" cy="300" r="60" fill="#FF9FB2"/>
+  <circle cx="285" cy="285" r="8" fill="#333"/>
+  <circle cx="315" cy="285" r="8" fill="#333"/>
+  <ellipse cx="300" cy="315" rx="20" ry="15" fill="#FF7A9A"/>
+
+  <!-- Title -->
+  <text x="450" y="280" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#333">
+    New Beginning
+  </text>
+
+  <!-- Subtitle -->
+  <text x="450" y="340" font-family="Arial, sans-serif" font-size="36" fill="#666">
+    임산부와 육아맘을 위한 커뮤니티
+  </text>
+
+  <!-- Description -->
+  <text x="450" y="400" font-family="Arial, sans-serif" font-size="24" fill="#999">
+    예비맘부터 1살 아기까지, 함께하는 육아 여정
+  </text>
+</svg>

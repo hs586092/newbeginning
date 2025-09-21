@@ -6,8 +6,7 @@
 'use client'
 
 import { PostLikeWithProfile } from '@/types/database.types'
-import { Heart, Clock, User } from 'lucide-react'
-import { OptimizedImage } from '@/components/ui/optimized-image'
+import { Heart, Clock } from 'lucide-react'
 
 interface LikeListProps {
   likes: PostLikeWithProfile[]
@@ -49,29 +48,11 @@ export function LikeList({ likes, currentUserId, postId }: LikeListProps) {
       }`}
     >
       <div className="flex items-center space-x-3">
-        {/* 프로필 이미지 */}
-        <div className="relative">
-          {like.profiles.avatar_url ? (
-            <OptimizedImage
-              src={like.profiles.avatar_url}
-              alt={like.profiles.username || 'User'}
-              width={40}
-              height={40}
-              className="rounded-full"
-              objectFit="cover"
-              sizes="40px"
-            />
-          ) : (
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-red-500 flex items-center justify-center">
-              <User className="w-5 h-5 text-white" />
-            </div>
-          )}
-          {/* 좋아요 아이콘 오버레이 */}
-          <div className="absolute -bottom-1 -right-1 bg-red-500 rounded-full p-1">
-            <Heart className="w-3 h-3 text-white fill-current" />
-          </div>
+        {/* 좋아요 아이콘 (아바타 대신) */}
+        <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+          <Heart className="w-4 h-4 text-white fill-current" />
         </div>
-        
+
         {/* 사용자 정보 */}
         <div>
           <div className="flex items-center space-x-2">

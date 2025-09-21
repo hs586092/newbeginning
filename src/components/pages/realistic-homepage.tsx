@@ -399,9 +399,9 @@ export function RealisticHomepage({ searchParams }: RealisticHomepageProps) {
               <p className="text-sm text-blue-800 mb-3 leading-relaxed">
                 첫돌까지는 초보엄마부터 베테랑맘까지 모든 육아맘들이 소통하는 공간이에요!
               </p>
-              <Link href={isAuthenticated ? "/write" : "/signup"}>
+              <Link href={isAuthenticated ? "/write" : "/login"}>
                 <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                  {isAuthenticated ? "첫 글 써보기" : "회원가입하고 시작하기"}
+                  {isAuthenticated ? "첫 글 써보기" : "로그인하고 시작하기"}
                 </Button>
               </Link>
             </div>

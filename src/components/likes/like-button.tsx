@@ -5,12 +5,14 @@
 
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Heart, Users } from 'lucide-react'
 import { useLikes } from '@/contexts/like-context'
 import { useAuth } from '@/contexts/auth-context'
 import { useNotifications } from '@/contexts/notification-context'
+import { isValidForSupabase } from '@/lib/utils/uuid-validation'
 import { toast } from 'sonner'
+import { logger } from '@/lib/utils/logger'
 
 interface LikeButtonProps {
   postId: string
@@ -27,6 +29,12 @@ export function LikeButton({
   showLikesModal = true,
   className = ''
 }: LikeButtonProps) {
+  // Validate UUID but continue rendering with disabled state for invalid UUIDs
+  const isValidPostId = isValidForSupabase(postId)
+  if (!isValidPostId) {
+    console.debug('LikeButton: Invalid postId, rendering disabled state:', postId)
+  }
+
   const { user, isAuthenticated } = useAuth() // AuthContext에서 직접 가져오기
   const {
     toggleLike,
@@ -64,18 +72,25 @@ export function LikeButton({
       event.stopPropagation()
       
       console.log('🔥 LikeButton: 좋아요 토글 이벤트 발생!', postId)
-      console.log('🔍 LikeButton: 인증 상태 확인', { 
-        user: user?.id, 
-        isAuthenticated, 
-        email: user?.email 
+
+      if (!isValidPostId) {
+        console.error('❌ LikeButton: Invalid postId')
+        toast.error('잘못된 게시글 ID입니다.')
+        return
+      }
+
+      console.log('🔍 LikeButton: 인증 상태 확인', {
+        user: user?.id,
+        isAuthenticated,
+        email: user?.email
       })
-      
+
       if (!isAuthenticated) {
         console.error('❌ LikeButton: 인증되지 않은 사용자')
         toast.error('로그인이 필요합니다.')
         return
       }
-      
+
       if (!user?.id) {
         console.error('❌ LikeButton: 사용자 ID가 없음')
         toast.error('사용자 정보를 가져올 수 없습니다.')

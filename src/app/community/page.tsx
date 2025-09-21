@@ -5,10 +5,12 @@ import { PlusCircle, Heart, Users, TrendingUp, MessageCircle } from 'lucide-reac
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { UnifiedFeed } from '@/components/feed/unified-feed'
+import { InfiniteFeed } from '@/components/feed/infinite-feed'
+import { RealtimeNotificationSystem } from '@/components/notifications/realtime-notification-system'
 import CategoryFilter from '@/components/social/category-filter'
 import PostForm from '@/components/social/post-form'
 import { createClient } from '@/lib/supabase/client'
+import { validateAndCleanPosts } from '@/lib/types/post-validation'
 
 // 통합된 Post 타입 정의
 interface UnifiedPost {
@@ -68,8 +70,11 @@ export default function CommunityPage() {
           .limit(20)
           
         if (postsData && !error && postsData.length > 0) {
-          // Transform database posts to match our Post interface
-          const transformedPosts: UnifiedPost[] = postsData.map((post: any) => ({
+          // First validate raw post data from database
+          const validPosts = validateAndCleanPosts(postsData)
+
+          // Transform validated database posts to match our Post interface
+          const transformedPosts: UnifiedPost[] = validPosts.map((post: any) => ({
             id: post.id,
             content: post.content || post.title || '내용을 불러올 수 없습니다',
             category_id: post.category || 'community',
@@ -295,20 +300,15 @@ export default function CommunityPage() {
             </Card>
           </div>
 
-          {/* Main Content - Social Feed */}
+          {/* Main Content - Infinite Feed */}
           <div className="flex-1">
-            <UnifiedFeed
-              posts={posts}
-              isLoading={isLoading}
-              isAuthenticated={true}
-              currentUserId="community_user"
-              variant="dashboard"
-              selectedCategory={selectedCategory === 'all' ? 'all' : selectedCategory}
-              selectedBabyMonth={selectedBabyMonth}
-              activeFilter="all"
-              smartFilter="latest"
-              showSearch={false}
-              showAdvancedFilters={false}
+            {/* Realtime Notification System */}
+            <RealtimeNotificationSystem />
+
+            <InfiniteFeed
+              category={selectedCategory === 'all' ? undefined : selectedCategory}
+              pageSize={10}
+              className="space-y-6"
             />
           </div>
         </div>

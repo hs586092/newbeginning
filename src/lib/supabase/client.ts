@@ -19,13 +19,20 @@ export function createClient() {
   )
 }
 
-// 채팅 시스템용 Realtime 클라이언트 (별도 인스턴스)
+// Realtime 클라이언트 (채팅 및 알림용)
 export const supabase = createBrowserClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key',
   {
     realtime: {
-      disabled: false // 채팅용 Realtime 활성화
+      disabled: false,
+      heartbeatIntervalMs: 30000,
+      reconnectAfterMs: (tries: number) => Math.min(tries * 1000, 10000),
+      logger: (level: string, message: string, details?: any) => {
+        if (level === 'error') {
+          console.error('Supabase Realtime error:', message, details)
+        }
+      }
     },
     auth: {
       persistSession: true,

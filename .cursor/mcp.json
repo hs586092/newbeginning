@@ -1,0 +1,43 @@
+{
+  "mcpServers": {
+    "playwright-mcp": {
+      "command": "@playwright/mcp",
+      "cwd": "/Users/hyeonsoo/newbeginning"
+    },
+    "filesystem": {
+      "command": "@modelcontextprotocol/server-filesystem",
+      "args": ["/Users/hyeonsoo/newbeginning"]
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": ""
+      }
+    },
+    "postgres": {
+      "command": "enhanced-postgres-mcp-server",
+      "env": {
+        "POSTGRES_CONNECTION_STRING": ""
+      }
+    },
+    "puppeteer-browser": {
+      "command": "puppeteer-mcp-server",
+      "cwd": "/Users/hyeonsoo/newbeginning"
+    },
+    "memory-knowledge-graph": {
+      "command": "@modelcontextprotocol/server-memory",
+      "cwd": "/Users/hyeonsoo/newbeginning"
+    },
+    "sequential-thinking": {
+      "command": "@modelcontextprotocol/server-sequential-thinking",
+      "cwd": "/Users/hyeonsoo/newbeginning"
+    },
+    "figma-design": {
+      "command": "figma-mcp",
+      "env": {
+        "FIGMA_ACCESS_TOKEN": ""
+      }
+    }
+  }
+}

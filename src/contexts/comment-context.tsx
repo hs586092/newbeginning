@@ -47,10 +47,18 @@ export function CommentProvider({ children }: CommentProviderProps) {
   const loadComments = useCallback(async (postId: string) => {
     console.log('🔄 CommentProvider: 댓글 로딩 시작', postId, { user: user?.id, isAuthenticated })
     
-    // UUID 유효성 검사
+    // UUID 유효성 검사 with detailed logging
     if (!isValidForSupabase(postId)) {
       const error = getUUIDValidationError(postId)
-      console.error('❌ CommentProvider: 유효하지 않은 UUID (로딩)', { postId, error })
+      console.error('❌ CommentProvider: 유효하지 않은 UUID (로딩)', {
+        postId: JSON.stringify(postId),
+        postIdType: typeof postId,
+        postIdLength: postId?.length,
+        postIdKeys: typeof postId === 'object' ? Object.keys(postId) : 'N/A',
+        postIdStringified: String(postId),
+        error,
+        stack: new Error().stack?.split('\n')[1]
+      })
       return
     }
     

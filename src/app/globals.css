@@ -110,10 +110,46 @@ body {
 
 /* Mobile touch improvements */
 @media (pointer: coarse) {
-  button, 
+  button,
   [role="button"],
   input,
-  textarea {
+  textarea,
+  .clickable,
+  [tabindex] {
     min-height: 44px;
+    min-width: 44px;
   }
+
+  /* Enhanced touch targets for interactive elements */
+  button, [role="button"], .clickable {
+    padding: 8px 16px;
+    touch-action: manipulation; /* Prevent zoom on double tap */
+  }
+
+  /* Larger tap areas for mobile */
+  .like-button,
+  .comment-button,
+  .share-button,
+  .menu-button {
+    min-height: 48px;
+    min-width: 48px;
+    padding: 12px;
+  }
+}
+
+/* Fix for vertical text rendering on mobile */
+h1, h2, h3, h4, h5, h6 {
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  direction: ltr !important;
+}
+
+/* Specific fix for header logo text */
+header h1 {
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  direction: ltr !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  flex-direction: row !important;
 }

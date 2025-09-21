@@ -1,0 +1,35 @@
+# MCP Server Environment Variables Template
+# Copy this content to .env.local and fill in your actual values
+
+# Brave Search API (for web search functionality)
+# Get your API key from: https://api.search.brave.com/
+BRAVE_API_KEY=your_brave_search_api_key_here
+
+# PostgreSQL Connection (for Supabase or other PostgreSQL databases)
+# Format: postgresql://username:password@hostname:port/database
+POSTGRES_CONNECTION_STRING=postgresql://user:password@host:5432/database
+
+# Supabase specific (if using Supabase)
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+# Figma Design Tools (for UI component generation)
+# Get your token from: https://www.figma.com/developers/api#access-tokens
+FIGMA_ACCESS_TOKEN=your_figma_personal_access_token
+
+# Context7 (if using - requires Smithery setup)
+# Get these from: https://smithery.ai/server/@upstash/context7-mcp
+UPSTASH_REDIS_REST_URL=https://your-redis-endpoint
+UPSTASH_REDIS_REST_TOKEN=your_redis_token
+
+# Instructions:
+# 1. Copy this content to .env.local file
+# 2. Fill in your actual API keys and connection strings
+# 3. Restart Cursor IDE to load the environment variables
+# 4. The MCP servers will automatically use these values
+
+# New MCP Servers Added:
+# - puppeteer-browser: Advanced browser automation (no API key needed)
+# - memory-knowledge-graph: Knowledge graph and memory system (no API key needed)
+# - sequential-thinking: Complex analysis and reasoning (no API key needed)
+# - figma-design: Figma integration for design workflows (requires token above)

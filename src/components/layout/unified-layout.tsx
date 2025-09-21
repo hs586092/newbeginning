@@ -9,6 +9,7 @@ import { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { UnifiedLeftSidebar } from '@/components/sidebar/unified-left-sidebar'
 import { UnifiedRightSidebar } from '@/components/sidebar/unified-right-sidebar'
+import { MobileBottomNavigationSafe } from '@/components/navigation/mobile-bottom-navigation-safe'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 
 interface UnifiedLayoutProps {
@@ -17,6 +18,7 @@ interface UnifiedLayoutProps {
   user?: SupabaseUser | null
   showLeftSidebar?: boolean
   showRightSidebar?: boolean
+  showMobileNavigation?: boolean
   className?: string
 }
 
@@ -26,6 +28,7 @@ export function UnifiedLayout({
   user,
   showLeftSidebar = true,
   showRightSidebar = true,
+  showMobileNavigation = true,
   className
 }: UnifiedLayoutProps) {
   return (
@@ -63,7 +66,9 @@ export function UnifiedLayout({
           <main className={cn(
             "order-2",
             // 사이드바 없을 때 중앙 정렬
-            (!showLeftSidebar && !showRightSidebar) && "max-w-4xl mx-auto"
+            (!showLeftSidebar && !showRightSidebar) && "max-w-4xl mx-auto",
+            // 모바일 하단 네비게이션 여백 (모바일에서만)
+            showMobileNavigation && "pb-20 md:pb-0"
           )}>
             {children}
           </main>
@@ -84,42 +89,58 @@ export function UnifiedLayout({
           {/* TODO: 모바일에서 사이드바 표시/숨김 기능 */}
         </div>
 
-        {/* 모바일 하단 네비게이션 (향후 구현) */}
-        {/* TODO: 모바일 친화적 하단 탭 네비게이션 */}
+        {/* 모바일 하단 네비게이션 */}
+        {(() => {
+          console.log('🔍 UnifiedLayout 모바일 네비게이션 렌더링 체크', {
+            showMobileNavigation,
+            isAuthenticated
+          })
+          return showMobileNavigation && (
+            <MobileBottomNavigationSafe
+              isAuthenticated={isAuthenticated}
+              badges={{
+                notifications: 3, // TODO: 실제 데이터 연동
+                bookmarks: 0
+              }}
+            />
+          )
+        })()}
       </div>
     </div>
   )
 }
 
 // 특수한 레이아웃 변형들
-export function LandingLayout({ 
-  children, 
-  isAuthenticated, 
-  user 
-}: Omit<UnifiedLayoutProps, 'showLeftSidebar' | 'showRightSidebar'>) {
+export function LandingLayout({
+  children,
+  isAuthenticated,
+  user
+}: Omit<UnifiedLayoutProps, 'showLeftSidebar' | 'showRightSidebar' | 'showMobileNavigation'>) {
   return (
     <UnifiedLayout
       isAuthenticated={isAuthenticated}
       user={user}
       showLeftSidebar={true} // 항상 왼쪽 사이드바 표시
       showRightSidebar={true} // 항상 오른쪽 사이드바 표시
+      showMobileNavigation={true} // 모바일 네비게이션 활성화
     >
       {children}
     </UnifiedLayout>
   )
 }
 
-export function DashboardLayout({ 
-  children, 
-  isAuthenticated, 
-  user 
-}: Omit<UnifiedLayoutProps, 'showLeftSidebar' | 'showRightSidebar'>) {
+export function DashboardLayout({
+  children,
+  isAuthenticated,
+  user
+}: Omit<UnifiedLayoutProps, 'showLeftSidebar' | 'showRightSidebar' | 'showMobileNavigation'>) {
   return (
     <UnifiedLayout
       isAuthenticated={isAuthenticated}
       user={user}
       showLeftSidebar={true} // 항상 양쪽 사이드바
       showRightSidebar={true}
+      showMobileNavigation={true} // 모바일 네비게이션 활성화
     >
       {children}
     </UnifiedLayout>

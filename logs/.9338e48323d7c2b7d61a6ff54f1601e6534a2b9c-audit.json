@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/hyeonsoo/newbeginning/logs/.9338e48323d7c2b7d61a6ff54f1601e6534a2b9c-audit.json",
+    "files": [
+        {
+            "date": 1757993393794,
+            "name": "/Users/hyeonsoo/newbeginning/logs/mcp-puppeteer-2025-09-16.log",
+            "hash": "786f7a6eba9ef34bd5e09b0f9871f61241aff8d557c936dce5d887244f30197d"
+        }
+    ],
+    "hashType": "sha256"
+}

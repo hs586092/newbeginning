@@ -10,6 +10,7 @@ import { PostLikeWithProfile, PostLikeRPC, LikeToggleResponse } from '@/types/da
 import { useAuth } from '@/contexts/auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { isValidForSupabase, getUUIDValidationError } from '@/lib/utils/uuid-validation'
+import { extractPostId } from '@/lib/types/post-validation'
 
 // 1. 좋아요 상태 인터페이스
 interface LikeState {
@@ -57,21 +58,36 @@ export function LikeProvider({ children }: LikeProviderProps) {
   const { user, isAuthenticated } = useAuth() // AuthContext에서 사용자 정보 가져오기
   const supabase = createClient() // 통합된 Supabase 클라이언트 사용
   
-  // 좋아요 목록 로드
-  const loadLikes = useCallback(async (postId: string) => {
-    console.log('🔄 LikeProvider: 좋아요 로딩 시작', postId, { user: user?.id, isAuthenticated })
-    
-    // UUID 유효성 검사
-    if (!isValidForSupabase(postId)) {
-      const error = getUUIDValidationError(postId)
-      console.error('❌ LikeProvider: 유효하지 않은 UUID (로딩)', { postId, error })
+  // 좋아요 목록 로드 (방어적 코딩)
+  const loadLikes = useCallback(async (postId: string | any) => {
+    // Type-safe postId extraction
+    const safePostId = typeof postId === 'string' ? postId : extractPostId(postId)
+
+    console.log('🔄 LikeProvider: 좋아요 로딩 시작', {
+      originalPostId: postId,
+      safePostId,
+      user: user?.id,
+      isAuthenticated
+    })
+
+    if (!safePostId || !isValidForSupabase(safePostId)) {
+      const error = getUUIDValidationError(safePostId)
+      console.error('❌ LikeProvider: 유효하지 않은 UUID (로딩)', {
+        originalPostId: JSON.stringify(postId),
+        safePostId,
+        postIdType: typeof postId,
+        error,
+        caller: new Error().stack?.split('\n')[2]?.trim()
+      })
       return
     }
+
+    const validPostId = safePostId
     
     setLikeState(prev => ({
       ...prev,
-      [postId]: {
-        ...prev[postId],
+      [validPostId]: {
+        ...prev[validPostId],
         isLoading: true,
         error: undefined
       }
@@ -79,43 +95,71 @@ export function LikeProvider({ children }: LikeProviderProps) {
     
     try {
       // RPC 함수 호출 (AuthContext의 user 사용)
-      const { data: likes, error } = await supabase
-        .rpc('get_post_likes', { p_post_id: postId })
+      const { data: likesCount, error } = await supabase
+        .rpc('get_post_like_count', { p_post_id: validPostId })
 
       if (error) {
         throw error
       }
-      
-      // RPC 결과를 PostLikeWithProfile 형식으로 변환
-      const convertedLikes: PostLikeWithProfile[] = (likes as PostLikeRPC[])?.map(like => ({
-        id: like.id,
-        post_id: like.post_id,
-        user_id: like.user_id,
-        created_at: like.created_at,
-        profiles: {
-          username: like.profile_username || 'Anonymous',
-          avatar_url: like.profile_avatar_url
-        },
-        posts: {
-          title: like.post_title,
-          category: like.post_category
-        }
-      })) || []
-      
-      // 현재 사용자의 좋아요 여부 확인
-      const isLikedByUser = user ? convertedLikes.some(like => like.user_id === user.id) : false
-      
-      console.log('✅ LikeProvider: 좋아요 로딩 성공', convertedLikes.length, '개')
-      
+
+      // get_post_like_count returns a number, not an array
+      const currentLikesCount = typeof likesCount === 'number' ? likesCount : 0
+
+      // We need to check if current user liked this post separately
+      let isLikedByUser = false
+      if (user) {
+        const { data: userLikeCheck, error: likeCheckError } = await supabase
+          .from('post_likes')
+          .select('id')
+          .eq('post_id', validPostId)
+          .eq('user_id', user.id)
+          .maybeSingle()
+
+        // maybeSingle() returns null if no record found, no error
+        isLikedByUser = !!userLikeCheck && !likeCheckError
+      }
+
+      // 실제 좋아요 목록 데이터도 가져오기
+      const { data: likesData, error: likesDataError } = await supabase
+        .from('post_likes')
+        .select(`
+          id,
+          post_id,
+          user_id,
+          created_at,
+          profiles!post_likes_user_id_fkey (
+            username
+          )
+        `)
+        .eq('post_id', validPostId)
+        .order('created_at', { ascending: false })
+
+      const likesArray = likesData || []
+
+      console.log('✅ LikeProvider: 좋아요 로딩 성공', currentLikesCount, '개, 목록:', likesArray.length, '개')
+
       setLikeState(prev => ({
         ...prev,
-        [postId]: {
-          ...prev[postId],
-          likes: convertedLikes,
+        [validPostId]: {
+          ...prev[validPostId],
+          likes: likesArray.map(like => ({
+            id: like.id,
+            post_id: like.post_id,
+            user_id: like.user_id,
+            created_at: like.created_at,
+            profiles: {
+              username: like.profiles?.username || 'Unknown',
+              avatar_url: null
+            },
+            posts: {
+              title: '', // Post data not needed for likes display
+              category: ''
+            }
+          })),
           isLoading: false,
           error: undefined,
           isLiked: isLikedByUser,
-          likesCount: convertedLikes.length
+          likesCount: currentLikesCount
         }
       }))
       
@@ -123,8 +167,8 @@ export function LikeProvider({ children }: LikeProviderProps) {
       console.error('❌ LikeProvider: 좋아요 로딩 오류', error)
       setLikeState(prev => ({
         ...prev,
-        [postId]: {
-          ...prev[postId],
+        [validPostId]: {
+          ...prev[validPostId],
           likes: [],
           isLoading: false,
           error: error instanceof Error ? error.message : '좋아요 로딩 실패',
@@ -135,8 +179,17 @@ export function LikeProvider({ children }: LikeProviderProps) {
     }
   }, [supabase, user?.id])
   
-  // 좋아요 토글
-  const toggleLike = useCallback(async (postId: string): Promise<LikeToggleResponse | null> => {
+  // 좋아요 토글 (방어적 코딩)
+  const toggleLike = useCallback(async (postId: string | any): Promise<LikeToggleResponse | null> => {
+    // Type-safe postId extraction
+    const safePostId = typeof postId === 'string' ? postId : extractPostId(postId)
+
+    if (!safePostId) {
+      console.error('❌ LikeProvider: Invalid postId in toggleLike', { postId })
+      return null
+    }
+
+    const validPostId = safePostId
     console.log('🔄 LikeProvider: 좋아요 토글', postId, { 
       user: user?.id, 
       email: user?.email,
@@ -144,10 +197,18 @@ export function LikeProvider({ children }: LikeProviderProps) {
       timestamp: new Date().toISOString()
     })
     
-    // UUID 유효성 검사
-    if (!isValidForSupabase(postId)) {
+    // UUID 유효성 검사 with detailed logging
+    if (!isValidForSupabase(validPostId)) {
       const error = getUUIDValidationError(postId)
-      console.error('❌ LikeProvider: 유효하지 않은 UUID', { postId, error })
+      console.error('❌ LikeProvider: 유효하지 않은 UUID (토글)', {
+        postId: JSON.stringify(postId),
+        postIdType: typeof postId,
+        postIdLength: postId?.length,
+        postIdKeys: typeof postId === 'object' ? Object.keys(postId) : 'N/A',
+        postIdStringified: String(postId),
+        error,
+        stack: new Error().stack?.split('\n')[1]
+      })
       return null
     }
     
@@ -160,30 +221,30 @@ export function LikeProvider({ children }: LikeProviderProps) {
     
     try {
       
-      const currentState = likeState[postId]
+      const currentState = likeState[validPostId]
       const wasLiked = currentState?.isLiked || false
       
       // Optimistic update
       setLikeState(prev => ({
         ...prev,
-        [postId]: {
-          ...prev[postId],
+        [validPostId]: {
+          ...prev[validPostId],
           isLiked: !wasLiked,
-          likesCount: wasLiked ? (prev[postId]?.likesCount || 1) - 1 : (prev[postId]?.likesCount || 0) + 1,
-          likes: prev[postId]?.likes || [],
+          likesCount: wasLiked ? (prev[validPostId]?.likesCount || 1) - 1 : (prev[validPostId]?.likesCount || 0) + 1,
+          likes: prev[validPostId]?.likes || [],
           isLoading: false
         }
       }))
       
       // RPC 함수 호출
-      console.log('🚀 LikeProvider: RPC 호출 시작', { 
+      console.log('🚀 LikeProvider: RPC 호출 시작', {
         function: 'toggle_post_like',
-        p_post_id: postId, 
-        p_user_id: user.id 
+        p_post_id: validPostId,
+        p_user_id: user.id
       })
-      
+
       const { data, error } = await supabase.rpc('toggle_post_like', {
-        p_post_id: postId,
+        p_post_id: validPostId,
         p_user_id: user.id
       })
       
@@ -194,10 +255,10 @@ export function LikeProvider({ children }: LikeProviderProps) {
         // Revert optimistic update
         setLikeState(prev => ({
           ...prev,
-          [postId]: {
-            ...prev[postId],
+          [validPostId]: {
+            ...prev[validPostId],
             isLiked: wasLiked,
-            likesCount: wasLiked ? (prev[postId]?.likesCount || 0) + 1 : (prev[postId]?.likesCount || 1) - 1
+            likesCount: wasLiked ? (prev[validPostId]?.likesCount || 0) + 1 : (prev[validPostId]?.likesCount || 1) - 1
           }
         }))
         throw error
@@ -209,8 +270,8 @@ export function LikeProvider({ children }: LikeProviderProps) {
       // 실제 결과로 상태 업데이트
       setLikeState(prev => ({
         ...prev,
-        [postId]: {
-          ...prev[postId],
+        [validPostId]: {
+          ...prev[validPostId],
           isLiked: result.liked,
           likesCount: result.like_count
         }

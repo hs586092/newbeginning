@@ -38,7 +38,22 @@ export function isDummyUUID(uuid: string): boolean {
  * Returns true if UUID is safe to use in RPC calls
  */
 export function isValidForSupabase(uuid: string): boolean {
-  return isValidUUID(uuid) && !isDummyUUID(uuid)
+  if (!uuid || typeof uuid !== 'string') {
+    console.debug('UUID Validation: Empty or non-string UUID provided:', uuid)
+    return false
+  }
+
+  if (!isValidUUID(uuid)) {
+    console.debug('UUID Validation: Invalid UUID format:', uuid)
+    return false
+  }
+
+  if (isDummyUUID(uuid)) {
+    console.debug('UUID Validation: Dummy/test UUID detected:', uuid)
+    return false
+  }
+
+  return true
 }
 
 /**
