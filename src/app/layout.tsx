@@ -2,15 +2,20 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { ConditionalHeader } from '@/components/layout/conditional-header'
+import { Footer } from '@/components/layout/footer'
 import { WebsiteStructuredData } from '@/components/seo/structured-data'
 import { AuthProvider } from '@/contexts/auth-context'
 import { CommentProvider } from '@/contexts/comment-context'
 import { LikeProvider } from '@/contexts/like-context'
 import { NotificationProvider } from '@/contexts/notification-context'
 import { RealtimeProvider } from '@/components/providers/realtime-provider'
+import { RealtimeNotificationSystem } from '@/lib/performance/lazy-components'
+import { QueryProvider } from '@/components/providers/query-provider'
 import { ToastContainer } from '@/components/notifications/toast-container'
 import { Toaster } from 'sonner'
 import { PerformanceMonitor } from '@/components/performance-monitor'
+import { WebVitalsMonitor } from '@/components/performance/web-vitals'
+import '@/lib/service-worker'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -106,35 +111,42 @@ export default function RootLayout({
         <meta name="format-detection" content="telephone=no" />
       </head>
       <body className={inter.className}>
-            <AuthProvider
-              config={{
-                redirectOnSignIn: '/',
-                redirectOnSignOut: '/',
-                enableDebugMode: process.env.NODE_ENV === 'development',
-                autoRefreshProfile: true
-              }}
-            >
-              <NotificationProvider>
-                <CommentProvider>
-                  <LikeProvider>
-                    <RealtimeProvider>
-                      <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-blue-50 transition-colors">
-                        <ConditionalHeader />
-                        <main>{children}</main>
-                      </div>
+        <QueryProvider>
+          <AuthProvider
+            config={{
+              redirectOnSignIn: '/',
+              redirectOnSignOut: '/',
+              enableDebugMode: process.env.NODE_ENV === 'development',
+              autoRefreshProfile: true
+            }}
+          >
+            <NotificationProvider>
+              <CommentProvider>
+                <LikeProvider>
+                  <RealtimeProvider>
+                    <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-blue-50 transition-colors flex flex-col">
+                      <ConditionalHeader />
+                      <main id="main-content" role="main" tabIndex={-1} className="flex-1">
+                        {children}
+                      </main>
+                      <Footer />
+                    </div>
 
-                      {/* 토스트 알림 컨테이너 */}
-                      <ToastContainer />
-                    </RealtimeProvider>
-                  </LikeProvider>
-                  <Toaster
-                    position="top-right"
-                    richColors
-                  />
-                  <PerformanceMonitor />
-                </CommentProvider>
-              </NotificationProvider>
-            </AuthProvider>
+                    {/* 토스트 알림 컨테이너 */}
+                    <ToastContainer />
+                    <RealtimeNotificationSystem />
+                  </RealtimeProvider>
+                </LikeProvider>
+                <Toaster
+                  position="top-right"
+                  richColors
+                />
+                <PerformanceMonitor />
+                <WebVitalsMonitor />
+              </CommentProvider>
+            </NotificationProvider>
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   )
