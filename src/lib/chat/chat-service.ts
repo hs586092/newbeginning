@@ -76,20 +76,35 @@ export class ChatService {
         throw new Error('You are not a member of this chat room')
       }
 
-      // 2. 메시지 생성
+      // 2. 메시지 생성 - 단순 쿼리 사용
       const { data: message, error } = await supabase
         .from('chat_messages')
         .insert({
           ...messageData,
           sender_id: (await supabase.auth.getUser()).data.user?.id
         })
-        .select(`
-          *,
-          reply_to:reply_to_id(id, content)
-        `)
+        .select('*')
         .single()
 
       if (error) throw error
+
+      // 답글 데이터를 별도로 조회
+      let replyData = null
+      if (messageData.reply_to_id) {
+        const { data: reply } = await supabase
+          .from('chat_messages')
+          .select('id, content, sender_id')
+          .eq('id', messageData.reply_to_id)
+          .single()
+
+        replyData = reply
+      }
+
+      // 메시지에 답글 데이터 추가
+      const messageWithReply = {
+        ...message,
+        reply_to: replyData
+      }
 
       // 3. 읽음 상태 초기화 (본인은 자동 읽음)
       await supabase
@@ -100,7 +115,7 @@ export class ChatService {
           room_id: message.room_id
         })
 
-      return message as ChatMessage
+      return messageWithReply as ChatMessage
 
     } catch (error) {
       console.error('Failed to create message:', error)
@@ -283,7 +298,7 @@ export class ChatService {
       .select(`
         *,
         members:chat_room_members!inner(user_id, role, last_read_at),
-        last_message:messages(id, content, message_type, created_at)
+        last_message:chat_messages(id, content, message_type, created_at)
       `)
       .eq('members.user_id', (await supabase.auth.getUser()).data.user?.id)
       .eq('members.is_active', true)
@@ -299,32 +314,60 @@ export class ChatService {
   }
 
   /**
-   * 채팅방 메시지 조회 (페이지네이션)
+   * 채팅방 메시지 조회 (페이지네이션) - 단순 쿼리 사용
    */
   async getChatMessages(
     roomId: string,
     limit: number = 50,
     before?: string
   ): Promise<ChatMessage[]> {
-    let query = supabase
-      .from('chat_messages')
-      .select(`
-        *,
-        reply_to:reply_to_id(id, content)
-      `)
-      .eq('room_id', roomId)
-      .eq('is_deleted', false)
-      .order('created_at', { ascending: false })
-      .limit(limit)
+    try {
+      let query = supabase
+        .from('chat_messages')
+        .select('*')
+        .eq('room_id', roomId)
+        .eq('is_deleted', false)
+        .order('created_at', { ascending: false })
+        .limit(limit)
 
-    if (before) {
-      query = query.lt('created_at', before)
+      if (before) {
+        query = query.lt('created_at', before)
+      }
+
+      const { data: messages, error } = await query
+      if (error) throw error
+
+      if (!messages || messages.length === 0) {
+        return []
+      }
+
+      // 답글 데이터를 별도로 조회 (reply_to_id가 있는 메시지만)
+      const messageIds = messages.filter(m => m.reply_to_id).map(m => m.reply_to_id)
+      let replyMessages: any[] = []
+
+      if (messageIds.length > 0) {
+        const { data: replies } = await supabase
+          .from('chat_messages')
+          .select('id, content, sender_id')
+          .in('id', messageIds)
+
+        replyMessages = replies || []
+      }
+
+      // 메시지에 답글 데이터 매핑
+      const messagesWithReplies = messages.map(message => ({
+        ...message,
+        reply_to: message.reply_to_id
+          ? replyMessages.find(r => r.id === message.reply_to_id) || null
+          : null
+      }))
+
+      return messagesWithReplies.reverse() as ChatMessage[] // 시간순 정렬
+
+    } catch (error) {
+      console.error('Failed to fetch messages:', error)
+      throw new Error('Failed to fetch messages')
     }
-
-    const { data, error } = await query
-
-    if (error) throw new Error('Failed to fetch messages')
-    return data.reverse() as ChatMessage[] // 시간순 정렬
   }
 
   /**

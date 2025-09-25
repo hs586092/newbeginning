@@ -204,15 +204,10 @@ export class MessagingService {
   static async getConversationMessages(conversationId: string, limit = 50, offset = 0): Promise<MessageWithProfile[]> {
     try {
       const { data, error } = await supabase
-        .from('messages')
+        .from('chat_messages')
         .select(`
           *,
-          profiles!inner(username, full_name, avatar_url),
-          reply_to:messages!messages_reply_to_id_fkey(
-            id,
-            content,
-            profiles!inner(username)
-          )
+          profiles!inner(username, full_name, avatar_url)
         `)
         .eq('conversation_id', conversationId)
         .eq('is_deleted', false)
@@ -246,7 +241,7 @@ export class MessagingService {
 
       // Send message
       const { data: message, error: messageError } = await supabase
-        .from('messages')
+        .from('chat_messages')
         .insert({
           conversation_id: conversationId,
           user_id: user.id,
@@ -308,7 +303,7 @@ export class MessagingService {
       if (!user) return false
 
       const { error } = await supabase
-        .from('messages')
+        .from('chat_messages')
         .update({ is_deleted: true })
         .eq('id', messageId)
         .eq('user_id', user.id)
@@ -327,7 +322,7 @@ export class MessagingService {
       if (!user) return false
 
       const { error } = await supabase
-        .from('messages')
+        .from('chat_messages')
         .update({
           content,
           is_edited: true,
