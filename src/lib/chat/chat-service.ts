@@ -290,27 +290,73 @@ export class ChatService {
   // 📖 Query 메서드들
 
   /**
-   * 사용자 채팅방 목록 조회
+   * 사용자 채팅방 목록 조회 - 단순화된 쿼리
    */
   async getUserChatRooms(): Promise<ChatRoom[]> {
-    const { data, error } = await supabase
-      .from('chat_rooms')
-      .select(`
-        *,
-        members:chat_room_members!inner(user_id, role, last_read_at),
-        last_message:chat_messages(id, content, message_type, created_at)
-      `)
-      .eq('members.user_id', (await supabase.auth.getUser()).data.user?.id)
-      .eq('members.is_active', true)
-      .order('updated_at', { ascending: false })
+    try {
+      const currentUser = (await supabase.auth.getUser()).data.user
+      if (!currentUser) return []
 
-    if (error) throw new Error('Failed to fetch chat rooms')
-    
-    return data.map(room => ({
-      ...room,
-      last_message: room.last_message[0] || null,
-      member_count: room.members?.length || 0
-    })) as ChatRoom[]
+      // 1. 사용자가 참여 중인 채팅방 ID 조회
+      const { data: membershipData, error: membershipError } = await supabase
+        .from('chat_room_members')
+        .select('room_id, role, last_read_at')
+        .eq('user_id', currentUser.id)
+        .eq('is_active', true)
+
+      if (membershipError) throw membershipError
+      if (!membershipData || membershipData.length === 0) return []
+
+      const roomIds = membershipData.map(m => m.room_id)
+
+      // 2. 채팅방 기본 정보 조회
+      const { data: rooms, error: roomsError } = await supabase
+        .from('chat_rooms')
+        .select('*')
+        .in('id', roomIds)
+        .order('updated_at', { ascending: false })
+
+      if (roomsError) throw roomsError
+      if (!rooms) return []
+
+      // 3. 각 방의 마지막 메시지와 멤버 수 조회
+      const roomsWithDetails = await Promise.all(
+        rooms.map(async (room) => {
+          // 마지막 메시지 조회
+          const { data: lastMessage } = await supabase
+            .from('chat_messages')
+            .select('id, content, message_type, created_at')
+            .eq('room_id', room.id)
+            .eq('is_deleted', false)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single()
+
+          // 멤버 수 조회
+          const { count: memberCount } = await supabase
+            .from('chat_room_members')
+            .select('*', { count: 'exact', head: true })
+            .eq('room_id', room.id)
+            .eq('is_active', true)
+
+          const membership = membershipData.find(m => m.room_id === room.id)
+
+          return {
+            ...room,
+            last_message: lastMessage || null,
+            member_count: memberCount || 0,
+            user_role: membership?.role || 'member',
+            last_read_at: membership?.last_read_at
+          }
+        })
+      )
+
+      return roomsWithDetails as ChatRoom[]
+
+    } catch (error) {
+      console.error('Failed to fetch chat rooms:', error)
+      throw new Error('Failed to fetch chat rooms')
+    }
   }
 
   /**
