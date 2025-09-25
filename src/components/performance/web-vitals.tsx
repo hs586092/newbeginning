@@ -62,22 +62,43 @@ export function WebVitalsMonitor() {
   useEffect(() => {
     const loadWebVitals = async () => {
       try {
-        const { getCLS, getFID, getFCP, getLCP, getTTFB } = await import('web-vitals')
-
-        const sendMetric = (metric: any) => {
-          const webVitalsMetric: WebVitalsMetric = {
-            ...metric,
-            rating: getRating(metric.name, metric.value)
-          }
-          sendToAnalytics(webVitalsMetric)
+        // Check if window is available (client-side only)
+        if (typeof window === 'undefined') {
+          return
         }
 
-        // 모든 Core Web Vitals 메트릭 수집
-        getCLS(sendMetric)
-        getFID(sendMetric)
-        getFCP(sendMetric)
-        getLCP(sendMetric)
-        getTTFB(sendMetric)
+        // Dynamic import with better error handling
+        const webVitalsModule = await import('web-vitals')
+
+        if (!webVitalsModule || typeof webVitalsModule.getCLS !== 'function') {
+          console.warn('Web Vitals module not loaded correctly')
+          return
+        }
+
+        const { getCLS, getFID, getFCP, getLCP, getTTFB } = webVitalsModule
+
+        const sendMetric = (metric: any) => {
+          try {
+            const webVitalsMetric: WebVitalsMetric = {
+              ...metric,
+              rating: getRating(metric.name, metric.value)
+            }
+            sendToAnalytics(webVitalsMetric)
+          } catch (err) {
+            console.error('Error processing web vitals metric:', err)
+          }
+        }
+
+        // 모든 Core Web Vitals 메트릭 수집 with error handling
+        try {
+          getCLS && getCLS(sendMetric)
+          getFID && getFID(sendMetric)
+          getFCP && getFCP(sendMetric)
+          getLCP && getLCP(sendMetric)
+          getTTFB && getTTFB(sendMetric)
+        } catch (metricsError) {
+          console.error('Error initializing web vitals metrics:', metricsError)
+        }
 
         // 커스텀 성능 메트릭 추가
         if (typeof performance !== 'undefined') {

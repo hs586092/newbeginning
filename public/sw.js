@@ -159,3 +159,100 @@ async function handleBackgroundSync() {
   // Handle queued requests when connectivity is restored
   console.log('Background sync triggered - handling queued requests')
 }
+
+// Push event - handle incoming push notifications
+self.addEventListener('push', (event) => {
+  console.log('Push received:', event)
+
+  let notificationData = {
+    title: 'New Notification',
+    body: 'You have a new notification',
+    icon: '/og-baby.png',
+    badge: '/og-baby.png',
+    tag: 'default',
+    data: {}
+  }
+
+  // Parse push data if available
+  if (event.data) {
+    try {
+      const data = event.data.json()
+      notificationData = {
+        ...notificationData,
+        ...data
+      }
+    } catch (error) {
+      console.error('Error parsing push data:', error)
+      notificationData.body = event.data.text() || notificationData.body
+    }
+  }
+
+  // Show notification
+  event.waitUntil(
+    self.registration.showNotification(notificationData.title, {
+      body: notificationData.body,
+      icon: notificationData.icon,
+      badge: notificationData.badge,
+      tag: notificationData.tag,
+      data: notificationData.data,
+      actions: [
+        {
+          action: 'view',
+          title: '보기'
+        },
+        {
+          action: 'dismiss',
+          title: '닫기'
+        }
+      ],
+      requireInteraction: true,
+      vibrate: [200, 100, 200]
+    })
+  )
+})
+
+// Notification click event
+self.addEventListener('notificationclick', (event) => {
+  console.log('Notification clicked:', event)
+
+  event.notification.close()
+
+  // Handle notification action
+  if (event.action === 'dismiss') {
+    return
+  }
+
+  // Default action or 'view' action
+  let url = '/'
+
+  if (event.notification.data && event.notification.data.url) {
+    url = event.notification.data.url
+  }
+
+  // Open or focus the app
+  event.waitUntil(
+    clients.matchAll({ type: 'window' })
+      .then((clientList) => {
+        // Check if app is already open
+        for (let client of clientList) {
+          if (client.url === url && 'focus' in client) {
+            return client.focus()
+          }
+        }
+
+        // Open new window if app is not open
+        if (clients.openWindow) {
+          return clients.openWindow(url)
+        }
+      })
+  )
+})
+
+// Message event - communicate with main thread
+self.addEventListener('message', (event) => {
+  console.log('Service worker received message:', event.data)
+
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting()
+  }
+})

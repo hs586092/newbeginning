@@ -127,6 +127,7 @@ export function HybridAuthWrapper({
   const effectiveUser = getEffectiveUser()
   const isUserAuthenticated = shouldShowDashboard()
 
+  // 일관된 피드 표시를 위해 항상 같은 컴포넌트 사용
   return (
     <RealisticHomepage
       searchParams={searchParams}

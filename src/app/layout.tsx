@@ -15,6 +15,7 @@ import { ToastContainer } from '@/components/notifications/toast-container'
 import { Toaster } from 'sonner'
 import { PerformanceMonitor } from '@/components/performance-monitor'
 import { WebVitalsMonitor } from '@/components/performance/web-vitals'
+import { InstallPrompt } from '@/components/pwa/install-prompt'
 import '@/lib/service-worker'
 
 const inter = Inter({ 
@@ -26,8 +27,9 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://newbeginning-community.vercel.app'),
+  manifest: '/manifest.json',
   title: {
-    default: 'ParentWise - Global Parenting Community',
+    default: '첫돌까지 - 육아맘 커뮤니티',
     template: '%s | ParentWise'
   },
   description: 'Connect with parents worldwide. From pregnancy to parenting, share experiences, get advice, and support each other through every stage of raising children.',
@@ -141,6 +143,7 @@ export default function RootLayout({
                   position="top-right"
                   richColors
                 />
+                <InstallPrompt />
                 <PerformanceMonitor />
                 <WebVitalsMonitor />
               </CommentProvider>

@@ -14,6 +14,7 @@ import { Card } from '@/components/ui/card'
 import { Avatar, AvatarImage, AvatarFallback, generateInitials } from '@/components/ui/avatar'
 import { MoreVertical, Baby, Clock, Lock, Heart, MessageCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FollowButton } from '@/components/social/follow-button'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -247,8 +248,21 @@ export function UnifiedFeed({
                       </span>
                     </div>
                   </div>
+
+                  {/* 팔로우 버튼 (인증된 사용자이고 본인이 아닌 경우) */}
+                  {isAuthenticated && currentUserId && post.author.id !== currentUserId && (
+                    <div className="ml-2">
+                      <FollowButton
+                        targetUserId={post.author.id}
+                        targetUsername={post.author.username}
+                        size="sm"
+                        variant="outline"
+                        showText={false}
+                      />
+                    </div>
+                  )}
                 </div>
-                
+
                 {/* 더보기 메뉴 (인증된 사용자만) */}
                 {isAuthenticated && (
                   <button className="p-1 hover:bg-gray-100 rounded transition-colors">
