@@ -98,77 +98,97 @@ export class ChatRealtimeClient {
     roomId: string,
     eventType: T,
     callback: (payload: ChatEventPayload[T]) => void
-  ): Promise<RealtimeChannel> {
+  ): Promise<RealtimeChannel | null> {
     const channelName = `chat_room:${roomId}`
-    
-    // 기존 채널 재사용
-    if (this.channels.has(channelName)) {
-      const channel = this.channels.get(channelName)!
-      channel.on('postgres_changes', { 
-        event: eventType === 'message_created' ? 'INSERT' : 
-               eventType === 'message_updated' ? 'UPDATE' : 'DELETE',
+
+    try {
+      // 기존 채널 재사용
+      if (this.channels.has(channelName)) {
+        const channel = this.channels.get(channelName)!
+        channel.on('postgres_changes', {
+          event: eventType === 'message_created' ? 'INSERT' :
+                 eventType === 'message_updated' ? 'UPDATE' : 'DELETE',
+          schema: 'public',
+          table: 'messages',
+          filter: `room_id=eq.${roomId}`
+        }, (payload) => {
+          this.handleMessageChange(payload, eventType, callback)
+        })
+
+        return channel
+      }
+
+      // 유저 인증 확인
+      const { data: user } = await supabase.auth.getUser()
+      if (!user.user) {
+        console.warn('User not authenticated for chat subscription')
+        return null
+      }
+
+      // 새 채널 생성
+      const channel = supabase
+        .channel(channelName, {
+          config: {
+            broadcast: { self: false },
+            presence: { key: `user_${user.user.id}` }
+          }
+        })
+
+      // 메시지 변경 감지
+      channel.on('postgres_changes', {
+        event: '*',
         schema: 'public',
         table: 'messages',
         filter: `room_id=eq.${roomId}`
       }, (payload) => {
         this.handleMessageChange(payload, eventType, callback)
       })
-      
-      return channel
-    }
 
-    // 새 채널 생성
-    const channel = supabase
-      .channel(channelName, {
-        config: {
-          broadcast: { self: false },
-          presence: { key: `user_${supabase.auth.getUser()}` }
+      // 타이핑 인디케이터
+      channel.on('broadcast', { event: 'typing' }, (payload) => {
+        if (eventType === 'user_typing' || eventType === 'user_stopped_typing') {
+          callback(payload.payload as ChatEventPayload[T])
         }
       })
 
-    // 메시지 변경 감지
-    channel.on('postgres_changes', {
-      event: '*',
-      schema: 'public', 
-      table: 'messages',
-      filter: `room_id=eq.${roomId}`
-    }, (payload) => {
-      this.handleMessageChange(payload, eventType, callback)
-    })
+      // 사용자 존재감 (Presence)
+      channel.on('presence', { event: 'sync' }, () => {
+        if (eventType === 'presence_sync') {
+          const state = channel.presenceState()
+          const users = Object.keys(state).map(userId => ({
+            user_id: userId,
+            status: 'online' as const,
+            last_seen: new Date().toISOString()
+          }))
+          callback(users as ChatEventPayload[T])
+        }
+      })
 
-    // 타이핑 인디케이터
-    channel.on('broadcast', { event: 'typing' }, (payload) => {
-      if (eventType === 'user_typing' || eventType === 'user_stopped_typing') {
-        callback(payload.payload as ChatEventPayload[T])
-      }
-    })
+      // 채널 구독 시작 - 개선된 에러 핸들링
+      await channel.subscribe((status, err) => {
+        if (status === 'SUBSCRIBED') {
+          console.log(`✅ Subscribed to ${channelName}`)
+          this.reconnectAttempts = 0
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error(`❌ Channel error: ${channelName}`, err)
+          // 재연결 대신 graceful degradation
+          this.handleChannelError(channelName, err)
+        } else if (status === 'TIMED_OUT') {
+          console.warn(`⏰ Channel timeout: ${channelName}`)
+          this.handleChannelError(channelName, 'timeout')
+        } else if (status === 'CLOSED') {
+          console.warn(`🔒 Channel closed: ${channelName}`)
+          this.channels.delete(channelName)
+        }
+      })
 
-    // 사용자 존재감 (Presence)
-    channel.on('presence', { event: 'sync' }, () => {
-      if (eventType === 'presence_sync') {
-        const state = channel.presenceState()
-        const users = Object.keys(state).map(userId => ({
-          user_id: userId,
-          status: 'online' as const,
-          last_seen: new Date().toISOString()
-        }))
-        callback(users as ChatEventPayload[T])
-      }
-    })
+      this.channels.set(channelName, channel)
+      return channel
 
-    // 채널 구독 시작
-    await channel.subscribe((status) => {
-      if (status === 'SUBSCRIBED') {
-        console.log(`✅ Subscribed to ${channelName}`)
-        this.reconnectAttempts = 0
-      } else if (status === 'CHANNEL_ERROR') {
-        console.error(`❌ Channel error: ${channelName}`)
-        this.handleReconnect(roomId, eventType, callback)
-      }
-    })
-
-    this.channels.set(channelName, channel)
-    return channel
+    } catch (error) {
+      console.error(`Failed to subscribe to ${channelName}:`, error)
+      return null
+    }
   }
 
   // 📝 메시지 변경 핸들러
@@ -245,7 +265,27 @@ export class ChatRealtimeClient {
     }
   }
 
-  // 🔌 재연결 처리
+  // ⚠️ 채널 에러 처리 (graceful degradation)
+  private handleChannelError(channelName: string, error: any) {
+    console.warn(`Channel ${channelName} error, falling back to polling mode:`, error)
+
+    // 채널 제거
+    const channel = this.channels.get(channelName)
+    if (channel) {
+      supabase.removeChannel(channel)
+      this.channels.delete(channelName)
+    }
+
+    // 사용자에게 알림 (선택적)
+    if (typeof window !== 'undefined') {
+      // 사용자 UI에 offline 표시 가능
+      document.dispatchEvent(new CustomEvent('chat-offline', {
+        detail: { channelName, error }
+      }))
+    }
+  }
+
+  // 🔌 재연결 처리 (백오프 알고리즘 개선)
   private async handleReconnect<T extends ChatEventType>(
     roomId: string,
     eventType: T,
@@ -253,14 +293,22 @@ export class ChatRealtimeClient {
   ) {
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
       console.error('Max reconnection attempts reached')
+      this.handleChannelError(`chat_room:${roomId}`, 'max_retries_exceeded')
       return
     }
 
     this.reconnectAttempts++
     const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000)
-    
-    setTimeout(() => {
-      this.subscribeToChatRoom(roomId, eventType, callback)
+
+    console.log(`Reconnecting to chat room ${roomId} in ${delay}ms (attempt ${this.reconnectAttempts})`)
+
+    setTimeout(async () => {
+      try {
+        await this.subscribeToChatRoom(roomId, eventType, callback)
+      } catch (error) {
+        console.error('Reconnection failed:', error)
+        this.handleChannelError(`chat_room:${roomId}`, error)
+      }
     }, delay)
   }
 

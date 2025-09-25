@@ -151,50 +151,76 @@ export default function ChatWindow({
   useEffect(() => {
     const subscribeToRoom = async () => {
       try {
-        // 메시지 생성 이벤트
-        await chatRealtimeClient.subscribeToChatRoom(
-          roomId, 
-          'message_created', 
-          (message) => {
-            setChatState(prev => ({
-              ...prev,
-              messages: [...prev.messages, message]
-            }))
-            scrollToBottom()
-          }
-        )
-
-        // 타이핑 인디케이터
-        await chatRealtimeClient.subscribeToChatRoom(
-          roomId,
-          'user_typing',
-          (typing) => {
-            setChatState(prev => ({
-              ...prev,
-              typingUsers: typing.is_typing 
-                ? [...prev.typingUsers.filter(u => u !== typing.user_name), typing.user_name]
-                : prev.typingUsers.filter(u => u !== typing.user_name)
-            }))
-          }
-        )
-
-        // 초기 메시지 로드
+        // 초기 메시지 로드 (항상 가능)
         const messages = await chatService.getChatMessages(roomId)
         setChatState(prev => ({
           ...prev,
           messages,
-          isLoading: false
+          isLoading: false,
+          error: null
         }))
 
         scrollToBottom()
 
+        // 실시간 구독 시도 (실패해도 기본 기능은 유지)
+        try {
+          // 메시지 생성 이벤트
+          const messageChannel = await chatRealtimeClient.subscribeToChatRoom(
+            roomId,
+            'message_created',
+            (message) => {
+              setChatState(prev => ({
+                ...prev,
+                messages: [...prev.messages, message]
+              }))
+              scrollToBottom()
+            }
+          )
+
+          // 타이핑 인디케이터 (optional)
+          const typingChannel = await chatRealtimeClient.subscribeToChatRoom(
+            roomId,
+            'user_typing',
+            (typing) => {
+              setChatState(prev => ({
+                ...prev,
+                typingUsers: typing.is_typing
+                  ? [...prev.typingUsers.filter(u => u !== typing.user_name), typing.user_name]
+                  : prev.typingUsers.filter(u => u !== typing.user_name)
+              }))
+            }
+          )
+
+          if (!messageChannel || !typingChannel) {
+            console.warn('실시간 채팅이 비활성화되었습니다. 기본 채팅 기능은 정상 작동합니다.')
+          }
+
+        } catch (realtimeError) {
+          console.warn('실시간 기능을 사용할 수 없습니다:', realtimeError)
+          // 실시간 실패해도 기본 채팅 기능은 계속 유지
+        }
+
       } catch (error) {
+        console.error('채팅 초기화 실패:', error)
         setChatState(prev => ({
           ...prev,
-          error: '채팅 연결 실패',
+          error: '채팅을 불러올 수 없습니다',
           isLoading: false
         }))
       }
+    }
+
+    // 오프라인 상태 감지
+    const handleChatOffline = (event: CustomEvent) => {
+      console.warn('채팅 연결이 끊어졌습니다:', event.detail)
+      setChatState(prev => ({
+        ...prev,
+        error: '실시간 채팅이 비활성화되었습니다'
+      }))
+    }
+
+    if (typeof window !== 'undefined') {
+      document.addEventListener('chat-offline', handleChatOffline as EventListener)
     }
 
     subscribeToRoom()
@@ -204,6 +230,9 @@ export default function ChatWindow({
       chatRealtimeClient.unsubscribeFromRoom(roomId)
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current)
+      }
+      if (typeof window !== 'undefined') {
+        document.removeEventListener('chat-offline', handleChatOffline as EventListener)
       }
     }
   }, [roomId, scrollToBottom])
