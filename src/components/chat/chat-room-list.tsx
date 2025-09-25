@@ -102,8 +102,8 @@ export default function ChatRoomList({
   useEffect(() => {
     loadRooms()
     
-    // TODO: 실시간 채팅방 목록 업데이트 구독
-    // chatRealtimeClient.subscribeToUserRooms(userId, loadRooms)
+    // 실시간 채팅방 목록 업데이트 임시 비활성화 (WebSocket 연결 문제)
+    console.info('실시간 채팅방 목록 업데이트가 비활성화되었습니다.')
     
     return () => {
       // 구독 해제

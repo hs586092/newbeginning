@@ -107,36 +107,11 @@ export default function ChatWindow({
     }
   }, [roomId, inputState])
 
-  // ⌨️ 타이핑 인디케이터 처리
+  // ⌨️ 타이핑 인디케이터 처리 (실시간 기능 비활성화)
   const handleTyping = useCallback((content: string) => {
     setInputState(prev => ({ ...prev, content }))
-
-    try {
-      // 타이핑 상태 전송 (실시간 기능 - 실패해도 괜찮음)
-      if (content.trim() && !chatState.isTyping) {
-        chatRealtimeClient.sendTypingIndicator(roomId, true)
-        setChatState(prev => ({ ...prev, isTyping: true }))
-      }
-
-      // 타이핑 중지 타이머
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current)
-      }
-
-      typingTimeoutRef.current = setTimeout(() => {
-        if (chatState.isTyping) {
-          try {
-            chatRealtimeClient.sendTypingIndicator(roomId, false)
-          } catch (e) {
-            console.warn('Typing indicator failed:', e)
-          }
-          setChatState(prev => ({ ...prev, isTyping: false }))
-        }
-      }, 2000)
-    } catch (error) {
-      console.warn('Typing handler error:', error)
-    }
-  }, [roomId, chatState.isTyping])
+    // 실시간 타이핑 인디케이터는 임시 비활성화
+  }, [])
 
   // 📝 키보드 이벤트 처리
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
@@ -161,43 +136,11 @@ export default function ChatWindow({
 
         scrollToBottom()
 
-        // 실시간 구독 시도 (실패해도 기본 기능은 유지)
-        try {
-          // 메시지 생성 이벤트
-          const messageChannel = await chatRealtimeClient.subscribeToChatRoom(
-            roomId,
-            'message_created',
-            (message) => {
-              setChatState(prev => ({
-                ...prev,
-                messages: [...prev.messages, message]
-              }))
-              scrollToBottom()
-            }
-          )
+        // 실시간 기능 임시 비활성화 (WebSocket 연결 문제로 인해)
+        console.info('실시간 기능이 임시로 비활성화되었습니다. 기본 채팅은 정상 작동합니다.')
 
-          // 타이핑 인디케이터 (optional)
-          const typingChannel = await chatRealtimeClient.subscribeToChatRoom(
-            roomId,
-            'user_typing',
-            (typing) => {
-              setChatState(prev => ({
-                ...prev,
-                typingUsers: typing.is_typing
-                  ? [...prev.typingUsers.filter(u => u !== typing.user_name), typing.user_name]
-                  : prev.typingUsers.filter(u => u !== typing.user_name)
-              }))
-            }
-          )
-
-          if (!messageChannel || !typingChannel) {
-            console.warn('실시간 채팅이 비활성화되었습니다. 기본 채팅 기능은 정상 작동합니다.')
-          }
-
-        } catch (realtimeError) {
-          console.warn('실시간 기능을 사용할 수 없습니다:', realtimeError)
-          // 실시간 실패해도 기본 채팅 기능은 계속 유지
-        }
+        // TODO: 실시간 기능은 인증 문제 해결 후 다시 활성화
+        // 현재는 기본 채팅 기능만 사용
 
       } catch (error) {
         console.error('채팅 초기화 실패:', error)
