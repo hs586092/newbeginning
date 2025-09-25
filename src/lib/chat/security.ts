@@ -298,7 +298,7 @@ export class ChatSecurityManager {
   ): Promise<boolean> {
     try {
       const { error } = await supabase
-        .from('messages')
+        .from('chat_messages')
         .update({
           is_deleted: true,
           deleted_at: new Date().toISOString(),

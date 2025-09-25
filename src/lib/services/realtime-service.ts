@@ -117,7 +117,7 @@ class RealtimeService {
         {
           event: '*',
           schema: 'public',
-          table: 'messages',
+          table: 'chat_messages',
           filter: `sender_id=eq.${userId},receiver_id=eq.${userId}`
         },
         (payload) => {

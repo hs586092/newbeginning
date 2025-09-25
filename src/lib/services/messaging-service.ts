@@ -165,7 +165,7 @@ export class MessagingService {
 
         // Get last message
         const { data: lastMessage } = await supabase
-          .from('messages')
+          .from('chat_messages')
           .select(`
             *,
             profiles!inner(username, avatar_url)
@@ -178,7 +178,7 @@ export class MessagingService {
 
         // Get unread count
         const { count: unreadCount } = await supabase
-          .from('messages')
+          .from('chat_messages')
           .select('*', { count: 'exact', head: true })
           .eq('conversation_id', conversation.id)
           .neq('user_id', user.id)
@@ -409,13 +409,13 @@ export class MessagingService {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'messages',
+          table: 'chat_messages',
           filter: `conversation_id=eq.${conversationId}`
         },
         async (payload) => {
           // Fetch the complete message with profile info
           const { data: message } = await supabase
-            .from('messages')
+            .from('chat_messages')
             .select(`
               *,
               profiles!inner(username, full_name, avatar_url)
@@ -445,7 +445,7 @@ export class MessagingService {
       )
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'messages' },
+        { event: '*', schema: 'public', table: 'chat_messages' },
         () => {
           // Reload conversations when any message changes
           this.getUserConversations().then(callback)

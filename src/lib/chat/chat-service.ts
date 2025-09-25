@@ -78,7 +78,7 @@ export class ChatService {
 
       // 2. 메시지 생성
       const { data: message, error } = await supabase
-        .from('messages')
+        .from('chat_messages')
         .insert({
           ...messageData,
           sender_id: (await supabase.auth.getUser()).data.user?.id
@@ -116,7 +116,7 @@ export class ChatService {
     content: string
   ): Promise<ChatMessage> {
     const { data, error } = await supabase
-      .from('messages')
+      .from('chat_messages')
       .update({ 
         content,
         is_edited: true,
@@ -139,7 +139,7 @@ export class ChatService {
    */
   async deleteMessage(messageId: string): Promise<boolean> {
     const { error } = await supabase
-      .from('messages')
+      .from('chat_messages')
       .update({ 
         is_deleted: true,
         deleted_at: new Date().toISOString(),
@@ -307,7 +307,7 @@ export class ChatService {
     before?: string
   ): Promise<ChatMessage[]> {
     let query = supabase
-      .from('messages')
+      .from('chat_messages')
       .select(`
         *,
         reply_to:reply_to_id(id, content)
@@ -332,7 +332,7 @@ export class ChatService {
    */
   async searchMessages(options: MessageSearchOptions): Promise<ChatMessage[]> {
     let query = supabase
-      .from('messages')
+      .from('chat_messages')
       .select(`
         *,
         sender:sender_id(id, full_name, avatar_url)
@@ -377,7 +377,7 @@ export class ChatService {
 
     // 마지막 읽은 시간 이후 메시지 수
     const { count } = await supabase
-      .from('messages')
+      .from('chat_messages')
       .select('*', { count: 'exact', head: true })
       .eq('room_id', roomId)
       .neq('sender_id', currentUser.id) // 본인 메시지 제외
@@ -411,7 +411,7 @@ export class ChatService {
     const [messagesResult, membersResult, unreadResult] = await Promise.all([
       // 총 메시지 수
       supabase
-        .from('messages')
+        .from('chat_messages')
         .select('*', { count: 'exact', head: true })
         .eq('room_id', roomId)
         .eq('is_deleted', false),

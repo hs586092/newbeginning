@@ -109,7 +109,7 @@ export class ChatRealtimeClient {
           event: eventType === 'message_created' ? 'INSERT' :
                  eventType === 'message_updated' ? 'UPDATE' : 'DELETE',
           schema: 'public',
-          table: 'messages',
+          table: 'chat_messages',
           filter: `room_id=eq.${roomId}`
         }, (payload) => {
           this.handleMessageChange(payload, eventType, callback)
@@ -138,7 +138,7 @@ export class ChatRealtimeClient {
       channel.on('postgres_changes', {
         event: '*',
         schema: 'public',
-        table: 'messages',
+        table: 'chat_messages',
         filter: `room_id=eq.${roomId}`
       }, (payload) => {
         this.handleMessageChange(payload, eventType, callback)
