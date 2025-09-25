@@ -112,23 +112,31 @@ export default function ChatWindow({
   const handleTyping = useCallback((content: string) => {
     setInputState(prev => ({ ...prev, content }))
 
-    // 타이핑 상태 전송
-    if (content.trim() && !chatState.isTyping) {
-      chatRealtimeClient.sendTypingIndicator(roomId, true)
-      setChatState(prev => ({ ...prev, isTyping: true }))
-    }
-
-    // 타이핑 중지 타이머
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current)
-    }
-
-    typingTimeoutRef.current = setTimeout(() => {
-      if (chatState.isTyping) {
-        chatRealtimeClient.sendTypingIndicator(roomId, false)
-        setChatState(prev => ({ ...prev, isTyping: false }))
+    try {
+      // 타이핑 상태 전송 (실시간 기능 - 실패해도 괜찮음)
+      if (content.trim() && !chatState.isTyping) {
+        chatRealtimeClient.sendTypingIndicator(roomId, true)
+        setChatState(prev => ({ ...prev, isTyping: true }))
       }
-    }, 2000)
+
+      // 타이핑 중지 타이머
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current)
+      }
+
+      typingTimeoutRef.current = setTimeout(() => {
+        if (chatState.isTyping) {
+          try {
+            chatRealtimeClient.sendTypingIndicator(roomId, false)
+          } catch (e) {
+            console.warn('Typing indicator failed:', e)
+          }
+          setChatState(prev => ({ ...prev, isTyping: false }))
+        }
+      }, 2000)
+    } catch (error) {
+      console.warn('Typing handler error:', error)
+    }
   }, [roomId, chatState.isTyping])
 
   // 📝 키보드 이벤트 처리

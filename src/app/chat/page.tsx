@@ -11,12 +11,18 @@ import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
 import ChatRoomList from '@/components/chat/chat-room-list'
 import ChatWindow from '@/components/chat/chat-window'
+import CreateRoomModal from '@/components/chat/create-room-modal'
 import { Plus } from 'lucide-react'
 
 export default function ChatPage() {
   const { user, isLoading } = useAuth()
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null)
   const [showCreateRoom, setShowCreateRoom] = useState(false)
+
+  const handleRoomCreated = (roomId: string) => {
+    setSelectedRoomId(roomId)
+    setShowCreateRoom(false)
+  }
 
   // 로딩 중
   if (isLoading) {
@@ -105,25 +111,12 @@ export default function ChatPage() {
         </div>
       </div>
 
-      {/* 새 채팅방 만들기 모달 (추후 구현) */}
-      {showCreateRoom && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md">
-            <h3 className="text-lg font-semibold mb-4">새 채팅방 만들기</h3>
-            <p className="text-gray-600 mb-4">
-              채팅방 생성 기능은 곧 추가될 예정입니다.
-            </p>
-            <div className="flex justify-end gap-3">
-              <Button
-                variant="outline"
-                onClick={() => setShowCreateRoom(false)}
-              >
-                닫기
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* 새 채팅방 만들기 모달 */}
+      <CreateRoomModal
+        isOpen={showCreateRoom}
+        onClose={() => setShowCreateRoom(false)}
+        onRoomCreated={handleRoomCreated}
+      />
     </div>
   )
 }

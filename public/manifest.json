@@ -1,0 +1,88 @@
+{
+  "name": "첫돌까지 - 육아맘 커뮤니티",
+  "short_name": "첫돌까지",
+  "description": "초보엄마부터 베테랑맘까지 모든 육아맘들이 소통하는 공간",
+  "theme_color": "#3b82f6",
+  "background_color": "#f9fafb",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "start_url": "/",
+  "categories": ["lifestyle", "education", "social"],
+  "lang": "ko",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/og-baby.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/og-baby.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/og-baby.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "새 글 작성",
+      "short_name": "글쓰기",
+      "description": "새로운 글을 작성합니다",
+      "url": "/write",
+      "icons": [
+        {
+          "src": "/og-baby.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "메시지",
+      "short_name": "메시지",
+      "description": "메시지를 확인합니다",
+      "url": "/chat",
+      "icons": [
+        {
+          "src": "/og-baby.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "알림",
+      "short_name": "알림",
+      "description": "알림을 확인합니다",
+      "url": "/notifications",
+      "icons": [
+        {
+          "src": "/og-baby.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "첫돌까지 메인 화면"
+    },
+    {
+      "src": "/screenshot-narrow.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "첫돌까지 모바일 화면"
+    }
+  ]
+}
