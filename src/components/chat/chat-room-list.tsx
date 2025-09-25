@@ -22,8 +22,8 @@ import {
   Globe,
   MoreHorizontal
 } from 'lucide-react'
-import { chatService } from '@/lib/chat/chat-service'
-import type { ChatRoom } from '@/lib/chat/realtime-client'
+import RobustChatService from '@/lib/chat/robust-chat-service'
+import type { ChatRoom } from '@/lib/chat/robust-chat-service'
 import { Button } from '@/components/ui/button'
 import { OptimizedImage } from '@/components/ui/optimized-image'
 
@@ -87,7 +87,7 @@ export default function ChatRoomList({
   const loadRooms = useCallback(async () => {
     try {
       setIsLoading(true)
-      const roomList = await chatService.getUserChatRooms()
+      const roomList = await RobustChatService.getUserRooms()
       setRooms(roomList)
       setError(null)
     } catch (err) {

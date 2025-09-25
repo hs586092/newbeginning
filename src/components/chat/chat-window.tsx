@@ -10,7 +10,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Send, Paperclip, Smile, MoreVertical, X, Search } from 'lucide-react'
-import { chatService } from '@/lib/chat/chat-service'
+import RobustChatService from '@/lib/chat/robust-chat-service'
 import { chatRealtimeClient } from '@/lib/chat/realtime-client'
 import type { ChatMessage, ChatRoom } from '@/lib/chat/realtime-client'
 
@@ -81,12 +81,11 @@ export default function ChatWindow({
     setInputState(prev => ({ ...prev, isSubmitting: true }))
 
     try {
-      await chatService.createMessage({
-        room_id: roomId,
-        content: inputState.content.trim(),
-        message_type: inputState.replyTo ? 'reply' : 'text',
-        reply_to_id: inputState.replyTo?.id
-      })
+      await RobustChatService.sendMessage(
+        roomId,
+        inputState.content.trim(),
+        inputState.replyTo?.id
+      )
 
       // 입력 상태 초기화
       setInputState({
@@ -151,8 +150,8 @@ export default function ChatWindow({
   useEffect(() => {
     const subscribeToRoom = async () => {
       try {
-        // 초기 메시지 로드 (항상 가능)
-        const messages = await chatService.getChatMessages(roomId)
+        // 초기 메시지 로드 (견고한 서비스 사용)
+        const messages = await RobustChatService.getRoomMessages(roomId)
         setChatState(prev => ({
           ...prev,
           messages,
