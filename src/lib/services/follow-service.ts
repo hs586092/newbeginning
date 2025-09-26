@@ -1,12 +1,21 @@
 import { createClient } from '@/lib/supabase/client'
 import { Follow, UserProfile, NotificationWithProfile } from '@/types/database.types'
 
-const supabase = createClient()
+// Promise-based Supabase client for consistent initialization
+let supabasePromise: Promise<any> | null = null
+
+const getSupabaseClient = async () => {
+  if (!supabasePromise) {
+    supabasePromise = createClient()
+  }
+  return supabasePromise
+}
 
 export class FollowService {
   // 사용자 팔로우
   static async followUser(followingId: string): Promise<{ success: boolean; message: string }> {
     try {
+      const supabase = await getSupabaseClient()
       const { data: { user }, error: authError } = await supabase.auth.getUser()
 
       if (authError || !user) {
@@ -231,6 +240,7 @@ export class FollowService {
   // 추천 사용자 (같은 육아 단계의 사용자들)
   static async getRecommendedUsers(limit = 10) {
     try {
+      const supabase = await getSupabaseClient()
       const { data: { user } } = await supabase.auth.getUser()
 
       if (!user) return []

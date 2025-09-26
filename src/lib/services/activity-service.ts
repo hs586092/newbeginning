@@ -1,7 +1,15 @@
 import { createClient } from '@/lib/supabase/client'
 import { ActivityFeedItem } from '@/types/database.types'
 
-const supabase = createClient()
+// Promise-based Supabase client for consistent initialization
+let supabasePromise: Promise<any> | null = null
+
+const getSupabaseClient = async () => {
+  if (!supabasePromise) {
+    supabasePromise = createClient()
+  }
+  return supabasePromise
+}
 
 export class ActivityService {
   // 활동 기록 생성
@@ -15,6 +23,7 @@ export class ActivityService {
     targetType?: 'post' | 'comment' | 'user'
   }): Promise<boolean> {
     try {
+      const supabase = await getSupabaseClient()
       const { data: { user } } = await supabase.auth.getUser()
 
       if (!user) return false
@@ -38,6 +47,7 @@ export class ActivityService {
   // 팔로우하는 사용자들의 활동 피드
   static async getFollowingActivityFeed(limit = 20, offset = 0): Promise<ActivityFeedItem[]> {
     try {
+      const supabase = await getSupabaseClient()
       const { data: { user } } = await supabase.auth.getUser()
 
       if (!user) return []
@@ -83,6 +93,7 @@ export class ActivityService {
   // 전체 활동 피드 (공개)
   static async getPublicActivityFeed(limit = 20, offset = 0): Promise<ActivityFeedItem[]> {
     try {
+      const supabase = await getSupabaseClient()
       const { data, error } = await supabase
         .from('user_activities')
         .select(`
@@ -173,6 +184,7 @@ export class ActivityService {
   // 최근 활동 (간단한 버전)
   static async getRecentActivity(limit = 10): Promise<{ type: string; count: number; description: string }[]> {
     try {
+      const supabase = await getSupabaseClient()
       const { data: { user } } = await supabase.auth.getUser()
 
       if (!user) return []
