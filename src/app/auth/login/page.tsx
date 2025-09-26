@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { getSupabaseClient } from '@/lib/supabase/client-factory'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -12,20 +12,22 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
   const router = useRouter()
-  const supabase = createClient()
 
   useEffect(() => {
     // Check if user is already logged in
     const checkAuth = async () => {
-      if (typeof window !== 'undefined') {
+      try {
+        const supabase = await getSupabaseClient()
         const { data: { session } } = await supabase.auth.getSession()
         if (session) {
-          router.push('/dashboard')
+          router.push('/')
         }
+      } catch (error) {
+        console.error('Auth check error:', error)
       }
     }
     checkAuth()
-  }, [router, supabase])
+  }, [router])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -42,6 +44,7 @@ export default function LoginPage() {
     setMessage(null)
 
     try {
+      const supabase = await getSupabaseClient()
       console.log('🔄 Calling signInWithPassword...')
       const { data, error } = await supabase.auth.signInWithPassword({
         email: email.trim(),
@@ -76,7 +79,7 @@ export default function LoginPage() {
         setMessage('로그인 성공! 대시보드로 이동합니다...')
 
         // Immediate redirect without delay
-        router.push('/dashboard')
+        router.push('/')
       } else {
         console.warn('⚠️ Login returned no session')
         setError('로그인 처리 중 문제가 발생했습니다. 다시 시도해주세요.')
@@ -96,6 +99,7 @@ export default function LoginPage() {
     setError(null)
 
     try {
+      const supabase = await getSupabaseClient()
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
