@@ -13,7 +13,7 @@
  * - Progressive enhancement approach
  */
 
-import { createClient } from '@/lib/supabase/client'
+import { getSupabaseClient } from '@/lib/supabase/client-factory'
 import type { User, Session } from '@supabase/supabase-js'
 
 export interface AuthState {
@@ -59,7 +59,6 @@ const DEFAULT_CONFIG: AuthConfig = {
 }
 
 export class ResilientAuthClient {
-  private supabase: ReturnType<typeof createClient> | null = null
   private config: AuthConfig
   private circuitBreakerOpen = false
   private failureCount = 0
@@ -77,14 +76,11 @@ export class ResilientAuthClient {
   }
 
   /**
-   * ✅ 지연 로딩: 필요할 때만 Supabase 클라이언트 생성
+   * ✅ Centralized client: Use factory pattern for all auth operations
    */
   private async getSupabaseClient() {
-    if (!this.supabase) {
-      this.log('🚀 Lazy loading Supabase client for auth operations')
-      this.supabase = await createClient()
-    }
-    return this.supabase
+    this.log('🚀 Getting Supabase client from centralized factory')
+    return await getSupabaseClient()
   }
 
   /**
