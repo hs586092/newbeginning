@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { ConditionalHeader } from '@/components/layout/conditional-header'
 import { Footer } from '@/components/layout/footer'
-import { ServiceReadyBanner } from '@/components/banners/service-ready-banner'
+// LAUNCH READY: ServiceReadyBanner removed to activate full site
 import { WebsiteStructuredData } from '@/components/seo/structured-data'
 import { ResilientAuthProvider } from '@/contexts/resilient-auth-context'
 import { CommentProvider } from '@/contexts/comment-context'
@@ -122,7 +122,7 @@ export default function RootLayout({
                 <LikeProvider>
                   <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-blue-50 transition-colors flex flex-col">
                     <ConditionalHeader />
-                    <ServiceReadyBanner />
+                    {/* 🚀 LAUNCH READY: ServiceReadyBanner removed for full site functionality */}
                     <main id="main-content" role="main" tabIndex={-1} className="flex-1">
                       {children}
                     </main>
