@@ -1,10 +1,15 @@
 // 사용자 프로필 서비스 - MOCK 데이터 대체용
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/client'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+// Promise-based Supabase client for consistent initialization
+let supabasePromise: Promise<any> | null = null
 
-const supabase = createClient(supabaseUrl, supabaseKey)
+const getSupabaseClient = async () => {
+  if (!supabasePromise) {
+    supabasePromise = createClient()
+  }
+  return supabasePromise
+}
 
 export interface UserProfile {
   id: string
@@ -27,6 +32,7 @@ export class ProfileService {
    */
   static async getUserProfile(userId: string): Promise<UserProfile | null> {
     try {
+      const supabase = await getSupabaseClient()
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -51,6 +57,7 @@ export class ProfileService {
    */
   static async getCurrentUserProfile(): Promise<UserProfile | null> {
     try {
+      const supabase = await getSupabaseClient()
       const { data: { user }, error: authError } = await supabase.auth.getUser()
 
       if (authError || !user) {
@@ -70,6 +77,7 @@ export class ProfileService {
    */
   static async updateUserPoints(userId: string, points: number): Promise<boolean> {
     try {
+      const supabase = await getSupabaseClient()
       const { error } = await supabase
         .from('profiles')
         .update({
@@ -102,6 +110,7 @@ export class ProfileService {
         userPoints = profile?.points || 0
       }
 
+      const supabase = await getSupabaseClient()
       const { data, error } = await supabase
         .from('profiles')
         .select('points')
@@ -156,6 +165,7 @@ export class ProfileService {
    */
   static async getUnreadNotificationCount(userId: string): Promise<number> {
     try {
+      const supabase = await getSupabaseClient()
       const { data, error } = await supabase
         .from('notifications')
         .select('id')
@@ -179,6 +189,7 @@ export class ProfileService {
    */
   static async getRecentNotifications(userId: string, limit: number = 2): Promise<any[]> {
     try {
+      const supabase = await getSupabaseClient()
       const { data, error } = await supabase
         .from('notifications')
         .select('*')
