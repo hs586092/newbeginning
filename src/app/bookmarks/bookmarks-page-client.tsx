@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAuth } from '@/contexts/auth-context'
+import { useResilientAuth as useAuth } from '@/contexts/resilient-auth-context'
 import { getUserBookmarks, getBookmarkCount } from '@/lib/actions/bookmarks'
 import { BookmarkButton } from '@/components/ui/bookmark-button'
 import { ShareButton } from '@/components/ui/share-button'

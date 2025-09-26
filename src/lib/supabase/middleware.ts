@@ -7,22 +7,18 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
-  // Check if environment variables are properly configured
+  // ✅ Edge Runtime Optimization: 환경변수 빠른 검증
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  
-  // If environment variables are not configured, continue without auth
-  // TEMPORARY: Disabled for debugging
-  // if (!supabaseUrl || !supabaseKey || 
-  //     supabaseUrl === 'https://placeholder.supabase.co' || 
-  //     supabaseKey === 'placeholder-key') {
-  //   console.log('Supabase environment variables not configured, continuing without auth')
-  //   return supabaseResponse
-  // }
-  
-  // Debug: Log environment variables
-  console.log('Supabase URL:', supabaseUrl)
-  console.log('Supabase Key:', supabaseKey ? 'Present' : 'Missing')
+
+  // Edge에서 빠른 실패 처리
+  if (!supabaseUrl || !supabaseKey ||
+      supabaseUrl === 'https://placeholder.supabase.co' ||
+      supabaseKey === 'placeholder-key') {
+    // X-Auth-Status 헤더로 상태 전달 (Edge 최적화)
+    supabaseResponse.headers.set('X-Auth-Status', 'no-config')
+    return supabaseResponse
+  }
 
   const supabase = createServerClient<Database>(
     supabaseUrl,
@@ -55,9 +51,17 @@ export async function updateSession(request: NextRequest) {
       data: { user: authUser },
     } = await supabase.auth.getUser()
     user = authUser
+
+    // ✅ Edge Optimization: 인증 상태를 헤더로 전달
+    if (user) {
+      supabaseResponse.headers.set('X-Auth-Status', 'authenticated')
+      supabaseResponse.headers.set('X-User-ID', user.id)
+    } else {
+      supabaseResponse.headers.set('X-Auth-Status', 'anonymous')
+    }
   } catch (error) {
-    // If Supabase connection fails, continue without user (show as logged out)
-    console.log('Supabase auth check failed, continuing without user')
+    // Edge에서 빠른 실패 처리
+    supabaseResponse.headers.set('X-Auth-Status', 'error')
     user = null
   }
 

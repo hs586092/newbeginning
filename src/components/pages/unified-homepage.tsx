@@ -23,7 +23,7 @@ import Link from 'next/link'
 import type { CommunityCategory } from '@/types/navigation'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
-import { useAuth } from '@/contexts/auth-context'
+import { useAuth } from '@/contexts/simple-auth-context'
 
 interface UnifiedHomepageProps {
   user?: SupabaseUser | null

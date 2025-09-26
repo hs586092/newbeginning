@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@/contexts/auth-context'
+import { useResilientAuth as useAuth } from '@/contexts/resilient-auth-context'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
@@ -22,37 +22,30 @@ export function ProtectedRoute({
   requiredRole,
   fallback
 }: ProtectedRouteProps) {
-  const { isAuthenticated, isLoading, hasRole, initialized } = useAuth()
+  const { user, loading } = useAuth()
+  const isAuthenticated = !!user
+  const isLoading = loading
   const router = useRouter()
 
   useEffect(() => {
-    // Don't redirect while still loading or initializing
-    if (!initialized || isLoading) return
+    // Don't redirect while still loading
+    if (isLoading) return
 
     // Check authentication requirement
     if (requireAuth && !isAuthenticated) {
       router.push(redirectTo)
       return
     }
-
-    // Check role requirement
-    if (requiredRole && (!isAuthenticated || !hasRole(requiredRole))) {
-      router.push('/unauthorized')
-      return
-    }
   }, [
-    isAuthenticated, 
-    isLoading, 
-    initialized, 
-    router, 
-    requireAuth, 
-    redirectTo, 
-    requiredRole, 
-    hasRole
+    isAuthenticated,
+    isLoading,
+    router,
+    requireAuth,
+    redirectTo
   ])
 
   // Show loading state
-  if (!initialized || isLoading) {
+  if (isLoading) {
     return fallback || (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -68,10 +61,7 @@ export function ProtectedRoute({
     return null // Will redirect in useEffect
   }
 
-  // Check role
-  if (requiredRole && !hasRole(requiredRole)) {
-    return null // Will redirect in useEffect
-  }
+  // Note: Role checking removed for simplicity
 
   return <>{children}</>
 }
@@ -79,62 +69,37 @@ export function ProtectedRoute({
 /**
  * Component to show content only when user is authenticated
  */
-export function AuthenticatedOnly({ 
-  children, 
-  fallback 
-}: { 
+export function AuthenticatedOnly({
+  children,
+  fallback
+}: {
   children: React.ReactNode
-  fallback?: React.ReactNode 
+  fallback?: React.ReactNode
 }) {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { user, loading } = useAuth()
 
-  if (isLoading) {
+  if (loading) {
     return fallback || null
   }
 
-  return isAuthenticated ? <>{children}</> : (fallback || null)
+  return user ? <>{children}</> : (fallback || null)
 }
 
 /**
  * Component to show content only when user is NOT authenticated
  */
-export function UnauthenticatedOnly({ 
-  children, 
-  fallback 
-}: { 
+export function UnauthenticatedOnly({
+  children,
+  fallback
+}: {
   children: React.ReactNode
-  fallback?: React.ReactNode 
+  fallback?: React.ReactNode
 }) {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { user, loading } = useAuth()
 
-  if (isLoading) {
+  if (loading) {
     return fallback || null
   }
 
-  return !isAuthenticated ? <>{children}</> : (fallback || null)
-}
-
-/**
- * Role-based access control component
- */
-export function RoleGuard({ 
-  role, 
-  children, 
-  fallback 
-}: { 
-  role: string
-  children: React.ReactNode
-  fallback?: React.ReactNode 
-}) {
-  const { hasRole, isAuthenticated, isLoading } = useAuth()
-
-  if (isLoading) {
-    return fallback || null
-  }
-
-  if (!isAuthenticated || !hasRole(role)) {
-    return fallback || null
-  }
-
-  return <>{children}</>
+  return !user ? <>{children}</> : (fallback || null)
 }

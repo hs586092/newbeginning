@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
     ]
   },
   
-  // Performance optimizations
+  // Performance optimizations - Phase 2: 업계 최고 수준 목표
   experimental: {
     // Enable optimized package imports
     optimizePackageImports: [
@@ -37,12 +37,19 @@ const nextConfig: NextConfig = {
       '@radix-ui/react-avatar',
       '@radix-ui/react-dialog',
       '@radix-ui/react-dropdown-menu',
-      '@radix-ui/react-collapsible'
+      '@radix-ui/react-collapsible',
+      'sonner',
+      'react-hook-form',
+      '@supabase/supabase-js'
     ],
     // Enable CSS optimization
     optimizeCss: true,
     // Enable modern output
     esmExternals: true,
+    // Enable webpack optimization
+    webpackBuildWorker: true,
+    // Enable module concatenation for smaller bundles
+    optimizeServerReact: true,
   },
   
   // Image optimization

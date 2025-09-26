@@ -1,55 +1,26 @@
 'use client'
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  useMemo
-} from 'react'
-import { useRouter } from 'next/navigation'
-import { SupabaseAuthClient } from '@/lib/auth/supabase-client'
-import { AuthStateMachine } from '@/lib/auth/auth-state-machine'
-import { OperationMutex } from '@/lib/auth/operation-mutex'
-import { 
-  AuthMachineState, 
-  AuthMachineEvent, 
-  AuthMachineContext 
-} from '@/types/auth-state-machine.types'
-import type { 
-  AuthConfig, 
-  AuthResult,
-  UserProfile,
-  AuthEvent 
-} from '@/types/auth.types'
-import type { User, Session } from '@supabase/supabase-js'
+import { createContext, useContext, useEffect, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import { User, Session } from '@supabase/supabase-js'
 
-// Enhanced Auth Context Value with State Machine
-interface EnhancedAuthContextValue {
-  // State Machine Properties
+interface UserProfile {
+  id: string
+  email: string | null
+  username: string | null
+  full_name: string | null
+  avatar_url: string | null
+  created_at: string
+  updated_at: string
+}
+
+interface AuthContextType {
   user: User | null
   profile: UserProfile | null
   session: Session | null
-  isAuthenticated: boolean
-  isLoading: boolean
-  initialized: boolean
-  currentState: AuthMachineState
-  
-  // Methods
-  signIn: (email: string, password: string) => Promise<AuthResult>
-  signUp: (email: string, password: string, username: string) => Promise<AuthResult>
-  signInWithGoogle: () => Promise<AuthResult>
-  signInWithKakao: () => Promise<AuthResult>
-  signOut: () => Promise<AuthResult>
-  updateProfile: (updates: Partial<UserProfile>) => Promise<AuthResult>
+  loading: boolean
+  signOut: () => Promise<void>
   refreshProfile: () => Promise<void>
-  hasRole: (role: string) => boolean
-  
-  // State Machine Methods
-  getMachineStatus: () => any
-  canSignOut: () => boolean
 }
 
 // Create context

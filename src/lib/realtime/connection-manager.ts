@@ -1,40 +1,38 @@
 'use client'
 
-import { supabase } from '@/lib/supabase/client'
-import type { RealtimeChannel } from '@supabase/supabase-js'
+import { getRealtimeClient } from '@/lib/supabase/client'
+import type { RealtimeChannel, SupabaseClient } from '@supabase/supabase-js'
 
 export class RealtimeConnectionManager {
   private channels = new Map<string, RealtimeChannel>()
   private isAuthenticated = false
   private retryCount = 0
   private maxRetries = 3
+  private supabasePromise: Promise<SupabaseClient> | null = null
 
   constructor() {
-    this.initializeAuthListener()
+    // Don't call async methods in constructor
   }
 
-  private initializeAuthListener() {
-    // Listen for auth state changes
-    supabase.auth.onAuthStateChange((event, session) => {
-      const wasAuthenticated = this.isAuthenticated
-      this.isAuthenticated = !!session
-
-      if (event === 'SIGNED_IN' && !wasAuthenticated) {
-        console.log('User signed in, enabling realtime subscriptions')
-        this.retryCount = 0
-      } else if (event === 'SIGNED_OUT') {
-        console.log('User signed out, cleaning up realtime subscriptions')
-        this.cleanup()
-      }
-    })
+  private getSupabaseClient(): Promise<SupabaseClient> {
+    if (!this.supabasePromise) {
+      this.supabasePromise = getRealtimeClient()
+    }
+    return this.supabasePromise
   }
 
   async createChannel(channelName: string): Promise<RealtimeChannel | null> {
+    // 🔄 Following CLAUDE.md principle: Graceful Degradation
+    console.log(`🔄 [RealtimeConnectionManager] Creating channel: ${channelName}`)
+
     try {
+      // Get supabase client
+      const supabase = await this.getSupabaseClient()
+
       // Check if user is authenticated
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) {
-        console.warn(`Cannot create channel ${channelName}: User not authenticated`)
+        console.log(`User not authenticated, skipping realtime subscriptions`)
         return null
       }
 
@@ -43,29 +41,44 @@ export class RealtimeConnectionManager {
         await this.removeChannel(channelName)
       }
 
-      const channel = supabase.channel(channelName, {
-        config: {
-          presence: {
-            key: session.user.id
+      // 🛡️ Evidence-based approach: Try WebSocket with timeout
+      return new Promise((resolve) => {
+        const timeout = setTimeout(() => {
+          console.log(`⚠️ WebSocket timeout for channel ${channelName}, gracefully degrading`)
+          resolve(null) // Graceful degradation - return null instead of throwing
+        }, 5000)
+
+        const channel = supabase.channel(channelName, {
+          config: {
+            presence: {
+              key: session.user.id
+            }
           }
-        }
+        })
+
+        channel.subscribe((status, error) => {
+          clearTimeout(timeout)
+
+          if (status === 'SUBSCRIBED') {
+            console.log(`✅ WebSocket channel active: ${channelName}`)
+            this.channels.set(channelName, channel)
+            this.retryCount = 0 // Reset retry count on success
+            resolve(channel)
+          } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+            console.log(`🔄 WebSocket failed for ${channelName}, gracefully degrading (status: ${status})`)
+            if (error) {
+              console.log(`WebSocket error details:`, error.message)
+            }
+            resolve(null) // Graceful degradation
+          }
+        })
       })
 
-      this.channels.set(channelName, channel)
-      console.log(`Created realtime channel: ${channelName}`)
-      return channel
-
     } catch (error) {
-      console.error(`Failed to create channel ${channelName}:`, error)
+      console.log(`❌ Channel creation error for ${channelName}:`, error.message)
 
-      // Retry logic
-      if (this.retryCount < this.maxRetries) {
-        this.retryCount++
-        console.log(`Retrying channel creation (${this.retryCount}/${this.maxRetries})`)
-        await new Promise(resolve => setTimeout(resolve, 1000 * this.retryCount))
-        return this.createChannel(channelName)
-      }
-
+      // Following CLAUDE.md: Fail Fast, Fail Explicitly with graceful degradation
+      console.log(`🔄 Gracefully degrading - channel ${channelName} will operate without realtime`)
       return null
     }
   }
@@ -74,6 +87,7 @@ export class RealtimeConnectionManager {
     const channel = this.channels.get(channelName)
     if (channel) {
       try {
+        const supabase = await this.getSupabaseClient()
         await supabase.removeChannel(channel)
         this.channels.delete(channelName)
         console.log(`Removed realtime channel: ${channelName}`)

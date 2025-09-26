@@ -3,19 +3,21 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { ConditionalHeader } from '@/components/layout/conditional-header'
 import { Footer } from '@/components/layout/footer'
+import { ServiceReadyBanner } from '@/components/banners/service-ready-banner'
 import { WebsiteStructuredData } from '@/components/seo/structured-data'
-import { AuthProvider } from '@/contexts/auth-context'
+import { ResilientAuthProvider } from '@/contexts/resilient-auth-context'
 import { CommentProvider } from '@/contexts/comment-context'
 import { LikeProvider } from '@/contexts/like-context'
 import { NotificationProvider } from '@/contexts/notification-context'
-import { RealtimeProvider } from '@/components/providers/realtime-provider'
-import { RealtimeNotificationSystem } from '@/lib/performance/lazy-components'
+import { ResilientNotificationSystem } from '@/components/notifications/resilient-notification-system'
 import { QueryProvider } from '@/components/providers/query-provider'
 import { ToastContainer } from '@/components/notifications/toast-container'
 import { Toaster } from 'sonner'
 import { PerformanceMonitor } from '@/components/performance-monitor'
 import { WebVitalsMonitor } from '@/components/performance/web-vitals'
 import { InstallPrompt } from '@/components/pwa/install-prompt'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 import '@/lib/service-worker'
 
 const inter = Inter({ 
@@ -26,18 +28,18 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://newbeginning-community.vercel.app'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://fortheorlingas.com'),
   manifest: '/manifest.json',
   title: {
-    default: '첫돌까지 - 육아맘 커뮤니티',
-    template: '%s | ParentWise'
+    default: '첫돌까지 - 0-12개월 육아맘 커뮤니티 | 신생아부터 첫돌까지',
+    template: '%s | 첫돌까지'
   },
-  description: 'Connect with parents worldwide. From pregnancy to parenting, share experiences, get advice, and support each other through every stage of raising children.',
+  description: '신생아부터 첫돌까지 월령별 육아 정보와 선배맘들의 따뜻한 조언. 수유, 이유식, 수면교육, 발달 등 초보맘을 위한 모든 정보를 나누는 커뮤니티입니다.',
   keywords: [
-    'parenting', 'pregnancy', 'newborn', 'baby', 'toddler', 'child development', 
-    'parenting tips', 'mom community', 'dad community', 'parenting advice', 
-    'child care', 'baby feeding', 'sleep training', 'parenting support', 
-    'family life', 'parenting community', 'child health', 'parenting journey'
+    '신생아', '육아', '첫돌', '이유식', '수면교육', '월령별발달',
+    '육아커뮤니티', '맘카페', '육아맘', '초보맘', '육아정보',
+    '수유', '신생아관리', '육아상담', '베이비', '유아',
+    '육아일기', '발달', '예방접종', '육아용품', '맘스', '0-12개월'
   ],
   authors: [{ name: 'ParentWise Team' }],
   creator: 'ParentWise',
@@ -49,17 +51,17 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    locale: 'en_US',
+    locale: 'ko_KR',
     url: '/',
-    siteName: 'ParentWise',
-    title: 'ParentWise - Global Parenting Community',
-    description: 'Connect with parents worldwide. From pregnancy to parenting, share experiences, get advice, and support each other through every stage of raising children.',
+    siteName: '첫돌까지',
+    title: '첫돌까지 - 0-12개월 육아맘 커뮤니티',
+    description: '신생아부터 첫돌까지 월령별 육아 정보와 선배맘들의 따뜻한 조언. 함께 성장하는 육아 커뮤니티입니다.',
     images: [
       {
         url: '/og-baby.png',
         width: 1200,
         height: 630,
-        alt: 'ParentWise - Global Parenting Community',
+        alt: '첫돌까지 - 육아맘 커뮤니티',
       },
     ],
   },
@@ -114,30 +116,23 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <QueryProvider>
-          <AuthProvider
-            config={{
-              redirectOnSignIn: '/',
-              redirectOnSignOut: '/',
-              enableDebugMode: process.env.NODE_ENV === 'development',
-              autoRefreshProfile: true
-            }}
-          >
+          <ResilientAuthProvider>
             <NotificationProvider>
               <CommentProvider>
                 <LikeProvider>
-                  <RealtimeProvider>
-                    <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-blue-50 transition-colors flex flex-col">
-                      <ConditionalHeader />
-                      <main id="main-content" role="main" tabIndex={-1} className="flex-1">
-                        {children}
-                      </main>
-                      <Footer />
-                    </div>
+                  <div className="min-h-screen bg-gradient-to-b from-pink-50 via-white to-blue-50 transition-colors flex flex-col">
+                    <ConditionalHeader />
+                    <ServiceReadyBanner />
+                    <main id="main-content" role="main" tabIndex={-1} className="flex-1">
+                      {children}
+                    </main>
+                    <Footer />
+                  </div>
 
-                    {/* 토스트 알림 컨테이너 */}
-                    <ToastContainer />
-                    <RealtimeNotificationSystem />
-                  </RealtimeProvider>
+                  {/* 토스트 알림 컨테이너 */}
+                  <ToastContainer />
+                  {/* 🛡️ Resilient Realtime System with WebSocket + Polling Fallback */}
+                  <ResilientNotificationSystem />
                 </LikeProvider>
                 <Toaster
                   position="top-right"
@@ -146,9 +141,11 @@ export default function RootLayout({
                 <InstallPrompt />
                 <PerformanceMonitor />
                 <WebVitalsMonitor />
+                <Analytics />
+                <SpeedInsights />
               </CommentProvider>
             </NotificationProvider>
-          </AuthProvider>
+          </ResilientAuthProvider>
         </QueryProvider>
       </body>
     </html>

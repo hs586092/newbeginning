@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { toggleBookmark, getBookmarkStatus } from '@/lib/actions/bookmarks'
-import { useAuth } from '@/contexts/auth-context'
+import { useResilientAuth as useAuth } from '@/contexts/resilient-auth-context'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 

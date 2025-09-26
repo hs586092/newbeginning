@@ -7,7 +7,7 @@
  */
 
 import { useState } from 'react'
-import { useAuth } from '@/contexts/auth-context'
+import { useResilientAuth as useAuth } from '@/contexts/resilient-auth-context'
 import { Button } from '@/components/ui/button'
 import ChatRoomList from '@/components/chat/chat-room-list'
 import ChatWindow from '@/components/chat/chat-window'

@@ -10,13 +10,13 @@ interface WebVitalsMetric {
   rating: 'good' | 'needs-improvement' | 'poor'
 }
 
-// Web Vitals 임계값 정의
+// Phase 2: 업계 최고 수준 임계값 (0.3초 목표)
 const thresholds = {
-  CLS: { good: 0.1, needsImprovement: 0.25 },
-  FID: { good: 100, needsImprovement: 300 },
-  FCP: { good: 1800, needsImprovement: 3000 },
-  LCP: { good: 2500, needsImprovement: 4000 },
-  TTFB: { good: 800, needsImprovement: 1800 }
+  CLS: { good: 0.05, needsImprovement: 0.1 },     // 더 엄격한 기준
+  FID: { good: 50, needsImprovement: 100 },       // 응답성 최적화
+  FCP: { good: 500, needsImprovement: 1000 },     // 0.5초 목표
+  LCP: { good: 1000, needsImprovement: 2000 },    // 1초 목표
+  TTFB: { good: 300, needsImprovement: 600 }      // 0.3초 목표
 }
 
 const getRating = (metric: string, value: number): 'good' | 'needs-improvement' | 'poor' => {

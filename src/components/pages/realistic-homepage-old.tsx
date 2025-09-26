@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/contexts/auth-context'
+import { useAuth } from '@/contexts/simple-auth-context'
 import { UnifiedFeed } from '@/components/feed/unified-feed'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'

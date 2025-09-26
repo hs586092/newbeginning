@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useAuth } from '@/contexts/auth-context'
+import { useResilientAuth as useAuth } from '@/contexts/resilient-auth-context'
 import { UnifiedFeed } from '@/components/feed/unified-feed'
 import { SearchBar } from '@/components/search/search-bar'
 import { TrendingUp, AlertCircle, Database, Wifi, WifiOff, Bell } from 'lucide-react'

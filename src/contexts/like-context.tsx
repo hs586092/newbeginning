@@ -7,7 +7,7 @@
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react'
 import { PostLikeWithProfile, PostLikeRPC, LikeToggleResponse } from '@/types/database.types'
-import { useAuth } from '@/contexts/auth-context'
+import { useResilientAuth as useAuth } from '@/contexts/resilient-auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { isValidForSupabase, getUUIDValidationError } from '@/lib/utils/uuid-validation'
 import { extractPostId } from '@/lib/types/post-validation'
@@ -56,7 +56,15 @@ interface LikeProviderProps {
 export function LikeProvider({ children }: LikeProviderProps) {
   const [likeState, setLikeState] = useState<LikeState>({})
   const { user, isAuthenticated } = useAuth() // AuthContext에서 사용자 정보 가져오기
-  const supabase = createClient() // 통합된 Supabase 클라이언트 사용
+  const [supabase, setSupabase] = useState<any>(null)
+
+  // 🚀 Supabase 클라이언트 지연 로딩
+  const getSupabaseClient = useCallback(async () => {
+    if (supabase) return supabase
+    const client = await createClient()
+    setSupabase(client)
+    return client
+  }, [supabase])
   
   // 좋아요 목록 로드 (방어적 코딩)
   const loadLikes = useCallback(async (postId: string | any) => {
@@ -94,8 +102,10 @@ export function LikeProvider({ children }: LikeProviderProps) {
     }))
     
     try {
+      const supabaseClient = await getSupabaseClient()
+
       // RPC 함수 호출 (AuthContext의 user 사용)
-      const { data: likesCount, error } = await supabase
+      const { data: likesCount, error } = await supabaseClient
         .rpc('get_post_like_count', { p_post_id: validPostId })
 
       if (error) {
@@ -108,7 +118,7 @@ export function LikeProvider({ children }: LikeProviderProps) {
       // We need to check if current user liked this post separately
       let isLikedByUser = false
       if (user) {
-        const { data: userLikeCheck, error: likeCheckError } = await supabase
+        const { data: userLikeCheck, error: likeCheckError } = await supabaseClient
           .from('post_likes')
           .select('id')
           .eq('post_id', validPostId)
@@ -120,7 +130,7 @@ export function LikeProvider({ children }: LikeProviderProps) {
       }
 
       // 실제 좋아요 목록 데이터도 가져오기
-      const { data: likesData, error: likesDataError } = await supabase
+      const { data: likesData, error: likesDataError } = await supabaseClient
         .from('post_likes')
         .select(`
           id,
@@ -177,7 +187,7 @@ export function LikeProvider({ children }: LikeProviderProps) {
         }
       }))
     }
-  }, [supabase, user?.id])
+  }, [getSupabaseClient, user?.id])
   
   // 좋아요 토글 (방어적 코딩)
   const toggleLike = useCallback(async (postId: string | any): Promise<LikeToggleResponse | null> => {
@@ -243,7 +253,8 @@ export function LikeProvider({ children }: LikeProviderProps) {
         p_user_id: user.id
       })
 
-      const { data, error } = await supabase.rpc('toggle_post_like', {
+      const supabaseClient = await getSupabaseClient()
+      const { data, error } = await supabaseClient.rpc('toggle_post_like', {
         p_post_id: validPostId,
         p_user_id: user.id
       })

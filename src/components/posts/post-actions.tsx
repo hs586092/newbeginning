@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Heart, MessageCircle, MoreHorizontal } from 'lucide-react'
 import { useLikes } from '@/contexts/like-context'
 import { useComments } from '@/contexts/comment-context'
-import { useAuth } from '@/contexts/auth-context'
+import { useResilientAuth as useAuth } from '@/contexts/resilient-auth-context'
 import { toast } from 'sonner'
 
 interface PostActionsProps {

@@ -11,7 +11,7 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import { Heart, Users } from 'lucide-react'
 import { useLikes } from '@/contexts/like-context'
-import { useAuth } from '@/contexts/auth-context'
+import { useResilientAuth as useAuth } from '@/contexts/resilient-auth-context'
 import { useNotifications } from '@/contexts/notification-context'
 import { isValidForSupabase } from '@/lib/utils/uuid-validation'
 import { toast } from 'sonner'

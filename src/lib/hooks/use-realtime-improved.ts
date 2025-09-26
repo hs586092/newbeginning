@@ -2,10 +2,10 @@
 
 import { useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 import { realtimeManager } from '@/lib/realtime/connection-manager'
 import { useNotifications } from '@/contexts/notification-context'
-import { useAuth } from '@/contexts/auth-context'
+import { useResilientAuth as useAuth } from '@/contexts/resilient-auth-context'
 
 export function useRealtimeSubscription() {
   const router = useRouter()
@@ -15,6 +15,8 @@ export function useRealtimeSubscription() {
   // 게시글 카운트 업데이트 함수
   const updatePostCounts = useCallback(async (postId: string) => {
     try {
+      const supabase = await createClient()
+
       // 댓글 수 조회
       const { count: commentsCount } = await supabase
         .from('comments')
@@ -144,6 +146,7 @@ export function useRealtimeSubscription() {
               if (user?.id && payload.new.user_id !== user.id) {
                 try {
                   // 게시글 정보 가져오기
+                  const supabase = await createClient()
                   const { data: post } = await supabase
                     .from('posts')
                     .select('title, user_id')
@@ -224,6 +227,7 @@ export function useRealtimeSubscription() {
               if (user?.id && payload.new.user_id !== user.id) {
                 try {
                   // 게시글 정보 가져오기
+                  const supabase = await createClient()
                   const { data: post } = await supabase
                     .from('posts')
                     .select('title, user_id')

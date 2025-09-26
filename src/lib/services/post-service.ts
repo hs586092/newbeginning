@@ -51,11 +51,18 @@ async function withRetry<T>(
  * Enhanced Post Service with production-ready error handling
  */
 export class PostService {
-  private supabase = createClient()
+  private supabasePromise: Promise<any> | null = null
   private config: Required<PostServiceConfig>
 
   constructor(config: PostServiceConfig = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config }
+  }
+
+  private async getSupabaseClient() {
+    if (!this.supabasePromise) {
+      this.supabasePromise = createClient()
+    }
+    return this.supabasePromise
   }
 
   /**
@@ -70,7 +77,8 @@ export class PostService {
       console.log(`🔍 Fetching posts from database (limit: ${limit})...`)
 
       const operation = async () => {
-        const { data, error } = await this.supabase
+        const supabase = await this.getSupabaseClient()
+        const { data, error } = await supabase
           .from('posts')
           .select('*')
           .eq('is_deleted', false)
@@ -136,7 +144,8 @@ export class PostService {
     try {
       console.log('🔍 Testing database connection...')
 
-      const { error } = await this.supabase
+      const supabase = await this.getSupabaseClient()
+      const { error } = await supabase
         .from('posts')
         .select('id', { count: 'exact', head: true })
         .limit(1)
@@ -174,7 +183,8 @@ export class PostService {
     lastUpdated?: string
   }> {
     try {
-      const { count, error } = await this.supabase
+      const supabase = await this.getSupabaseClient()
+      const { count, error } = await supabase
         .from('posts')
         .select('*', { count: 'exact', head: true })
         .eq('is_deleted', false)
@@ -183,7 +193,7 @@ export class PostService {
         throw new Error(error.message)
       }
 
-      const { data: latestPost } = await this.supabase
+      const { data: latestPost } = await supabase
         .from('posts')
         .select('created_at')
         .eq('is_deleted', false)

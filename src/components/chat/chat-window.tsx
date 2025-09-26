@@ -10,10 +10,9 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Send, Paperclip, Smile, MoreVertical, X, Search } from 'lucide-react'
-// import RobustChatService from '@/lib/chat/robust-chat-service'
-import DemoChatService from '@/lib/chat/demo-chat-service'
-import { chatRealtimeClient } from '@/lib/chat/realtime-client'
-import type { ChatMessage, ChatRoom } from '@/lib/chat/realtime-client'
+import { RobustChatService } from '@/lib/chat/robust-chat-service'
+import { resilientRealtimeClient } from '@/lib/chat/resilient-realtime-client'
+import type { ChatMessage, ChatRoom } from '@/lib/chat/resilient-realtime-client'
 
 // 🎯 채팅 윈도우 상태 타입
 interface ChatWindowState {
@@ -82,7 +81,7 @@ export default function ChatWindow({
     setInputState(prev => ({ ...prev, isSubmitting: true }))
 
     try {
-      await DemoChatService.sendMessage(
+      await RobustChatService.sendMessage(
         roomId,
         inputState.content.trim(),
         inputState.replyTo?.id
@@ -127,7 +126,7 @@ export default function ChatWindow({
     const subscribeToRoom = async () => {
       try {
         // 초기 메시지 로드 (견고한 서비스 사용)
-        const messages = await DemoChatService.getRoomMessages(roomId)
+        const messages = await RobustChatService.getRoomMessages(roomId)
         setChatState(prev => ({
           ...prev,
           messages,
@@ -137,11 +136,32 @@ export default function ChatWindow({
 
         scrollToBottom()
 
-        // 실시간 기능 임시 비활성화 (WebSocket 연결 문제로 인해)
-        console.info('실시간 기능이 임시로 비활성화되었습니다. 기본 채팅은 정상 작동합니다.')
+        // Resilient realtime with graceful degradation
+        const subscribed = await resilientRealtimeClient.subscribeToRoom(
+          roomId,
+          (newMessage) => {
+            console.log('📨 새 메시지 수신:', newMessage)
+            setChatState(prev => ({
+              ...prev,
+              messages: [...prev.messages, newMessage]
+            }))
+            scrollToBottom()
+          },
+          (error) => {
+            console.warn('🔄 Realtime connection issue (fallback active):', error)
+            // Graceful degradation: 폴링 모드로 자동 전환됨
+            setChatState(prev => ({
+              ...prev,
+              error: null // 에러 상태 초기화 (폴링으로 복구됨)
+            }))
+          }
+        )
 
-        // TODO: 실시간 기능은 인증 문제 해결 후 다시 활성화
-        // 현재는 기본 채팅 기능만 사용
+        if (subscribed) {
+          console.log(`✅ Successfully subscribed to room ${roomId}`)
+          const status = resilientRealtimeClient.getStatus()
+          console.log(`📊 Connection status:`, status)
+        }
 
       } catch (error) {
         console.error('채팅 초기화 실패:', error)
@@ -168,9 +188,9 @@ export default function ChatWindow({
 
     subscribeToRoom()
 
-    // 정리
+    // 정리 (Context preservation)
     return () => {
-      chatRealtimeClient.unsubscribeFromRoom(roomId)
+      resilientRealtimeClient.unsubscribeFromRoom(roomId)
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current)
       }

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import { realtimeManager } from '@/lib/realtime/connection-manager'
 import { useNotifications } from '@/contexts/notification-context'
-import { useAuth } from '@/contexts/auth-context'
+import { useResilientAuth as useAuth } from '@/contexts/resilient-auth-context'
 
 export function useRealtimeSubscription() {
   const router = useRouter()

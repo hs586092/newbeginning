@@ -7,7 +7,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useAuth } from '@/contexts/auth-context'
+import { useResilientAuth as useAuth } from '@/contexts/resilient-auth-context'
 import { toast } from 'sonner'
 import { Bell, Heart, MessageCircle, UserPlus, Award } from 'lucide-react'
 import { logger } from '@/lib/utils/logger'
@@ -162,15 +162,18 @@ export function RealtimeNotificationSystem() {
     // Load initial notifications
     loadNotifications()
 
-    // Setup realtime subscription
-    const subscription = supabase
-      .channel('notifications')
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'notifications',
-        filter: `user_id=eq.${user.id}`
-      }, (payload) => {
+    // Setup realtime subscription with error handling
+    let subscription: any = null
+
+    try {
+      subscription = supabase
+        .channel('notifications')
+        .on('postgres_changes', {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'notifications',
+          filter: `user_id=eq.${user.id}`
+        }, (payload) => {
         const newNotification = payload.new as Notification
 
         logger.log('New notification received', {
@@ -209,14 +212,26 @@ export function RealtimeNotificationSystem() {
           logger.log('Realtime notification subscription active')
         } else if (status === 'CLOSED') {
           logger.log('Realtime notification subscription closed')
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          logger.error('Realtime notification subscription error:', status)
         } else {
           logger.warn('Realtime notification subscription status:', status)
         }
       })
 
+    } catch (error) {
+      logger.error('Error setting up realtime notification subscription:', error)
+    }
+
     return () => {
-      logger.log('Cleaning up realtime notification subscription')
-      subscription.unsubscribe()
+      try {
+        logger.log('Cleaning up realtime notification subscription')
+        if (subscription && typeof subscription.unsubscribe === 'function') {
+          subscription.unsubscribe()
+        }
+      } catch (error) {
+        logger.error('Error cleaning up notification subscription:', error)
+      }
     }
   }, [isAuthenticated, user?.id, supabase, loadNotifications, showNotificationToast])
 

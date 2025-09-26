@@ -31,7 +31,7 @@ export function Footer() {
             </p>
             <div className="flex items-center gap-1 text-sm text-gray-500">
               <Heart className="w-4 h-4 text-pink-500" aria-hidden="true" />
-              <span>1,247명의 부모가 함께하고 있어요</span>
+              <span>함께 성장하는 육아 커뮤니티</span>
             </div>
           </div>
 

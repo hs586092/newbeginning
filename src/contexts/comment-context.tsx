@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react'
 import { CommentWithProfile, CommentRPC } from '@/types/database.types'
-import { useAuth } from '@/contexts/auth-context'
+import { useResilientAuth as useAuth } from '@/contexts/resilient-auth-context'
 import { createClient } from '@/lib/supabase/client'
 import { isValidForSupabase, getUUIDValidationError } from '@/lib/utils/uuid-validation'
 
@@ -42,7 +42,15 @@ interface CommentProviderProps {
 export function CommentProvider({ children }: CommentProviderProps) {
   const [commentState, setCommentState] = useState<CommentState>({})
   const { user, isAuthenticated } = useAuth() // AuthContext에서 사용자 정보 가져오기
-  const supabase = createClient() // 통합된 Supabase 클라이언트 사용
+  const [supabase, setSupabase] = useState<any>(null)
+
+  // 🚀 Supabase 클라이언트 지연 로딩
+  const getSupabaseClient = useCallback(async () => {
+    if (supabase) return supabase
+    const client = await createClient()
+    setSupabase(client)
+    return client
+  }, [supabase])
   
   const loadComments = useCallback(async (postId: string) => {
     console.log('🔄 CommentProvider: 댓글 로딩 시작', postId, { user: user?.id, isAuthenticated })
@@ -73,8 +81,10 @@ export function CommentProvider({ children }: CommentProviderProps) {
     
     try {
       
+      const supabaseClient = await getSupabaseClient()
+
       // RPC 함수 호출로 변경
-      const { data: comments, error } = await supabase
+      const { data: comments, error } = await supabaseClient
         .rpc('get_post_comments', { p_post_id: postId })
 
       if (error) {
@@ -122,7 +132,7 @@ export function CommentProvider({ children }: CommentProviderProps) {
         }
       }))
     }
-  }, [supabase, user?.id, isAuthenticated]) // supabase 및 인증 상태 의존성 추가
+  }, [getSupabaseClient, user?.id, isAuthenticated]) // supabase 및 인증 상태 의존성 추가
   
   const toggleComments = useCallback(async (postId: string) => {
     console.log('🔄 CommentProvider: 댓글 토글', postId)

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { X, Users, Hash, Globe, Lock } from 'lucide-react'
 import { chatService } from '@/lib/chat/chat-service'
-import { useAuth } from '@/contexts/auth-context'
+import { useResilientAuth as useAuth } from '@/contexts/resilient-auth-context'
 
 interface CreateRoomModalProps {
   isOpen: boolean

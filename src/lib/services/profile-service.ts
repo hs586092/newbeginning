@@ -1,15 +1,5 @@
 // 사용자 프로필 서비스 - MOCK 데이터 대체용
-import { createClient } from '@/lib/supabase/client'
-
-// Promise-based Supabase client for consistent initialization
-let supabasePromise: Promise<any> | null = null
-
-const getSupabaseClient = async () => {
-  if (!supabasePromise) {
-    supabasePromise = createClient()
-  }
-  return supabasePromise
-}
+import { getSupabaseClient } from '@/lib/supabase/client-factory'
 
 export interface UserProfile {
   id: string

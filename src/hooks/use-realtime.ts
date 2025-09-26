@@ -4,14 +4,13 @@
  */
 
 import { useEffect, useCallback, useRef } from 'react'
-import {
-  realtimeService,
+import realtimeService, {
   RealtimeSubscription,
   PostUpdate,
   MessageUpdate,
   NotificationUpdate
 } from '@/lib/services/realtime-service'
-import { useAuth } from '@/contexts/auth-context'
+import { useResilientAuth as useAuth } from '@/contexts/resilient-auth-context'
 
 /**
  * Hook for real-time post updates

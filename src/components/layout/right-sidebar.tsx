@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@/contexts/auth-context'
+import { useResilientAuth as useAuth } from '@/contexts/resilient-auth-context'
 import { RecommendedUsersSection } from '@/components/social/recommended-users-section'
 import { ActivityFeed } from '@/components/social/activity-feed'
 import { CategoryService } from '@/lib/services/category-service'

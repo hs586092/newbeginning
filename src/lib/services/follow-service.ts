@@ -1,15 +1,5 @@
-import { createClient } from '@/lib/supabase/client'
+import { getSupabaseClient } from '@/lib/supabase/client-factory'
 import { Follow, UserProfile, NotificationWithProfile } from '@/types/database.types'
-
-// Promise-based Supabase client for consistent initialization
-let supabasePromise: Promise<any> | null = null
-
-const getSupabaseClient = async () => {
-  if (!supabasePromise) {
-    supabasePromise = createClient()
-  }
-  return supabasePromise
-}
 
 export class FollowService {
   // 사용자 팔로우
