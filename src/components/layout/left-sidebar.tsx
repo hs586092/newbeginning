@@ -44,6 +44,22 @@ export function LeftSidebar({ className = '' }: LeftSidebarProps) {
   return (
     <div className={`space-y-6 ${className}`}>
 
+      {/* 병원 찾기 바로가기 */}
+      <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg p-4 text-white">
+        <h4 className="font-bold mb-2 flex items-center gap-2">
+          🏥 우리 동네 소아과
+        </h4>
+        <p className="text-sm text-blue-50 mb-3 leading-relaxed">
+          내 주변 소아과를 찾고 실제 엄마들의 리뷰를 확인하세요
+        </p>
+        <button
+          onClick={() => window.location.href = '/hospital'}
+          className="w-full bg-white text-blue-600 hover:bg-blue-50 text-sm py-2 px-4 rounded-md font-medium transition-colors"
+        >
+          병원 찾기
+        </button>
+      </div>
+
       {/* Phase 2: 새 메시지 알림 (로그인된 사용자만) */}
       {isAuthenticated && (
         <div className="bg-white rounded-lg border border-gray-200 p-4">
