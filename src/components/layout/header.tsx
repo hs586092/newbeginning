@@ -66,9 +66,26 @@ export function Header() {
       <header className="bg-white shadow-sm border-b border-gray-200 transition-colors sticky top-0 z-40" role="banner">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* 커뮤니티 정보 */}
-            <div className="flex items-center">
-              <h1 className="text-lg font-bold text-gray-900">🤱 첫돌까지</h1>
+            {/* 로고 및 네비게이션 */}
+            <div className="flex items-center space-x-6">
+              <Link href="/">
+                <h1 className="text-lg font-bold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors">
+                  🏥 우리동네 육아병원
+                </h1>
+              </Link>
+
+              <nav className="hidden md:flex items-center space-x-4">
+                <Link href="/">
+                  <Button variant="ghost" size="sm" className="text-blue-600 font-medium">
+                    병원 찾기
+                  </Button>
+                </Link>
+                <Link href="/community">
+                  <Button variant="ghost" size="sm">
+                    커뮤니티
+                  </Button>
+                </Link>
+              </nav>
             </div>
 
             {/* User Actions */}
