@@ -75,18 +75,20 @@ export function HospitalFinder() {
           },
           (error) => {
             console.error('Geolocation error:', error)
-            // 서울 시청 기본 좌표
-            setUserLocation({ lat: 37.5665, lng: 126.9780 })
-            toast.info('위치 권한이 없어 서울 지역을 기본으로 설정했습니다')
+            // 강남역 기본 좌표 (데이터가 있는 위치)
+            setUserLocation({ lat: 37.4979, lng: 127.0276 })
+            toast.info('위치 권한이 없어 강남 지역을 기본으로 설정했습니다')
           }
         )
       } else {
-        setUserLocation({ lat: 37.5665, lng: 126.9780 })
-        toast.info('위치 서비스를 사용할 수 없어 서울 지역을 기본으로 설정했습니다')
+        // 강남역 기본 좌표 (데이터가 있는 위치)
+        setUserLocation({ lat: 37.4979, lng: 127.0276 })
+        toast.info('위치 서비스를 사용할 수 없어 강남 지역을 기본으로 설정했습니다')
       }
     } catch (error) {
       console.error('Error getting location:', error)
-      setUserLocation({ lat: 37.5665, lng: 126.9780 })
+      // 강남역 기본 좌표 (데이터가 있는 위치)
+      setUserLocation({ lat: 37.4979, lng: 127.0276 })
     }
   }
 
