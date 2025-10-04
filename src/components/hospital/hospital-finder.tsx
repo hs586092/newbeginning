@@ -97,6 +97,7 @@ export function HospitalFinder() {
 
       // 실제 데이터 로드 시도
       try {
+        console.log('🔍 실제 병원 데이터 로드 시작...', { userLocation, filters })
         const { getNearbyHospitals } = await import('@/lib/hospital-service')
         const realHospitals = await getNearbyHospitals(
           userLocation.lat,
@@ -107,13 +108,20 @@ export function HospitalFinder() {
           }
         )
 
+        console.log('✅ 실제 병원 데이터 로드 성공:', realHospitals.length, '개')
+
         if (realHospitals.length > 0) {
           setHospitals(realHospitals)
           setLoading(false)
+          toast.success(`${realHospitals.length}개의 병원을 찾았습니다`)
           return
+        } else {
+          console.warn('⚠️ 실제 데이터는 로드되었지만 병원이 0개입니다')
+          toast.info('주변에 병원이 없어 목업 데이터를 표시합니다')
         }
       } catch (error) {
-        console.warn('실제 데이터 로드 실패, 목업 데이터 사용:', error)
+        console.error('❌ 실제 데이터 로드 실패, 목업 데이터 사용:', error)
+        toast.warning('실제 데이터 로드 실패, 샘플 데이터를 표시합니다')
       }
 
       // 폴백: 목업 데이터

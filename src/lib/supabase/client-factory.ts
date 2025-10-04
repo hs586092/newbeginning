@@ -133,14 +133,22 @@ export class SupabaseClientFactory {
    */
   private async testConnection(client: SupabaseClient): Promise<void> {
     try {
-      // Simple query to test connection
+      // Simple query to test connection - try hospitals table first
       const { error } = await client
-        .from('profiles')
+        .from('hospitals')
         .select('id', { count: 'exact', head: true })
         .limit(1)
 
-      if (error && !error.message.includes('relation "profiles" does not exist')) {
-        throw error
+      if (error) {
+        // Fallback to profiles table if hospitals doesn't exist
+        const { error: profileError } = await client
+          .from('profiles')
+          .select('id', { count: 'exact', head: true })
+          .limit(1)
+
+        if (profileError && !profileError.message.includes('relation "profiles" does not exist')) {
+          throw profileError
+        }
       }
     } catch (error: any) {
       throw new Error(`Connection test failed: ${error.message}`)

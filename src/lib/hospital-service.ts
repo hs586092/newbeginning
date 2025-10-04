@@ -64,7 +64,10 @@ export async function getNearbyHospitals(
   filters: HospitalFilters = {}
 ): Promise<Hospital[]> {
   try {
+    console.log('🏥 getNearbyHospitals 호출:', { userLat, userLng, filters })
     const supabase = await getSupabaseClient()
+    console.log('✅ Supabase 클라이언트 연결 성공')
+
     const radiusKm = filters.radius_km || 5.0
 
     // RPC 함수 호출 시도
@@ -79,11 +82,12 @@ export async function getNearbyHospitals(
 
     // RPC 성공
     if (!rpcError && rpcData) {
+      console.log('✅ RPC 함수 성공:', rpcData.length, '개')
       data = rpcData
     }
     // RPC 실패: 클라이언트 측에서 거리 계산
     else {
-      console.warn('RPC 함수 없음, 클라이언트 측 거리 계산 사용:', rpcError?.message)
+      console.warn('⚠️ RPC 함수 없음, 클라이언트 측 거리 계산 사용:', rpcError?.message)
 
       let query = supabase
         .from('hospitals')
@@ -96,9 +100,11 @@ export async function getNearbyHospitals(
       const { data: allHospitals, error } = await query
 
       if (error) {
-        console.error('병원 검색 에러:', error)
+        console.error('❌ 병원 검색 에러:', error)
         return []
       }
+
+      console.log('📊 전체 병원 조회:', allHospitals?.length, '개')
 
       // 클라이언트 측에서 거리 계산 및 필터링
       data = (allHospitals || [])
@@ -108,6 +114,8 @@ export async function getNearbyHospitals(
         }))
         .filter(hospital => hospital.distance <= radiusKm)
         .sort((a, b) => a.distance - b.distance)
+
+      console.log('✅ 클라이언트 측 필터링 완료:', data.length, '개 (반경', radiusKm, 'km)')
     }
 
     // 리뷰 요약 데이터 병합
