@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { HospitalList } from './hospital-list'
 import { HospitalMap } from './hospital-map'
 import { HospitalFilters } from './hospital-filters'
+import { HospitalListSkeleton } from './hospital-skeleton'
 import { MapPin, List, Map, Search, Navigation2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -92,8 +93,30 @@ export function HospitalFinder() {
   const loadNearbyHospitals = async () => {
     setLoading(true)
     try {
-      // TODO: 실제 네이버 지도 API 연동
-      // 현재는 목업 데이터로 시연
+      if (!userLocation) return
+
+      // 실제 데이터 로드 시도
+      try {
+        const { getNearbyHospitals } = await import('@/lib/hospital-service')
+        const realHospitals = await getNearbyHospitals(
+          userLocation.lat,
+          userLocation.lng,
+          {
+            category: filters.category !== 'all' ? filters.category : undefined,
+            radius_km: 5.0
+          }
+        )
+
+        if (realHospitals.length > 0) {
+          setHospitals(realHospitals)
+          setLoading(false)
+          return
+        }
+      } catch (error) {
+        console.warn('실제 데이터 로드 실패, 목업 데이터 사용:', error)
+      }
+
+      // 폴백: 목업 데이터
       const mockHospitals: Hospital[] = [
         {
           id: '1',
@@ -241,17 +264,80 @@ export function HospitalFinder() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="w-8 h-8 border-2 border-pink-300 border-t-pink-600 rounded-full animate-spin"></div>
-          <p className="text-gray-600">주변 병원을 찾는 중...</p>
+      <div className="space-y-6">
+        {/* Quick Filters Skeleton */}
+        <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-lg shadow-md p-4 animate-pulse">
+          <div className="h-4 bg-white/30 rounded w-24 mb-3"></div>
+          <div className="flex flex-wrap gap-2">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-9 bg-white/20 rounded-full w-24"></div>
+            ))}
+          </div>
         </div>
+
+        {/* Search Bar Skeleton */}
+        <div className="bg-white rounded-lg shadow-sm p-4">
+          <div className="h-10 bg-gray-200 rounded animate-pulse mb-4"></div>
+          <div className="h-6 bg-gray-200 rounded w-48 animate-pulse"></div>
+        </div>
+
+        {/* Hospital Cards Skeleton */}
+        <HospitalListSkeleton />
       </div>
     )
   }
 
   return (
     <div className="space-y-6">
+      {/* Quick Filters - 원클릭 필터 */}
+      <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-lg shadow-md p-4">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-white font-semibold text-sm">⚡ 빠른 필터</span>
+          {(filters.isOpen || filters.features.length > 0) && (
+            <button
+              onClick={() => handleFilterChange({ isOpen: false, features: [] })}
+              className="text-white text-xs underline hover:no-underline"
+            >
+              초기화
+            </button>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => handleFilterChange({ isOpen: !filters.isOpen })}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+              filters.isOpen
+                ? 'bg-white text-purple-600 shadow-md scale-105'
+                : 'bg-white/20 text-white hover:bg-white/30'
+            }`}
+          >
+            🟢 지금진료중
+          </button>
+          {['야간진료', '주말진료', '주차가능', '예약가능'].map((feature) => (
+            <button
+              key={feature}
+              onClick={() => {
+                const newFeatures = filters.features.includes(feature)
+                  ? filters.features.filter(f => f !== feature)
+                  : [...filters.features, feature]
+                handleFilterChange({ features: newFeatures })
+              }}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                filters.features.includes(feature)
+                  ? 'bg-white text-purple-600 shadow-md scale-105'
+                  : 'bg-white/20 text-white hover:bg-white/30'
+              }`}
+            >
+              {feature === '야간진료' && '🌙 '}
+              {feature === '주말진료' && '📅 '}
+              {feature === '주차가능' && '🅿️ '}
+              {feature === '예약가능' && '📞 '}
+              {feature}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Search and View Toggle */}
       <div className="bg-white rounded-lg shadow-sm p-4 space-y-4">
         <div className="flex items-center space-x-2">

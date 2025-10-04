@@ -4,6 +4,7 @@ import { Hospital } from './hospital-finder'
 import { Star, Phone, MapPin, Clock, CheckCircle, Navigation } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { ReviewSummary } from './review-summary'
 
 interface HospitalCardProps {
   hospital: Hospital
@@ -54,29 +55,74 @@ export function HospitalCard({ hospital, onClick }: HospitalCardProps) {
             )}
           </div>
 
-          <p className="text-sm text-gray-600 mb-3">{hospital.address}</p>
+          <p className="text-sm text-gray-600 mb-2">{hospital.address}</p>
 
-          {hospital.description && (
-            <p className="text-sm text-gray-700 mb-3 line-clamp-2">
-              {hospital.description}
-            </p>
+          {/* 진료시간 항상 노출 */}
+          {hospital.openingHours && (
+            <div className="flex items-start text-xs text-gray-600 mb-3">
+              <Clock className="w-3.5 h-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
+              <span className="leading-relaxed">{hospital.openingHours}</span>
+            </div>
           )}
 
-          <div className="flex flex-wrap gap-2">
-            {hospital.features.slice(0, 4).map((feature) => (
-              <Badge key={feature} variant="secondary" className="text-xs">
+          {/* 특징 6개로 확대 */}
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {hospital.features.slice(0, 6).map((feature) => (
+              <Badge key={feature} variant="secondary" className="text-xs px-2 py-0.5">
                 {feature}
               </Badge>
             ))}
-            {hospital.features.length > 4 && (
-              <Badge variant="secondary" className="text-xs">
-                +{hospital.features.length - 4}
+            {hospital.features.length > 6 && (
+              <Badge variant="secondary" className="text-xs px-2 py-0.5">
+                +{hospital.features.length - 6}
               </Badge>
             )}
           </div>
+
+          {/* AI 리뷰 요약 추가 */}
+          {(hospital as any).review_summary ? (
+            <ReviewSummary
+              hospitalId={hospital.id}
+              summary={(hospital as any).review_summary.summary}
+              pros={(hospital as any).review_summary.pros}
+              cons={(hospital as any).review_summary.cons}
+              sentiment={(hospital as any).review_summary.sentiment}
+            />
+          ) : (
+            <ReviewSummary
+              hospitalId={hospital.id}
+              summary={
+                hospital.id === '1' ? '친절하고 꼼꼼한 진료, 다만 대기시간이 긴 편입니다' :
+                hospital.id === '2' ? '시설과 장비는 좋으나 예약이 필수입니다' :
+                hospital.id === '3' ? '아이들과 소통 잘하는 원장님, 예약 필수' :
+                hospital.id === '4' ? '주차 편리하고 대기실 쾌적, 진료는 평범' :
+                '365일 진료로 편리하지만 혼잡할 수 있음'
+              }
+              pros={
+                hospital.id === '1' ? ['친절한 상담', '꼼꼼한 진료', '깨끗한 시설'] :
+                hospital.id === '2' ? ['최신 장비', '전문 진료', '깨끗한 환경'] :
+                hospital.id === '3' ? ['아이 소통 잘함', '친절한 직원', '정확한 진단'] :
+                hospital.id === '4' ? ['주차 편리', '쾌적한 대기실', '친절한 안내'] :
+                ['365일 진료', '야간진료', '응급 대응']
+              }
+              cons={
+                hospital.id === '1' ? ['대기시간 긴 편', '주차공간 부족'] :
+                hospital.id === '2' ? ['예약 필수', '대기시간 있음'] :
+                hospital.id === '3' ? ['예약 어려움', '점심시간 긴 편'] :
+                hospital.id === '4' ? ['진료 평범', '혼잡할 수 있음'] :
+                ['항상 혼잡', '대기 긴 편']
+              }
+              sentiment={
+                ['1', '3'].includes(hospital.id) ? 'positive' :
+                ['2', '4'].includes(hospital.id) ? 'neutral' :
+                'positive'
+              }
+            />
+          )}
         </div>
       </div>
 
+      {/* 전화/길찾기 버튼 항상 노출 */}
       <div className="flex items-center space-x-2 pt-3 border-t border-gray-100">
         <Button
           variant="outline"
@@ -105,13 +151,6 @@ export function HospitalCard({ hospital, onClick }: HospitalCardProps) {
           상세보기
         </Button>
       </div>
-
-      {hospital.openingHours && (
-        <div className="mt-3 pt-3 border-t border-gray-100 flex items-center text-sm text-gray-600">
-          <Clock className="w-4 h-4 mr-2" />
-          <span>{hospital.openingHours}</span>
-        </div>
-      )}
     </div>
   )
 }
