@@ -12,11 +12,16 @@ interface ReviewSummaryProps {
 
 export function ReviewSummary({
   hospitalId,
-  summary = '친절하고 꼼꼼한 진료, 다만 대기시간이 긴 편입니다',
-  pros = ['친절한 상담', '꼼꼼한 진료', '깨끗한 시설'],
-  cons = ['대기시간 긴 편', '주차공간 부족'],
-  sentiment = 'positive'
+  summary,
+  pros,
+  cons,
+  sentiment = 'neutral'
 }: ReviewSummaryProps) {
+  // 실제 리뷰 데이터가 없으면 컴포넌트 숨김
+  if (!summary && (!pros || pros.length === 0)) {
+    return null
+  }
+
   const sentimentColor = {
     positive: 'bg-green-50 border-green-200 text-green-800',
     neutral: 'bg-gray-50 border-gray-200 text-gray-800',
@@ -41,37 +46,43 @@ export function ReviewSummary({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 mt-3">
-        <div className="space-y-1">
-          <div className="flex items-center space-x-1 text-xs font-medium">
-            <ThumbsUp className="w-3 h-3" />
-            <span>장점</span>
-          </div>
-          <ul className="text-xs space-y-0.5">
-            {pros.slice(0, 3).map((pro, index) => (
-              <li key={index} className="flex items-start">
-                <span className="mr-1">•</span>
-                <span>{pro}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+      {((pros && pros.length > 0) || (cons && cons.length > 0)) && (
+        <div className="grid grid-cols-2 gap-2 mt-3">
+          {pros && pros.length > 0 && (
+            <div className="space-y-1">
+              <div className="flex items-center space-x-1 text-xs font-medium">
+                <ThumbsUp className="w-3 h-3" />
+                <span>장점</span>
+              </div>
+              <ul className="text-xs space-y-0.5">
+                {pros.slice(0, 3).map((pro, index) => (
+                  <li key={index} className="flex items-start">
+                    <span className="mr-1">•</span>
+                    <span>{pro}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
-        <div className="space-y-1">
-          <div className="flex items-center space-x-1 text-xs font-medium">
-            <ThumbsDown className="w-3 h-3" />
-            <span>단점</span>
-          </div>
-          <ul className="text-xs space-y-0.5">
-            {cons.slice(0, 3).map((con, index) => (
-              <li key={index} className="flex items-start">
-                <span className="mr-1">•</span>
-                <span>{con}</span>
-              </li>
-            ))}
-          </ul>
+          {cons && cons.length > 0 && (
+            <div className="space-y-1">
+              <div className="flex items-center space-x-1 text-xs font-medium">
+                <ThumbsDown className="w-3 h-3" />
+                <span>단점</span>
+              </div>
+              <ul className="text-xs space-y-0.5">
+                {cons.slice(0, 3).map((con, index) => (
+                  <li key={index} className="flex items-start">
+                    <span className="mr-1">•</span>
+                    <span>{con}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
-      </div>
+      )}
     </div>
   )
 }
