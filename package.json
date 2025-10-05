@@ -21,6 +21,7 @@
     "db:migrate:comments": "node scripts/db-migrate.js comments"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.65.0",
     "@hookform/resolvers": "^5.2.1",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-collapsible": "^1.1.12",
@@ -43,6 +44,7 @@
     "isomorphic-dompurify": "^2.26.0",
     "lucide-react": "^0.542.0",
     "next": "15.5.2",
+    "openai": "^6.1.0",
     "pg": "^8.16.3",
     "playwright": "^1.55.0",
     "react": "19.1.0",

@@ -28,23 +28,22 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://fortheorlingas.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://moree.ai'),
   manifest: '/manifest.json',
   title: {
-    default: '우리동네 육아병원 - 소아과 찾기, 리뷰, 예약 | 엄마들의 진짜 후기',
-    template: '%s | 우리동네 육아병원'
+    default: 'moree.ai - AI가 요약하는 모든 리뷰',
+    template: '%s | moree.ai'
   },
-  description: '우리 동네 소아과를 찾고 실제 엄마들의 리뷰를 확인하세요. 위치 기반 검색, 진료시간, 주차 정보, 야간진료까지. 아이를 위한 믿을 수 있는 병원 정보.',
+  description: '카페, 식당, 병원 등 어떤 장소든 검색하면 네이버 리뷰를 AI가 한눈에 요약해드립니다. 장점, 단점, 전체 평가를 빠르게 확인하세요.',
   keywords: [
-    '소아과', '소아청소년과', '병원찾기', '소아과추천', '동네병원',
-    '소아과리뷰', '병원후기', '야간진료', '응급실', '예방접종',
-    '영유아검진', '육아병원', '아기병원', '신생아병원', '소아과예약',
-    '병원정보', '진료시간', '주차가능병원', '주말진료', '공휴일진료',
-    '육아', '육아커뮤니티', '맘카페', '육아맘', '육아정보'
+    '리뷰요약', 'AI리뷰', '네이버리뷰', '장소검색', '맛집추천',
+    '카페추천', '병원추천', '리뷰분석', 'AI요약', '스마트리뷰',
+    '장점단점', '리뷰한눈에', '빠른리뷰', '리뷰검색', '장소추천',
+    'moree', 'moree.ai', '모든리뷰', 'review summary', 'AI review'
   ],
-  authors: [{ name: 'ParentWise Team' }],
-  creator: 'ParentWise',
-  publisher: 'ParentWise',
+  authors: [{ name: 'moree.ai Team' }],
+  creator: 'moree.ai',
+  publisher: 'moree.ai',
   formatDetection: {
     email: false,
     address: false,
@@ -54,25 +53,25 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'ko_KR',
     url: '/',
-    siteName: '첫돌까지',
-    title: '첫돌까지 - 0-12개월 육아맘 커뮤니티',
-    description: '신생아부터 첫돌까지 월령별 육아 정보와 선배맘들의 따뜻한 조언. 함께 성장하는 육아 커뮤니티입니다.',
+    siteName: 'moree.ai',
+    title: 'moree.ai - AI가 요약하는 모든 리뷰',
+    description: '카페, 식당, 병원 등 어떤 장소든 검색하면 네이버 리뷰를 AI가 한눈에 요약해드립니다.',
     images: [
       {
-        url: '/og-baby.png',
+        url: '/og-moree.png',
         width: 1200,
         height: 630,
-        alt: '첫돌까지 - 육아맘 커뮤니티',
+        alt: 'moree.ai - AI 리뷰 요약 서비스',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    site: '@ParentWise',
-    creator: '@ParentWise',
-    title: 'ParentWise - Global Parenting Community',
-    description: 'Connect with parents worldwide. Share experiences, get advice, and support each other.',
-    images: ['/og-baby.png'],
+    site: '@moree_ai',
+    creator: '@moree_ai',
+    title: 'moree.ai - AI Review Summary Service',
+    description: 'Get AI-powered summaries of any place reviews in seconds.',
+    images: ['/og-moree.png'],
   },
   robots: {
     index: true,
