@@ -64,6 +64,12 @@ export function HospitalFinder() {
 
   const getUserLocation = async () => {
     try {
+      // 강남역 기본 좌표 (데이터가 있는 위치)
+      // 실제 위치가 강남 근처가 아니면 병원이 안 나올 수 있으므로 일단 강남역으로 고정
+      setUserLocation({ lat: 37.4979, lng: 127.0276 })
+      toast.info('현재 강남 지역 병원을 표시합니다')
+
+      /* 위치 권한 기능은 나중에 활성화
       if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
@@ -75,19 +81,14 @@ export function HospitalFinder() {
           },
           (error) => {
             console.error('Geolocation error:', error)
-            // 강남역 기본 좌표 (데이터가 있는 위치)
             setUserLocation({ lat: 37.4979, lng: 127.0276 })
             toast.info('위치 권한이 없어 강남 지역을 기본으로 설정했습니다')
           }
         )
-      } else {
-        // 강남역 기본 좌표 (데이터가 있는 위치)
-        setUserLocation({ lat: 37.4979, lng: 127.0276 })
-        toast.info('위치 서비스를 사용할 수 없어 강남 지역을 기본으로 설정했습니다')
       }
+      */
     } catch (error) {
       console.error('Error getting location:', error)
-      // 강남역 기본 좌표 (데이터가 있는 위치)
       setUserLocation({ lat: 37.4979, lng: 127.0276 })
     }
   }
