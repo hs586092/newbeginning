@@ -118,23 +118,40 @@ export async function getNearbyHospitals(
       console.log('✅ 클라이언트 측 필터링 완료:', data.length, '개 (반경', radiusKm, 'km)')
     }
 
-    // 리뷰 요약 데이터 병합
+    // 리뷰 요약 데이터 병합 및 필드명 변환
     const hospitals = await Promise.all(
       (data || []).map(async (hospital: any) => {
         const summary = await getHospitalReviewSummary(hospital.id)
+        const isOpen = checkIsOpen(hospital.opening_hours)
+
+        // 데이터베이스 필드명을 프론트엔드 camelCase로 변환
         return {
-          ...hospital,
-          is_open: checkIsOpen(hospital.opening_hours),
+          id: hospital.id,
+          name: hospital.name,
+          address: hospital.address,
+          phone: hospital.phone || '',
+          category: hospital.category,
+          lat: hospital.lat,
+          lng: hospital.lng,
+          rating: hospital.rating,
+          reviewCount: hospital.review_count || 0, // review_count -> reviewCount
+          distance: hospital.distance,
+          isOpen, // is_open -> isOpen
+          openingHours: hospital.opening_hours ? JSON.stringify(hospital.opening_hours) : undefined,
+          features: hospital.features || [],
+          description: hospital.description,
           review_summary: summary
         }
       })
     )
 
+    console.log('✅ 병원 데이터 변환 완료:', hospitals.length, '개')
+
     // 필터 적용
     let filtered = hospitals
 
     if (filters.is_open) {
-      filtered = filtered.filter(h => h.is_open)
+      filtered = filtered.filter(h => h.isOpen)
     }
 
     if (filters.features && filters.features.length > 0) {
@@ -146,11 +163,12 @@ export async function getNearbyHospitals(
     // 정렬
     if (filters.sort_by === 'rating') {
       filtered.sort((a, b) => b.rating - a.rating)
-    } else if (filters.sort_by === 'review_count') {
-      filtered.sort((a, b) => b.review_count - a.review_count)
+    } else if (filters.sort_by === 'reviewCount') {
+      filtered.sort((a, b) => b.reviewCount - a.reviewCount)
     }
     // distance는 이미 정렬되어 있음
 
+    console.log('✅ 최종 반환 데이터:', filtered.length, '개')
     return filtered
   } catch (error) {
     console.error('병원 검색 실패:', error)
