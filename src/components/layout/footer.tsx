@@ -23,15 +23,15 @@ export function Footer() {
           {/* 서비스 소개 */}
           <div className="md:col-span-1">
             <h3 className="text-lg font-bold text-gray-900 mb-4">
-              🤱 첫돌까지 육아맘들
+              moree<span className="text-blue-600">.ai</span>
             </h3>
             <p className="text-sm text-gray-600 mb-4">
-              새로운 엄마, 아빠들이 함께 성장하는 커뮤니티입니다.
-              육아의 모든 순간을 함께 나누어요.
+              AI가 요약하는 모든 리뷰.
+              카페, 식당, 병원 등 어떤 장소든 네이버 리뷰를 한눈에 요약해드립니다.
             </p>
             <div className="flex items-center gap-1 text-sm text-gray-500">
-              <Heart className="w-4 h-4 text-pink-500" aria-hidden="true" />
-              <span>함께 성장하는 육아 커뮤니티</span>
+              <Heart className="w-4 h-4 text-blue-500" aria-hidden="true" />
+              <span>스마트한 장소 선택의 시작</span>
             </div>
           </div>
 
@@ -45,7 +45,7 @@ export function Footer() {
                   className="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center gap-2"
                 >
                   <MessageSquare className="w-4 h-4" aria-hidden="true" />
-                  커뮤니티 소개
+                  서비스 소개
                 </Link>
               </li>
               <li>
@@ -54,16 +54,16 @@ export function Footer() {
                   className="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center gap-2"
                 >
                   <FileText className="w-4 h-4" aria-hidden="true" />
-                  이용가이드
+                  사용 방법
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/community-rules"
+                  href="/how-it-works"
                   className="text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center gap-2"
                 >
                   <Shield className="w-4 h-4" aria-hidden="true" />
-                  커뮤니티 규칙
+                  AI 요약 원리
                 </Link>
               </li>
             </ul>
@@ -124,10 +124,10 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:support@fortheorlingas.com"
+                  href="mailto:support@moree.ai"
                   className="text-sm text-gray-600 hover:text-blue-600 transition-colors"
                 >
-                  support@fortheorlingas.com
+                  support@moree.ai
                 </a>
               </li>
             </ul>
@@ -137,7 +137,7 @@ export function Footer() {
               <h5 className="text-sm font-medium text-gray-900 mb-3">소셜 미디어</h5>
               <div className="flex space-x-3">
                 <a
-                  href="https://instagram.com/fortheorlingas"
+                  href="https://instagram.com/moree.ai"
                   className="text-gray-400 hover:text-pink-500 transition-colors"
                   aria-label="Instagram 팔로우하기"
                   target="_blank"
@@ -146,7 +146,7 @@ export function Footer() {
                   <Instagram className="w-5 h-5" />
                 </a>
                 <a
-                  href="https://twitter.com/fortheorlingas"
+                  href="https://twitter.com/moree_ai"
                   className="text-gray-400 hover:text-blue-500 transition-colors"
                   aria-label="Twitter 팔로우하기"
                   target="_blank"
@@ -155,7 +155,7 @@ export function Footer() {
                   <Twitter className="w-5 h-5" />
                 </a>
                 <a
-                  href="https://facebook.com/fortheorlingas"
+                  href="https://facebook.com/moree.ai"
                   className="text-gray-400 hover:text-blue-600 transition-colors"
                   aria-label="Facebook 팔로우하기"
                   target="_blank"
@@ -172,12 +172,12 @@ export function Footer() {
         <div className="border-t border-gray-300 mt-8 pt-8">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-sm text-gray-500">
-              © {currentYear} 첫돌까지 육아맘들. All rights reserved.
+              © {currentYear} moree.ai. All rights reserved.
             </p>
             <div className="flex items-center gap-4 text-sm text-gray-500">
               <span>Made with</span>
-              <Heart className="w-4 h-4 text-pink-500" aria-hidden="true" />
-              <span>for parents worldwide</span>
+              <Heart className="w-4 h-4 text-blue-500" aria-hidden="true" />
+              <span>for smarter decisions</span>
             </div>
           </div>
         </div>
