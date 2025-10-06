@@ -79,13 +79,24 @@ export async function extractReviewsFromNaverMap(
       timeout: 30000
     })
 
-    // Wait longer for dynamic content
+    // Wait for dynamic content and iframes
     await sleep(8000)
 
-    // Extract ALL text from the page (including iframes)
-    const allText = await page.evaluate(() => {
-      return document.body.innerText
-    })
+    // Extract text from all frames
+    let allText = ''
+    const frames = page.frames()
+
+    for (const frame of frames) {
+      try {
+        const frameText = await frame.evaluate(() => document.body?.innerText || '')
+        if (frameText && frameText.length > 100) {
+          allText += '\n' + frameText
+        }
+      } catch (e) {
+        // Skip frames that can't be accessed
+        continue
+      }
+    }
 
     // Get current URL
     const currentUrl = page.url()
@@ -103,8 +114,14 @@ export async function extractReviewsFromNaverMap(
     if (reviewIndex !== -1) {
       reviewText = allText.substring(reviewIndex, reviewIndex + 10000)
     } else {
-      // If no "리뷰" found, use full text
-      reviewText = allText
+      // Try finding other review indicators
+      const visitorIndex = allText.indexOf('방문자')
+      if (visitorIndex !== -1) {
+        reviewText = allText.substring(visitorIndex, visitorIndex + 10000)
+      } else {
+        // Use full text if no specific section found
+        reviewText = allText
+      }
     }
 
     if (start && metrics) {
