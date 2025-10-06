@@ -48,7 +48,7 @@ export function normalizePlaceName(placeName: string): string {
  *
  * Run with: npx tsx src/lib/utils/normalizer.ts
  */
-if (require.main === module) {
+if (typeof require !== 'undefined' && require.main === module) {
   const tests = [
     // Test 1: Basic normalization
     {
