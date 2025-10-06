@@ -60,64 +60,96 @@ export async function extractReviewsFromNaverMap(
     browser = await getBrowser()
     const page = await browser.newPage()
 
+    // Set viewport
+    await page.setViewport({ width: 1280, height: 720 })
+
     const searchUrl = `https://map.naver.com/v5/search/${encodeURIComponent(placeName)}`
     await page.goto(searchUrl, {
-      waitUntil: 'domcontentloaded',
+      waitUntil: 'networkidle2',
       timeout: 30000
     })
 
-    await sleep(5000)
+    // Wait for iframes to load
+    await sleep(3000)
 
-    // iframe에서 검색 결과 찾기
-    const frames = page.frames()
-    const searchFrame = frames.find(f => f.url().includes('pcmap.place.naver.com/place/list'))
+    // Find search result iframe - try multiple times
+    let searchFrame = null
+    for (let i = 0; i < 3; i++) {
+      const frames = page.frames()
+      searchFrame = frames.find(f => f.url().includes('pcmap.place.naver.com'))
+
+      if (searchFrame) break
+      await sleep(2000)
+    }
 
     if (!searchFrame) {
       throw new Error('검색 결과를 찾을 수 없습니다')
     }
 
-    // 첫 번째 검색 결과 클릭 (Puppeteer API)
-    const firstResult = await searchFrame.$('a')
-    if (!firstResult) {
+    // Wait for search results to appear
+    await sleep(2000)
+
+    // Click first search result - try multiple selectors
+    let clicked = false
+    const selectors = [
+      'a[class*="place"]',
+      'li[class*="search"] a',
+      'div[class*="search"] a',
+      '.search_item a',
+      'a'
+    ]
+
+    for (const selector of selectors) {
+      try {
+        const firstResult = await searchFrame.$(selector)
+        if (firstResult) {
+          await firstResult.click()
+          clicked = true
+          break
+        }
+      } catch (e) {
+        continue
+      }
+    }
+
+    if (!clicked) {
       throw new Error('검색 결과를 찾을 수 없습니다')
     }
-    await firstResult.click()
-    await sleep(5000)
 
-    // 상세 페이지 iframe 찾기
-    const framesAfterClick = page.frames()
-    let detailFrame = framesAfterClick.find(f =>
-      f.url().includes('pcmap.place.naver.com') &&
-      !f.url().includes('/list')
-    )
+    // Wait for detail page to load
+    await sleep(4000)
+
+    // Find detail iframe
+    let detailFrame = null
+    for (let i = 0; i < 3; i++) {
+      const frames = page.frames()
+      detailFrame = frames.find(f =>
+        f.url().includes('pcmap.place.naver.com') &&
+        f.url().includes('/place/')
+      )
+
+      if (detailFrame) break
+      await sleep(2000)
+    }
 
     if (!detailFrame) {
       throw new Error('상세 페이지를 찾을 수 없습니다')
     }
 
-    // 리뷰 탭 클릭 시도
-    try {
-      // Puppeteer doesn't have :has-text selector, use alternative
-      const reviewTab = await detailFrame.$('a[href*="review"], button[aria-label*="리뷰"]')
-      if (reviewTab) {
-        await reviewTab.click()
-        await sleep(3000)
-      }
-    } catch (e) {
-      // 리뷰 탭 없으면 전체 페이지 사용
-    }
+    // Wait for content to load
+    await sleep(2000)
 
-    // 현재 URL (네이버 지도 링크)
-    const currentUrl = page.url()
-
-    // 상세 페이지에서 텍스트 추출
+    // Extract all text content
     const detailText = await detailFrame.evaluate(() => {
       return document.body.innerText
     })
 
+    // Get current URL
+    const currentUrl = page.url()
+
     await browser.close()
 
-    // 리뷰 섹션 텍스트만 추출 시도
+    // Extract review section
     let reviewText = detailText
     const reviewIndex = detailText.indexOf('리뷰')
     if (reviewIndex !== -1) {
