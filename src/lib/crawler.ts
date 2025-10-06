@@ -1,16 +1,43 @@
 /**
  * Naver Map Crawler
  *
- * Extracts reviews from Naver Map using Playwright
+ * Extracts reviews from Naver Map using Puppeteer (Vercel compatible)
  * Accepts MetricsTracker for performance monitoring
  */
 
-import { chromium } from 'playwright'
 import { MetricsTracker } from '@/types/place'
 
 export interface CrawlResult {
   reviewText: string
   naverUrl: string
+}
+
+/**
+ * Get browser instance (Vercel-compatible)
+ */
+async function getBrowser() {
+  // Check if running on Vercel
+  if (process.env.VERCEL) {
+    const chromium = require('chrome-aws-lambda')
+    const puppeteer = require('puppeteer-core')
+
+    return await puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath,
+      headless: chromium.headless,
+    })
+  } else {
+    // Local development - use Playwright
+    const { chromium: playwrightChromium } = require('playwright')
+    return await playwrightChromium.launch({ headless: true })
+  }
+}
+
+/**
+ * Sleep helper
+ */
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 /**
@@ -29,7 +56,7 @@ export async function extractReviewsFromNaverMap(
   try {
     const start = metrics?.startCrawl()
 
-    browser = await chromium.launch({ headless: true })
+    browser = await getBrowser()
     const page = await browser.newPage()
 
     const searchUrl = `https://map.naver.com/v5/search/${encodeURIComponent(placeName)}`
@@ -38,22 +65,27 @@ export async function extractReviewsFromNaverMap(
       timeout: 30000
     })
 
-    await page.waitForTimeout(5000)
+    await sleep(5000)
 
     // iframe에서 검색 결과 찾기
-    const searchFrame = page.frames().find(f => f.url().includes('pcmap.place.naver.com/place/list'))
+    const frames = page.frames()
+    const searchFrame = frames.find(f => f.url().includes('pcmap.place.naver.com/place/list'))
 
     if (!searchFrame) {
       throw new Error('검색 결과를 찾을 수 없습니다')
     }
 
-    // 첫 번째 검색 결과 클릭
-    const firstResult = searchFrame.locator('a').first()
+    // 첫 번째 검색 결과 클릭 (Puppeteer API)
+    const firstResult = await searchFrame.$('a')
+    if (!firstResult) {
+      throw new Error('검색 결과를 찾을 수 없습니다')
+    }
     await firstResult.click()
-    await page.waitForTimeout(5000)
+    await sleep(5000)
 
     // 상세 페이지 iframe 찾기
-    let detailFrame = page.frames().find(f =>
+    const framesAfterClick = page.frames()
+    let detailFrame = framesAfterClick.find(f =>
       f.url().includes('pcmap.place.naver.com') &&
       !f.url().includes('/list')
     )
@@ -64,10 +96,11 @@ export async function extractReviewsFromNaverMap(
 
     // 리뷰 탭 클릭 시도
     try {
-      const reviewTab = detailFrame.locator('a:has-text("리뷰")').or(detailFrame.locator('button:has-text("리뷰")'))
-      if (await reviewTab.count() > 0) {
-        await reviewTab.first().click()
-        await page.waitForTimeout(3000)
+      // Puppeteer doesn't have :has-text selector, use alternative
+      const reviewTab = await detailFrame.$('a[href*="review"], button[aria-label*="리뷰"]')
+      if (reviewTab) {
+        await reviewTab.click()
+        await sleep(3000)
       }
     } catch (e) {
       // 리뷰 탭 없으면 전체 페이지 사용
