@@ -42,7 +42,20 @@ export default function HomePage() {
         throw new Error(data.error || '요약에 실패했습니다')
       }
 
-      setResult(data)
+      // API returns { status, data, is_fresh }
+      if (data.data) {
+        setResult({
+          placeName: data.data.placename || data.data.place_name_original,
+          summary: data.data.summary,
+          pros: data.data.pros || [],
+          cons: data.data.cons || [],
+          sentiment: data.data.sentiment,
+          naverMapUrl: data.data.navermapurl || data.data.naverMapUrl,
+          reviewCount: data.data.reviewcount || data.data.reviewCount || 0
+        })
+      } else {
+        throw new Error('응답 형식이 올바르지 않습니다')
+      }
 
     } catch (err: any) {
       setError(err.message || '오류가 발생했습니다')
