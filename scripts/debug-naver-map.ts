@@ -1,51 +1,37 @@
 /**
- * 네이버 지도 UI 디버깅
+ * Debug script to test Naver Map crawling locally
  */
 
 import { chromium } from 'playwright'
 
 async function debugNaverMap() {
+  const placeName = '스타벅스 강남역점'
   const browser = await chromium.launch({ headless: false })
   const page = await browser.newPage()
 
-  const hospitalName = '무지개의원'
-  const searchUrl = `https://map.naver.com/v5/search/${encodeURIComponent(hospitalName)}`
+  try {
+    console.log('1. Navigating to Naver Map...')
+    const searchUrl = `https://map.naver.com/v5/search/${encodeURIComponent(placeName)}`
+    await page.goto(searchUrl, { waitUntil: 'networkidle', timeout: 30000 })
 
-  console.log(`🔍 테스트: ${hospitalName}`)
-  console.log(`📍 URL: ${searchUrl}\n`)
+    console.log('2. Waiting for page load...')
+    await page.waitForTimeout(5000)
 
-  await page.goto(searchUrl, {
-    waitUntil: 'domcontentloaded',
-    timeout: 60000
-  })
+    console.log('3. Checking frames...')
+    const frames = page.frames()
+    console.log(`Found ${frames.length} frames:`)
+    frames.forEach((f, i) => {
+      console.log(`  Frame ${i}: ${f.url()}`)
+    })
 
-  await page.waitForTimeout(5000)
+    console.log('\n✅ Success! Check browser window.')
+    await page.waitForTimeout(60000)
 
-  // 스크린샷
-  await page.screenshot({ path: '/tmp/naver-map-debug.png', fullPage: true })
-  console.log('📸 스크린샷 저장: /tmp/naver-map-debug.png\n')
-
-  // 가능한 선택자들 확인
-  const selectors = [
-    'a.place_bluelink',
-    '.search_item',
-    '[class*="search"]',
-    '[class*="place"]',
-    'li[role="button"]',
-    '.place_didmount',
-    '#_pcmap_list_scroll_container li'
-  ]
-
-  console.log('🔍 선택자 확인:\n')
-  for (const selector of selectors) {
-    const count = await page.locator(selector).count()
-    console.log(`  ${selector}: ${count}개`)
+  } catch (error: any) {
+    console.error('❌ Error:', error.message)
+  } finally {
+    await browser.close()
   }
-
-  console.log('\n⏸️  브라우저를 열어둡니다. 확인 후 Ctrl+C로 종료하세요.')
-
-  // 무한 대기 (수동 확인용)
-  await new Promise(() => {})
 }
 
-debugNaverMap().catch(console.error)
+debugNaverMap()

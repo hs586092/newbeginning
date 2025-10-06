@@ -21,8 +21,18 @@ async function getBrowser() {
     const chromium = require('@sparticuz/chromium')
     const puppeteer = require('puppeteer-core')
 
+    // Add extra flags for iframe support
+    const args = [
+      ...chromium.args,
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-web-security',
+      '--disable-features=IsolateOrigins,site-per-process'
+    ]
+
     return await puppeteer.launch({
-      args: chromium.args,
+      args,
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath(),
       headless: chromium.headless,
