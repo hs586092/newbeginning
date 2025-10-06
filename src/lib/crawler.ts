@@ -105,7 +105,7 @@ export async function extractReviewsFromNaverMap(
 
     // Check if we got meaningful content
     if (allText.length < 100) {
-      throw new Error('검색 결과를 찾을 수 없습니다')
+      throw new Error(`검색 결과를 찾을 수 없습니다 (extracted ${allText.length} chars from ${frames.length} frames)`)
     }
 
     // Extract review section if exists
