@@ -44,14 +44,15 @@ export default function HomePage() {
 
       // API returns { status, data, is_fresh }
       if (data.data) {
+        const resultData = data.data
         setResult({
-          placeName: data.data.placename || data.data.place_name_original,
-          summary: data.data.summary,
-          pros: data.data.pros || [],
-          cons: data.data.cons || [],
-          sentiment: data.data.sentiment,
-          naverMapUrl: data.data.navermapurl || data.data.naverMapUrl,
-          reviewCount: data.data.reviewcount || data.data.reviewCount || 0
+          placeName: resultData.placename || resultData.place_name_original || '',
+          summary: resultData.summary || '',
+          pros: Array.isArray(resultData.pros) ? resultData.pros : [],
+          cons: Array.isArray(resultData.cons) ? resultData.cons : [],
+          sentiment: resultData.sentiment || 'neutral',
+          naverMapUrl: resultData.navermapurl || resultData.naverMapUrl || '',
+          reviewCount: resultData.reviewcount || resultData.reviewCount || 0
         })
       } else {
         throw new Error('응답 형식이 올바르지 않습니다')
