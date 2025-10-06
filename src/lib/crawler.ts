@@ -18,12 +18,13 @@ export interface CrawlResult {
 async function getBrowser() {
   // Check if running on Vercel
   if (process.env.VERCEL) {
-    const chromium = require('chrome-aws-lambda')
+    const chromium = require('@sparticuz/chromium')
     const puppeteer = require('puppeteer-core')
 
     return await puppeteer.launch({
       args: chromium.args,
-      executablePath: await chromium.executablePath,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
       headless: chromium.headless,
     })
   } else {
