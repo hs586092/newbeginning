@@ -75,82 +75,15 @@ export async function extractReviewsFromNaverMap(
 
     const searchUrl = `https://map.naver.com/v5/search/${encodeURIComponent(placeName)}`
     await page.goto(searchUrl, {
-      waitUntil: 'networkidle2',
+      waitUntil: 'domcontentloaded',
       timeout: 30000
     })
 
-    // Wait for iframes to load
-    await sleep(3000)
+    // Wait longer for dynamic content
+    await sleep(8000)
 
-    // Find search result iframe - try multiple times
-    let searchFrame = null
-    for (let i = 0; i < 3; i++) {
-      const frames = page.frames()
-      searchFrame = frames.find(f => f.url().includes('pcmap.place.naver.com'))
-
-      if (searchFrame) break
-      await sleep(2000)
-    }
-
-    if (!searchFrame) {
-      throw new Error('검색 결과를 찾을 수 없습니다')
-    }
-
-    // Wait for search results to appear
-    await sleep(2000)
-
-    // Click first search result - try multiple selectors
-    let clicked = false
-    const selectors = [
-      'a[class*="place"]',
-      'li[class*="search"] a',
-      'div[class*="search"] a',
-      '.search_item a',
-      'a'
-    ]
-
-    for (const selector of selectors) {
-      try {
-        const firstResult = await searchFrame.$(selector)
-        if (firstResult) {
-          await firstResult.click()
-          clicked = true
-          break
-        }
-      } catch (e) {
-        continue
-      }
-    }
-
-    if (!clicked) {
-      throw new Error('검색 결과를 찾을 수 없습니다')
-    }
-
-    // Wait for detail page to load
-    await sleep(4000)
-
-    // Find detail iframe
-    let detailFrame = null
-    for (let i = 0; i < 3; i++) {
-      const frames = page.frames()
-      detailFrame = frames.find(f =>
-        f.url().includes('pcmap.place.naver.com') &&
-        f.url().includes('/place/')
-      )
-
-      if (detailFrame) break
-      await sleep(2000)
-    }
-
-    if (!detailFrame) {
-      throw new Error('상세 페이지를 찾을 수 없습니다')
-    }
-
-    // Wait for content to load
-    await sleep(2000)
-
-    // Extract all text content
-    const detailText = await detailFrame.evaluate(() => {
+    // Extract ALL text from the page (including iframes)
+    const allText = await page.evaluate(() => {
       return document.body.innerText
     })
 
@@ -159,11 +92,19 @@ export async function extractReviewsFromNaverMap(
 
     await browser.close()
 
-    // Extract review section
-    let reviewText = detailText
-    const reviewIndex = detailText.indexOf('리뷰')
+    // Check if we got meaningful content
+    if (allText.length < 100) {
+      throw new Error('검색 결과를 찾을 수 없습니다')
+    }
+
+    // Extract review section if exists
+    let reviewText = allText
+    const reviewIndex = allText.indexOf('리뷰')
     if (reviewIndex !== -1) {
-      reviewText = detailText.substring(reviewIndex, reviewIndex + 10000)
+      reviewText = allText.substring(reviewIndex, reviewIndex + 10000)
+    } else {
+      // If no "리뷰" found, use full text
+      reviewText = allText
     }
 
     if (start && metrics) {
