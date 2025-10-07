@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, ThumbsUp, ThumbsDown, ExternalLink, Loader2 } from 'lucide-react'
+import { Search, ThumbsUp, ThumbsDown, ExternalLink, Loader2, CreditCard } from 'lucide-react'
+import { loadTossPayments } from '@tosspayments/tosspayments-sdk'
 
 interface PlaceSummary {
   placeName: string
@@ -19,6 +20,26 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<PlaceSummary | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  // 결제 처리
+  const handlePayment = async () => {
+    try {
+      const tossPayments = await loadTossPayments(
+        process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY!
+      )
+
+      await tossPayments.requestPayment('카드', {
+        amount: 9900,
+        orderId: 'moree_' + Date.now(),
+        orderName: 'moree.ai 프리미엄 플랜',
+        customerName: '고객',
+        successUrl: `${window.location.origin}/payment/success`,
+        failUrl: `${window.location.origin}/payment/fail`
+      })
+    } catch (error) {
+      console.error('결제 오류:', error)
+    }
+  }
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -92,9 +113,18 @@ export default function HomePage() {
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">
-            moree<span className="text-blue-600">.ai</span>
-          </h1>
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <h1 className="text-5xl font-bold text-gray-900">
+              moree<span className="text-blue-600">.ai</span>
+            </h1>
+            <button
+              onClick={handlePayment}
+              className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-full hover:from-blue-600 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl"
+            >
+              <CreditCard className="w-4 h-4" />
+              <span className="font-medium">프리미엄</span>
+            </button>
+          </div>
           <p className="text-xl text-gray-600 mb-2">
             AI가 요약하는 모든 리뷰
           </p>
